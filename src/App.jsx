@@ -3,6 +3,7 @@ import Navbar from './components/Navbar'
 import Hero from './components/Hero'
 import ProMatchEssentials from './components/ProMatchEssentials'
 import ArmourAdvantage from './components/ArmourAdvantage'
+import CustomGearBanner from './components/CustomGearBanner'
 import { Shield, Wind, Crosshair, Award } from 'lucide-react'
 
 export default function App() {
@@ -48,8 +49,11 @@ export default function App() {
         {/* PRO MATCH ESSENTIALS Section */}
         <ProMatchEssentials onAddToCart={handleAddToCart} />
 
-        {/* THE ARMOURCRAFT ADVANTAGE Section (Appended right below products) */}
+        {/* THE ARMOURCRAFT ADVANTAGE Section */}
         <ArmourAdvantage />
+
+        {/* CUSTOM TEAM GEAR & JERSEY MATCHING Banner */}
+        <CustomGearBanner />
 
         {/* Feature Specs Strip */}
         <section id="about" className="relative z-10 border-t border-slate-800/80 bg-[#070d18]/80 py-16 px-4 sm:px-6 lg:px-8">
