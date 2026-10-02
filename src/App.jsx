@@ -5,6 +5,8 @@ import ProMatchEssentials from './components/ProMatchEssentials'
 import ArmourAdvantage from './components/ArmourAdvantage'
 import CustomGearBanner from './components/CustomGearBanner'
 import ComparisonTable from './components/ComparisonTable'
+import SmartCollection from './components/SmartCollection'
+import Testimonials from './components/Testimonials'
 import { Shield, Wind, Crosshair, Award } from 'lucide-react'
 
 export default function App() {
@@ -58,6 +60,12 @@ export default function App() {
 
         {/* SmartThighs vs. The Others Comparison Table Section */}
         <ComparisonTable />
+
+        {/* BROWSE THE SMART COLLECTION Section */}
+        <SmartCollection onAddToCart={handleAddToCart} />
+
+        {/* TRUSTED BY 10,000+ BATSMEN Testimonials Section */}
+        <Testimonials />
 
         {/* Feature Specs Strip */}
         <section id="about" className="relative z-10 border-t border-slate-800/80 bg-[#070d18]/80 py-16 px-4 sm:px-6 lg:px-8">
