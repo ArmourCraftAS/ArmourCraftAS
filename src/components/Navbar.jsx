@@ -18,57 +18,15 @@ export default function Navbar() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
         
         {/* Brand Logo */}
-        <a href="#" className="flex items-center gap-3 group">
-          <div className="relative w-10 h-10 flex items-center justify-center">
-            {/* Stylized Futuristic "A" Logo */}
-            <svg
-              viewBox="0 0 100 100"
-              className="w-10 h-10 drop-shadow-[0_0_12px_rgba(59,130,246,0.6)] transition-transform duration-300 group-hover:scale-105"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              {/* Outer orbital ring */}
-              <ellipse
-                cx="50"
-                cy="50"
-                rx="44"
-                ry="22"
-                transform="rotate(-28 50 50)"
-                stroke="url(#blueGrad)"
-                strokeWidth="4"
-                strokeDasharray="180 50"
-              />
-              {/* Triangular dynamic A shield */}
-              <path
-                d="M50 14L22 84L38 84L50 52L62 84L78 84L50 14Z"
-                fill="url(#silverGrad)"
-                stroke="#60a5fa"
-                strokeWidth="1.5"
-              />
-              <path
-                d="M34 64H66L50 30L34 64Z"
-                fill="#060a12"
-              />
-              <defs>
-                <linearGradient id="blueGrad" x1="0" y1="0" x2="100" y2="100" gradientUnits="userSpaceOnUse">
-                  <stop stopColor="#60a5fa" />
-                  <stop offset="0.5" stopColor="#2563eb" />
-                  <stop offset="1" stopColor="#1d4ed8" />
-                </linearGradient>
-                <linearGradient id="silverGrad" x1="20" y1="20" x2="80" y2="80" gradientUnits="userSpaceOnUse">
-                  <stop stopColor="#f8fafc" />
-                  <stop offset="0.5" stopColor="#94a3b8" />
-                  <stop offset="1" stopColor="#cbd5e1" />
-                </linearGradient>
-              </defs>
-            </svg>
-          </div>
-          <div className="tracking-wider flex items-center font-bold text-lg select-none">
-            <span className="text-white tracking-widest font-extrabold text-xl">ARMOUR</span>
-            <span className="text-blue-500 tracking-widest font-extrabold text-xl ml-0.5">CRAFT</span>
-            <span className="text-slate-200 tracking-wider font-bold text-xl ml-1.5">AS</span>
-          </div>
+        <a href="#" className="flex items-center group py-1">
+          <img
+            src="/images/logo.png"
+            alt="ARMOURCRAFT AS"
+            className="h-10 sm:h-11 md:h-12 w-auto object-contain transition-transform duration-200 group-hover:scale-[1.02] drop-shadow-[0_2px_14px_rgba(37,99,235,0.3)] select-none"
+            loading="eager"
+          />
         </a>
+
 
         {/* Desktop Navigation Links */}
         <nav className="hidden md:flex items-center space-x-8">
