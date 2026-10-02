@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import Navbar from './components/Navbar'
 import Hero from './components/Hero'
 import ProMatchEssentials from './components/ProMatchEssentials'
+import ArmourAdvantage from './components/ArmourAdvantage'
 import { Shield, Wind, Crosshair, Award } from 'lucide-react'
 
 export default function App() {
@@ -44,8 +45,11 @@ export default function App() {
         {/* Hero Section */}
         <Hero />
 
-        {/* PRO MATCH ESSENTIALS Section (Appended right below Hero) */}
+        {/* PRO MATCH ESSENTIALS Section */}
         <ProMatchEssentials onAddToCart={handleAddToCart} />
+
+        {/* THE ARMOURCRAFT ADVANTAGE Section (Appended right below products) */}
+        <ArmourAdvantage />
 
         {/* Feature Specs Strip */}
         <section id="about" className="relative z-10 border-t border-slate-800/80 bg-[#070d18]/80 py-16 px-4 sm:px-6 lg:px-8">
