@@ -8,6 +8,7 @@ import ComparisonTable from './components/ComparisonTable'
 import SmartCollection from './components/SmartCollection'
 import Testimonials from './components/Testimonials'
 import FAQ from './components/FAQ'
+import Footer from './components/Footer'
 import { Shield, Wind, Crosshair, Award } from 'lucide-react'
 
 export default function App() {
@@ -92,17 +93,8 @@ export default function App() {
         </section>
       </main>
 
-      {/* 3. Footer */}
-      <footer className="border-t border-slate-900 bg-[#04070d] py-10 px-4 sm:px-6 lg:px-8 text-center text-xs text-slate-500">
-        <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
-          <div className="flex items-center gap-2 font-bold tracking-wider text-slate-300">
-            <span>ARMOURCRAFT AS</span>
-            <span className="text-blue-500">•</span>
-            <span className="text-slate-500 font-normal">Next-Gen Cricket Protection</span>
-          </div>
-          <p>© 2026 ArmourCraft AS. All rights reserved. Precision engineered for high-velocity sports.</p>
-        </div>
-      </footer>
+      {/* 3. Global Persistent Footer */}
+      <Footer />
     </div>
   )
 }
