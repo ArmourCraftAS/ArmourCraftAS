@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import { ShoppingBag, Menu, X } from 'lucide-react'
 
-export default function Navbar() {
+export default function Navbar({ cartCount = 2 }) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const [activeNav, setActiveNav] = useState('Home')
 
@@ -26,7 +26,6 @@ export default function Navbar() {
             loading="eager"
           />
         </a>
-
 
         {/* Desktop Navigation Links */}
         <nav className="hidden md:flex items-center space-x-8">
@@ -55,16 +54,18 @@ export default function Navbar() {
         <div className="hidden md:flex items-center">
           <button className="flex items-center gap-2.5 bg-[#1762f0] hover:bg-[#1354d4] text-white px-5 py-2.5 rounded-full text-xs font-bold tracking-wider transition-all duration-200 shadow-md shadow-blue-600/30 hover:shadow-blue-500/50 hover:scale-[1.02] active:scale-[0.98]">
             <ShoppingBag className="w-3.5 h-3.5 stroke-[2.5]" />
-            <span>CART (2)</span>
+            <span>CART ({cartCount})</span>
           </button>
         </div>
+
 
         {/* Mobile Menu Button */}
         <div className="flex md:hidden items-center gap-3">
           <button className="flex items-center gap-1.5 bg-[#1762f0] text-white px-3 py-1.5 rounded-full text-xs font-bold">
             <ShoppingBag className="w-3.5 h-3.5" />
-            <span>(2)</span>
+            <span>({cartCount})</span>
           </button>
+
           <button
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
             className="p-2 text-slate-400 hover:text-white rounded-lg focus:outline-none"
