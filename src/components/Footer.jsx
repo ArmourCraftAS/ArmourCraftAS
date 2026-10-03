@@ -1,20 +1,29 @@
 import React from 'react'
 import { Mail, MapPin, MessageCircle } from 'lucide-react'
 
-export default function Footer() {
+export default function Footer({ onNavigate }) {
   const quickNavLinks = [
-    { name: 'Shop Thigh Guards', href: '#shop' },
-    { name: 'Custom Team Orders', href: '#custom-team' },
-    { name: 'What We Are', href: '#about' },
-    { name: 'Cricket Blog', href: '#blog' }
+    { name: 'Shop Thigh Guards', href: '/shop', path: '/shop' },
+    { name: 'Custom Team Orders', href: '/#custom-team', hash: '#custom-team' },
+    { name: 'What We Are', href: '/#about', hash: '#about' },
+    { name: 'Cricket Blog', href: '/#blog', hash: '#blog' }
   ]
 
-  const supportLinks = [
-    { name: 'Delivery & Shipping Info', href: '#shipping' },
-    { name: 'WhatsApp Support', href: 'https://wa.me/923001234567' },
-    { name: 'Maintenance Care', href: '#care' },
-    { name: 'Gear Care Guide', href: '#guide' }
-  ]
+  const handleLinkClick = (e, link) => {
+    if (onNavigate) {
+      if (link.path) {
+        e.preventDefault()
+        onNavigate(link.path)
+      } else if (link.hash) {
+        e.preventDefault()
+        onNavigate('/')
+        setTimeout(() => {
+          const el = document.querySelector(link.hash)
+          if (el) el.scrollIntoView({ behavior: 'smooth' })
+        }, 100)
+      }
+    }
+  }
 
   return (
     <footer className="w-full bg-[#04070e] text-slate-400 border-t border-slate-900/90 pt-16 pb-12 px-4 sm:px-6 lg:px-8">
@@ -25,7 +34,16 @@ export default function Footer() {
           {/* Column 1: Brand Info & Socials */}
           <div className="flex flex-col">
             {/* Brand Logo */}
-            <a href="#" className="inline-block mb-5">
+            <a
+              href="/"
+              onClick={(e) => {
+                if (onNavigate) {
+                  e.preventDefault()
+                  onNavigate('/')
+                }
+              }}
+              className="inline-block mb-5 cursor-pointer"
+            >
               <img
                 src="/images/logo.png"
                 alt="ARMOURCRAFT AS"
@@ -106,7 +124,8 @@ export default function Footer() {
                 <li key={link.name}>
                   <a
                     href={link.href}
-                    className="text-slate-400 hover:text-white transition-colors duration-200 text-xs sm:text-sm block"
+                    onClick={(e) => handleLinkClick(e, link)}
+                    className="text-slate-400 hover:text-white transition-colors duration-200 text-xs sm:text-sm block cursor-pointer"
                   >
                     {link.name}
                   </a>

@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import { ArrowRight, ShieldCheck, Sparkles, Activity } from 'lucide-react'
 import Armour3DModal from './Armour3DModal'
 
-export default function Hero() {
+export default function Hero({ onNavigate }) {
   const [is3DModalOpen, setIs3DModalOpen] = useState(false)
   const [activeSlide, setActiveSlide] = useState(0)
 
@@ -81,8 +81,14 @@ export default function Hero() {
             
             {/* Primary Blue Button */}
             <a
-              href="#shop"
-              className="inline-flex items-center justify-center gap-2.5 bg-[#1762f0] hover:bg-[#1354d4] text-white px-8 py-4 rounded-xl font-bold text-sm sm:text-base tracking-wide transition-all duration-200 shadow-lg shadow-blue-600/35 hover:shadow-blue-500/50 hover:translate-y-[-1px] active:translate-y-[0px] group"
+              href="/shop"
+              onClick={(e) => {
+                if (onNavigate) {
+                  e.preventDefault()
+                  onNavigate('/shop')
+                }
+              }}
+              className="inline-flex items-center justify-center gap-2.5 bg-[#1762f0] hover:bg-[#1354d4] text-white px-8 py-4 rounded-xl font-bold text-sm sm:text-base tracking-wide transition-all duration-200 shadow-lg shadow-blue-600/35 hover:shadow-blue-500/50 hover:translate-y-[-1px] active:translate-y-[0px] group cursor-pointer"
             >
               <span>Explore Collection</span>
               <ArrowRight className="w-4 h-4 transition-transform duration-200 group-hover:translate-x-1" />

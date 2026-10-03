@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import { Hammer, Zap, ShieldCheck, Lock, ShoppingCart, Check, ExternalLink } from 'lucide-react'
 
-export default function ProMatchEssentials({ onAddToCart }) {
+export default function ProMatchEssentials({ onAddToCart, onNavigate }) {
   const [addedItem, setAddedItem] = useState(null)
 
   const featureHighlights = [
@@ -101,8 +101,14 @@ export default function ProMatchEssentials({ onAddToCart }) {
           </div>
 
           <a
-            href="#all-products"
-            className="inline-flex items-center gap-1.5 text-xs sm:text-sm font-bold text-[#1d68ed] hover:text-blue-400 tracking-wider uppercase transition-colors group self-start sm:self-auto border-b-2 border-transparent hover:border-blue-500 pb-0.5"
+            href="/shop"
+            onClick={(e) => {
+              if (onNavigate) {
+                e.preventDefault()
+                onNavigate('/shop')
+              }
+            }}
+            className="inline-flex items-center gap-1.5 text-xs sm:text-sm font-bold text-[#1d68ed] hover:text-blue-400 tracking-wider uppercase transition-colors group self-start sm:self-auto border-b-2 border-transparent hover:border-blue-500 pb-0.5 cursor-pointer"
           >
             <span>VIEW ALL PRODUCTS</span>
             <ExternalLink className="w-3.5 h-3.5 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
