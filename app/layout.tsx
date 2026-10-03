@@ -1,6 +1,7 @@
 import React from 'react'
 import Navbar from '../src/components/Navbar'
 import Footer from '../src/components/Footer'
+import '../src/index.css'
 
 export const metadata = {
   title: 'ArmourCraft AS | Next-Gen Ergonomic Thigh Protection',
