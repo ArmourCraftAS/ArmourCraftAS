@@ -56,7 +56,11 @@ function AdminRouter({ currentPath, onNavigate }) {
     return <AdminLoginPage onNavigate={onNavigate} />
   }
 
-  // Authenticated Protected Routes inside Standalone AdminLayout
+  // Authenticated Protected Routes
+  if (normalizedPath === '/admin/dashboard' || normalizedPath === '/admin') {
+    return <AdminDashboardPage onNavigate={onNavigate} />
+  }
+
   return (
     <AdminLayout currentPath={normalizedPath} onNavigate={onNavigate}>
       {normalizedPath === '/admin/products' ? (
