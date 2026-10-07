@@ -1,13 +1,11 @@
 import React, { useState } from 'react'
-import { Mail, CheckCircle2, AlertCircle, ArrowLeft, ArrowRight, ExternalLink } from 'lucide-react'
+import { Mail, AlertCircle } from 'lucide-react'
 import { useAdminAuth } from '../AdminAuthContext'
 
 export default function AdminForgotPasswordPage({ onNavigate }) {
   const { requestPasswordReset } = useAdminAuth()
   const [email, setEmail] = useState('')
   const [isLoading, setIsLoading] = useState(false)
-  const [isSubmitted, setIsSubmitted] = useState(false)
-  const [resetToken, setResetToken] = useState('')
   const [error, setError] = useState('')
 
   const handleSubmit = async (e) => {
@@ -25,8 +23,8 @@ export default function AdminForgotPasswordPage({ onNavigate }) {
       const res = await requestPasswordReset(email.trim())
       setIsLoading(false)
       if (res.success) {
-        setResetToken(res.token)
-        setIsSubmitted(true)
+        // Immediately redirect directly back to Login screen with success toast parameter
+        onNavigate('/admin/login?reset_sent=true')
       } else {
         setError(res.error || 'Failed to dispatch reset link.')
       }
@@ -60,98 +58,47 @@ export default function AdminForgotPasswordPage({ onNavigate }) {
           </div>
         )}
 
-        {/* Success Confirmation State */}
-        {isSubmitted ? (
-          <div className="py-4 text-center space-y-4 animate-in fade-in duration-200">
-            <div className="w-14 h-14 rounded-full bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center text-emerald-400 mx-auto shadow-[0_0_20px_rgba(16,185,129,0.2)]">
-              <CheckCircle2 className="w-7 h-7" />
-            </div>
-
-            <div>
-              <h3 className="text-lg font-bold text-white tracking-tight">
-                Password reset link has been sent to your email!
-              </h3>
-              <p className="text-slate-400 text-xs mt-1.5 leading-relaxed">
-                We have dispatched a secure recovery link to <span className="text-blue-400 font-semibold">{email}</span>. Please check your inbox or spam folder and click the link to set your new password.
-              </p>
-            </div>
-
-            <div className="pt-2 space-y-3">
-              {resetToken && (
-                <button
-                  type="button"
-                  onClick={() => onNavigate(`/admin/reset-password?token=${resetToken}`)}
-                  className="w-full py-3.5 rounded-xl bg-[#2563eb] hover:bg-[#1d4ed8] text-white font-bold text-sm tracking-wider uppercase transition-colors shadow-lg shadow-blue-600/30 cursor-pointer flex items-center justify-center gap-2"
-                >
-                  <span>Set New Password Now</span>
-                  <ArrowRight className="w-4 h-4" />
-                </button>
-              )}
-
-              <button
-                type="button"
-                onClick={() => onNavigate('/admin/login')}
-                className="w-full py-3 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 font-semibold text-xs tracking-wider uppercase transition-colors cursor-pointer"
-              >
-                Return to Login
-              </button>
-
-              <button
-                type="button"
-                onClick={() => {
-                  setIsSubmitted(false)
-                  setEmail('')
-                  setResetToken('')
-                }}
-                className="text-xs text-slate-500 hover:text-slate-300 transition-colors cursor-pointer block mx-auto pt-1"
-              >
-                Send to a different email address
-              </button>
+        {/* Main Form */}
+        <form onSubmit={handleSubmit} className="space-y-5">
+          <div>
+            <label className="text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-2 block">
+              ADMIN EMAIL
+            </label>
+            <div className="relative">
+              <Mail className="w-4 h-4 text-slate-500 absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none stroke-[1.8]" />
+              <input
+                type="email"
+                required
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="name@armourcraft.com"
+                className="w-full bg-[#182236] border border-slate-700/50 text-white placeholder-slate-500 text-sm rounded-xl pl-10 pr-4 py-3.5 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-colors"
+              />
             </div>
           </div>
-        ) : (
-          /* Main Form */
-          <form onSubmit={handleSubmit} className="space-y-5">
-            <div>
-              <label className="text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-2 block">
-                ADMIN EMAIL
-              </label>
-              <div className="relative">
-                <Mail className="w-4 h-4 text-slate-500 absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none stroke-[1.8]" />
-                <input
-                  type="email"
-                  required
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  placeholder="name@armourcraft.com"
-                  className="w-full bg-[#182236] border border-slate-700/50 text-white placeholder-slate-500 text-sm rounded-xl pl-10 pr-4 py-3.5 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-colors"
-                />
-              </div>
-            </div>
 
-            {/* Action Button: SEND RESET LINK */}
-            <div>
-              <button
-                type="submit"
-                disabled={isLoading}
-                className="w-full py-3.5 rounded-xl bg-[#2563eb] hover:bg-[#1d4ed8] active:bg-blue-700 disabled:opacity-50 text-white font-bold text-sm tracking-wider uppercase transition-colors shadow-lg shadow-blue-600/30 flex items-center justify-center cursor-pointer"
-              >
-                <span>{isLoading ? 'DISPATCHING LINK...' : 'SEND RESET LINK'}</span>
-              </button>
-            </div>
+          {/* Action Button: SEND RESET LINK */}
+          <div>
+            <button
+              type="submit"
+              disabled={isLoading}
+              className="w-full py-3.5 rounded-xl bg-[#2563eb] hover:bg-[#1d4ed8] active:bg-blue-700 disabled:opacity-50 text-white font-bold text-sm tracking-wider uppercase transition-colors shadow-lg shadow-blue-600/30 flex items-center justify-center cursor-pointer"
+            >
+              <span>{isLoading ? 'DISPATCHING LINK...' : 'SEND RESET LINK'}</span>
+            </button>
+          </div>
 
-            {/* Center-aligned grey link: ← Back to Login */}
-            <div className="pt-1 text-center">
-              <button
-                type="button"
-                onClick={() => onNavigate('/admin/login')}
-                className="text-xs sm:text-sm text-slate-400 hover:text-white transition-colors cursor-pointer inline-flex items-center gap-1.5 font-normal"
-              >
-                <span>&larr; Back to Login</span>
-              </button>
-            </div>
-          </form>
-        )}
+          {/* Center-aligned grey link: ← Back to Login */}
+          <div className="pt-1 text-center">
+            <button
+              type="button"
+              onClick={() => onNavigate('/admin/login')}
+              className="text-xs sm:text-sm text-slate-400 hover:text-white transition-colors cursor-pointer inline-flex items-center gap-1.5 font-normal"
+            >
+              <span>&larr; Back to Login</span>
+            </button>
+          </div>
+        </form>
 
       </div>
 

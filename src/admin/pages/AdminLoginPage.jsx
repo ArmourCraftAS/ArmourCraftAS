@@ -33,7 +33,7 @@ export default function AdminLoginPage({ onNavigate }) {
   const [successToast, setSuccessToast] = useState('')
   const [isLoading, setIsLoading] = useState(false)
 
-  // Listen for reset=success in URL query parameters
+  // Listen for reset=success or reset_sent=true in URL query parameters
   useEffect(() => {
     if (typeof window !== 'undefined') {
       const params = new URLSearchParams(window.location.search)
@@ -46,18 +46,27 @@ export default function AdminLoginPage({ onNavigate }) {
         } catch (e) {
           // ignore url state update error
         }
+      } else if (params.get('reset_sent') === 'true') {
+        setSuccessToast('Password reset link has been sent to your email!')
+        try {
+          const url = new URL(window.location.href)
+          url.searchParams.delete('reset_sent')
+          window.history.replaceState({}, '', url.pathname + (url.search ? url.search : ''))
+        } catch (e) {
+          // ignore url state update error
+        }
       }
     }
   }, [])
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault()
     setError('')
     setSuccessToast('')
     setIsLoading(true)
 
-    setTimeout(() => {
-      const res = login(email, password)
+    try {
+      const res = await login(email, password)
       setIsLoading(false)
       if (res.success) {
         try {
@@ -71,11 +80,15 @@ export default function AdminLoginPage({ onNavigate }) {
         } catch (err) {
           console.warn('Could not persist remember me state:', err)
         }
+        // Immediately redirect straight into the main Admin Dashboard
         onNavigate('/admin/dashboard')
       } else {
         setError(res.error)
       }
-    }, 350)
+    } catch (err) {
+      setIsLoading(false)
+      setError('An error occurred during authentication. Please try again.')
+    }
   }
 
   const handleForgotPassword = () => {

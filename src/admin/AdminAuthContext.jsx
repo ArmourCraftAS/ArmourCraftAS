@@ -123,32 +123,61 @@ export function AdminAuthProvider({ children }) {
   }, [orders])
 
   // Login handler
-  const login = (email, password) => {
+  const login = async (email, password) => {
     const trimmedEmail = email.trim().toLowerCase()
     
-    // Check against registered admins or fallback master credentials
+    // 1. Check against registered admins (including updated passwords)
     const found = registeredAdmins.find(
       (u) => u.email.toLowerCase() === trimmedEmail && u.password === password
     )
 
-    if (found || (trimmedEmail === 'admin@armourcraft.com' && password === 'admin')) {
-      const userToSet = found
-        ? {
-            id: `admin-${Date.now()}`,
-            name: found.name || 'Admin',
-            email: found.email,
-            role: found.role || 'Staff Administrator',
+    if (found) {
+      const userToSet = {
+        id: found.id || `admin-${Date.now()}`,
+        name: found.name || 'Admin',
+        email: found.email,
+        role: found.role || 'Staff Administrator',
+        avatar: found.avatar || '/images/avatar_david.png'
+      }
+      setAdminUser(userToSet)
+      return { success: true }
+    }
+
+    // 2. Try Supabase Auth sign-in if connected
+    try {
+      if (supabase && supabase.auth && typeof supabase.auth.signInWithPassword === 'function') {
+        const { data: supaData, error: supaError } = await supabase.auth.signInWithPassword({
+          email: trimmedEmail,
+          password: password
+        })
+        if (!supaError && supaData?.user) {
+          const userToSet = {
+            id: supaData.user.id || `admin-${Date.now()}`,
+            name: supaData.user.user_metadata?.full_name || 'Admin',
+            email: supaData.user.email,
+            role: 'Staff Administrator',
             avatar: '/images/avatar_david.png'
           }
-        : defaultAdminUser
+          setAdminUser(userToSet)
+          return { success: true }
+        }
+      }
+    } catch (e) {
+      console.warn('Supabase signIn notice:', e?.message || e)
+    }
 
-      setAdminUser(userToSet)
+    // 3. Fallback master default test access if not yet customized
+    const hasCustomMaster = registeredAdmins.some(
+      (u) => u.email.toLowerCase() === 'admin@armourcraft.com' && u.password !== 'admin'
+    )
+    if (!hasCustomMaster && trimmedEmail === 'admin@armourcraft.com' && password === 'admin') {
+      setAdminUser(defaultAdminUser)
       return { success: true }
     }
 
     return {
       success: false,
-      error: 'Invalid admin email or password. Default test access: admin@armourcraft.com / admin'
+      error: 'Invalid admin email or password. Please verify your credentials or reset your password.'
     }
   }
 
@@ -245,8 +274,8 @@ export function AdminAuthProvider({ children }) {
     // Connect Supabase Auth resetPasswordForEmail if configured
     try {
       const redirectUrl = typeof window !== 'undefined'
-        ? `${window.location.origin}/admin/reset-password`
-        : 'http://localhost:3000/admin/reset-password'
+        ? `${window.location.origin}/admin/reset-password?token=${token}`
+        : `http://localhost:3000/admin/reset-password?token=${token}`
 
       if (supabase && supabase.auth && typeof supabase.auth.resetPasswordForEmail === 'function') {
         const { error: supaError } = await supabase.auth.resetPasswordForEmail(trimmedEmail, {
