@@ -69,10 +69,10 @@ export default function AdminForgotPasswordPage({ onNavigate }) {
 
             <div>
               <h3 className="text-lg font-bold text-white tracking-tight">
-                Reset Link Sent!
+                Password reset link has been sent to your email!
               </h3>
-              <p className="text-slate-400 text-xs mt-1 leading-relaxed">
-                We have dispatched a secure recovery link to <span className="text-blue-400 font-semibold">{email}</span>. Please check your inbox and spam folder.
+              <p className="text-slate-400 text-xs mt-1.5 leading-relaxed">
+                We have dispatched a secure recovery link to <span className="text-blue-400 font-semibold">{email}</span>. Please check your inbox or spam folder and click the link to set your new password.
               </p>
             </div>
 

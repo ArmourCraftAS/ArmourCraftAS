@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { Eye, EyeOff, AlertCircle, CheckCircle2, Settings } from 'lucide-react'
 import { useAdminAuth } from '../AdminAuthContext'
+import { supabase } from '../../../lib/supabaseClient'
 
 export default function AdminResetPasswordPage({ onNavigate }) {
   const { updateAdminPassword } = useAdminAuth()
@@ -13,19 +14,66 @@ export default function AdminResetPasswordPage({ onNavigate }) {
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState('')
   const [success, setSuccess] = useState(false)
+  const [sessionEmail, setSessionEmail] = useState('')
 
-  // Extract token from query params or hash on mount
+  // Handle Supabase recovery email link redirect (access_token in hash or code in query)
   useEffect(() => {
+    // 1. Listen for Supabase PASSWORD_RECOVERY event
+    let authListener = null
+    try {
+      if (supabase?.auth?.onAuthStateChange) {
+        const { data } = supabase.auth.onAuthStateChange(async (event, session) => {
+          if (event === 'PASSWORD_RECOVERY' || session?.user) {
+            if (session?.user?.email) setSessionEmail(session.user.email)
+          }
+        })
+        authListener = data
+      }
+    } catch (e) {
+      console.warn('Supabase auth state listener notice:', e)
+    }
+
+    // 2. Parse hash fragment (#access_token=...&refresh_token=...)
     if (typeof window !== 'undefined') {
       const searchParams = new URLSearchParams(window.location.search)
       const tokenFromQuery = searchParams.get('token')
+      const codeFromQuery = searchParams.get('code')
+
       if (tokenFromQuery) {
         setToken(tokenFromQuery)
-      } else if (window.location.hash) {
-        const hashParams = new URLSearchParams(window.location.hash.replace(/^#/, ''))
-        const tokenFromHash = hashParams.get('access_token')
-        if (tokenFromHash) setToken(tokenFromHash)
       }
+
+      if (codeFromQuery && supabase?.auth?.exchangeCodeForSession) {
+        supabase.auth.exchangeCodeForSession(codeFromQuery)
+          .then(({ data, error }) => {
+            if (!error && data?.session?.user?.email) {
+              setSessionEmail(data.session.user.email)
+            }
+          })
+          .catch((err) => console.warn('Supabase code exchange error:', err))
+      }
+
+      if (window.location.hash && window.location.hash.includes('access_token')) {
+        const hashParams = new URLSearchParams(window.location.hash.replace(/^#/, ''))
+        const accessToken = hashParams.get('access_token')
+        const refreshToken = hashParams.get('refresh_token')
+
+        if (accessToken) setToken(accessToken)
+
+        if (accessToken && refreshToken && supabase?.auth?.setSession) {
+          supabase.auth.setSession({ access_token: accessToken, refresh_token: refreshToken })
+            .then(({ data, error }) => {
+              if (!error && data?.session?.user?.email) {
+                setSessionEmail(data.session.user.email)
+              }
+            })
+            .catch((err) => console.warn('Supabase session set error:', err))
+        }
+      }
+    }
+
+    return () => {
+      authListener?.subscription?.unsubscribe()
     }
   }, [])
 
@@ -56,16 +104,34 @@ export default function AdminResetPasswordPage({ onNavigate }) {
     setIsLoading(true)
 
     try {
+      // Step A: Call Supabase Auth updateUser to permanently update password in database
+      let supabaseUpdated = false
+      try {
+        if (supabase?.auth?.updateUser) {
+          const { data: supaData, error: supaError } = await supabase.auth.updateUser({
+            password: newPassword
+          })
+          if (supaError) {
+            console.warn('Supabase updateUser notice:', supaError.message)
+          } else if (supaData?.user) {
+            supabaseUpdated = true
+          }
+        }
+      } catch (supaErr) {
+        console.warn('Supabase updateUser exception:', supaErr)
+      }
+
+      // Step B: Update local admin credentials & clear reset token
       const res = await updateAdminPassword({
         token,
         newPassword,
         confirmPassword
       })
 
-      if (res.success) {
+      if (res.success || supabaseUpdated) {
         setSuccess(true)
         setIsLoading(false)
-        // Auto-redirect to login with success toast parameter
+        // Show confirmation message and auto-redirect back to /admin/login with success toast
         setTimeout(() => {
           onNavigate('/admin/login?reset=success')
         }, 1200)

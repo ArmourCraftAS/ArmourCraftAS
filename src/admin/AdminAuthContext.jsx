@@ -245,13 +245,16 @@ export function AdminAuthProvider({ children }) {
     // Connect Supabase Auth resetPasswordForEmail if configured
     try {
       const redirectUrl = typeof window !== 'undefined'
-        ? `${window.location.origin}/admin/reset-password?token=${token}`
-        : `/admin/reset-password?token=${token}`
+        ? `${window.location.origin}/admin/reset-password`
+        : 'http://localhost:3000/admin/reset-password'
 
       if (supabase && supabase.auth && typeof supabase.auth.resetPasswordForEmail === 'function') {
-        await supabase.auth.resetPasswordForEmail(trimmedEmail, {
+        const { error: supaError } = await supabase.auth.resetPasswordForEmail(trimmedEmail, {
           redirectTo: redirectUrl
         })
+        if (supaError) {
+          console.warn('Supabase resetPasswordForEmail notice:', supaError.message)
+        }
       }
     } catch (supabaseError) {
       console.info('Supabase email reset notice (fallback to local token workflow):', supabaseError?.message || supabaseError)
