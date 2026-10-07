@@ -1,10 +1,7 @@
-import React, { useState } from 'react'
-import { ShieldCheck, Eye, Layers } from 'lucide-react'
-import Armour3DModal from './Armour3DModal'
+import React from 'react'
+import { Layers } from 'lucide-react'
 
 export default function ArmourAdvantage() {
-  const [is3DModalOpen, setIs3DModalOpen] = useState(false)
-
   return (
     <section className="relative w-full bg-[#060a14] py-20 lg:py-28 overflow-hidden text-white border-t border-slate-900/60">
       
@@ -25,11 +22,11 @@ export default function ArmourAdvantage() {
               <div className="absolute -bottom-4 -left-4 sm:-bottom-6 sm:-left-6 w-32 sm:w-40 h-32 sm:h-40 border-l-2 border-b-2 border-blue-500/25 rounded-bl-2xl pointer-events-none" />
 
               {/* 1. Background Card (Carbon-fiber/Foam Macro Texture) */}
-              <div className="absolute top-0 left-0 w-[58%] sm:w-[60%] h-[74%] sm:h-[76%] rounded-2xl sm:rounded-3xl overflow-hidden border border-slate-700/70 shadow-2xl bg-[#090f1d] group transition-transform duration-300 hover:scale-[1.01]">
+              <div className="absolute top-0 left-0 w-[58%] sm:w-[60%] h-[74%] sm:h-[76%] rounded-2xl sm:rounded-3xl overflow-hidden border border-slate-700/70 shadow-2xl bg-[#090f1d]">
                 <img
                   src="/images/advantage_carbon.png"
                   alt="High-density Carbon-Fiber Composite Texture"
-                  className="w-full h-full object-cover select-none group-hover:scale-105 transition-transform duration-500 ease-out"
+                  className="w-full h-full object-cover select-none"
                   loading="lazy"
                 />
                 {/* Subtle sheen overlay */}
@@ -42,25 +39,14 @@ export default function ArmourAdvantage() {
                 </div>
               </div>
 
-              {/* 2. Foreground Floating Card (Blue 3D Thigh Guard Model) */}
-              <div 
-                onClick={() => setIs3DModalOpen(true)}
-                className="absolute bottom-0 right-0 sm:right-4 w-[65%] sm:w-[66%] h-[74%] sm:h-[76%] rounded-2xl sm:rounded-3xl overflow-hidden border border-slate-700/80 shadow-[0_25px_60px_-15px_rgba(0,0,0,0.9)] bg-[#0a1120] group cursor-pointer transition-all duration-300 hover:border-blue-500/50 hover:translate-y-[-4px]"
-              >
+              {/* 2. Foreground Floating Card (Static Product Image Display) */}
+              <div className="absolute bottom-0 right-0 sm:right-4 w-[65%] sm:w-[66%] h-[74%] sm:h-[76%] rounded-2xl sm:rounded-3xl overflow-hidden border border-slate-700/80 shadow-[0_25px_60px_-15px_rgba(0,0,0,0.9)] bg-[#0a1120]">
                 <img
                   src="/images/advantage_thigh_guard.png"
-                  alt="ArmourCraft 3D Ergonomic Blue Thigh Guard"
-                  className="w-full h-full object-cover select-none group-hover:scale-105 transition-transform duration-500 ease-out"
+                  alt="ArmourCraft Ergonomic Blue Thigh Guard"
+                  className="w-full h-full object-cover select-none"
                   loading="lazy"
                 />
-                {/* Subtle dark vignette */}
-                <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent pointer-events-none" />
-
-                {/* Floating 3D Badge on hover */}
-                <div className="absolute bottom-4 right-4 bg-blue-600/90 hover:bg-blue-500 backdrop-blur-md text-white px-3 py-1.5 rounded-full text-[11px] font-bold tracking-wide flex items-center gap-1.5 shadow-lg shadow-blue-600/40 transition-transform group-hover:scale-105">
-                  <Eye className="w-3.5 h-3.5" />
-                  <span>Inspect 3D</span>
-                </div>
               </div>
 
             </div>
@@ -109,12 +95,6 @@ export default function ArmourAdvantage() {
 
         </div>
       </div>
-
-      {/* Interactive 3D Model Modal */}
-      <Armour3DModal
-        isOpen={is3DModalOpen}
-        onClose={() => setIs3DModalOpen(false)}
-      />
     </section>
   )
 }

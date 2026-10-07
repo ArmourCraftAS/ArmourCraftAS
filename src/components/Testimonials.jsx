@@ -1,5 +1,5 @@
 import React from 'react'
-import { Star, Check } from 'lucide-react'
+import { Check } from 'lucide-react'
 
 export default function Testimonials() {
   const testimonials = [
@@ -27,31 +27,16 @@ export default function Testimonials() {
   ]
 
   return (
-    <section className="relative w-full bg-[#060a12] py-20 lg:py-24 px-4 sm:px-6 lg:px-8 text-white border-t border-slate-900/60 overflow-hidden">
+    <section className="relative w-full bg-[#060a12] py-16 sm:py-20 lg:py-24 px-4 sm:px-6 lg:px-8 text-white border-t border-slate-900/60 overflow-hidden">
       {/* Subtle backdrop glow */}
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[350px] bg-blue-600/5 blur-[140px] pointer-events-none rounded-full" />
 
       <div className="max-w-7xl mx-auto relative z-10">
-        {/* Section Header */}
-        <div className="text-center mb-12 sm:mb-16">
-          <h2 className="text-3xl sm:text-4xl md:text-5xl font-black text-white tracking-tight uppercase mb-4">
+        {/* Main Section Heading (Without Star Rating Line) */}
+        <div className="text-center mb-10 sm:mb-14">
+          <h2 className="text-3xl sm:text-4xl md:text-5xl font-black text-white tracking-tight uppercase">
             TRUSTED BY 10,000+ BATSMEN
           </h2>
-
-          {/* 5-Star Rating Graphic */}
-          <div className="inline-flex items-center justify-center gap-2 text-amber-400">
-            <div className="flex items-center gap-1">
-              {[...Array(5)].map((_, i) => (
-                <Star
-                  key={i}
-                  className="w-4 h-4 sm:w-5 sm:h-5 fill-amber-400 text-amber-400"
-                />
-              ))}
-            </div>
-            <span className="text-xs sm:text-sm font-black tracking-wider text-slate-200 uppercase ml-1">
-              4.9/5 AVERAGE RATING
-            </span>
-          </div>
         </div>
 
         {/* Testimonial Cards Grid (3 Columns) */}
@@ -59,15 +44,15 @@ export default function Testimonials() {
           {testimonials.map((item) => (
             <div
               key={item.id}
-              className="bg-[#0b1222] border border-slate-800/80 rounded-2xl p-6 sm:p-7 flex flex-col justify-between hover:border-blue-500/40 hover:shadow-2xl transition-all duration-300 hover:translate-y-[-2px] group"
+              className="bg-[#0b1222] border border-slate-800/80 rounded-2xl p-6 sm:p-7 flex flex-col justify-between hover:border-blue-500/50 hover:shadow-[0_0_25px_rgba(59,130,246,0.15)] transition-all duration-300 hover:translate-y-[-2px] group"
             >
               {/* Header with Avatar, Name, Verified Badge */}
-              <div className="flex items-center gap-3.5 mb-5">
-                <div className="relative w-12 h-12 rounded-full overflow-hidden border-2 border-blue-500/40 bg-slate-800 flex-shrink-0 shadow-md shadow-blue-500/10">
+              <div className="flex items-center gap-4 mb-5">
+                <div className="relative w-14 h-14 sm:w-16 sm:h-16 rounded-full overflow-hidden border-4 border-[#007bff] bg-slate-900 flex-shrink-0 shadow-[0_0_16px_rgba(0,123,255,0.45)] user-avatar-circle">
                   <img
                     src={item.avatar}
-                    alt={item.name}
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                    alt={`${item.name} - Verified Batsman Review for ARMOURCRAFT AS Cricket Protection`}
+                    className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-300"
                     loading="lazy"
                   />
                 </div>
@@ -77,7 +62,7 @@ export default function Testimonials() {
                     {item.name}
                   </span>
                   <div className="flex items-center gap-1.5 mt-1">
-                    <span className="inline-flex items-center justify-center w-3.5 h-3.5 rounded-full bg-[#1762f0] text-white">
+                    <span className="inline-flex items-center justify-center w-3.5 h-3.5 rounded-full bg-[#1762f0] text-white shadow-sm shadow-blue-500/30">
                       <Check className="w-2.5 h-2.5 stroke-[3]" />
                     </span>
                     <span className="text-[10px] sm:text-[11px] font-bold text-[#1762f0] tracking-wider uppercase">

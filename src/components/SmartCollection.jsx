@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { Check, ShoppingCart } from 'lucide-react'
+import { ShoppingCart } from 'lucide-react'
 
 export default function SmartCollection({ onAddToCart }) {
   const [activeTab, setActiveTab] = useState('ALL')
@@ -15,7 +15,7 @@ export default function SmartCollection({ onAddToCart }) {
       price: '$19.99',
       category: 'THIGH PADS',
       image: '/images/product_straps.png',
-      alt: 'Flex-fit replacement straps'
+      alt: 'ARMOURCRAFT AS Flex-Fit Double-Velcro Cricket Thigh Guard Replacement Straps'
     },
     {
       id: 'spray',
@@ -24,7 +24,7 @@ export default function SmartCollection({ onAddToCart }) {
       price: '$14.99',
       category: 'ALL',
       image: '/images/product_spray.png',
-      alt: 'Freshguard hygiene spray'
+      alt: 'ARMOURCRAFT AS FreshGuard Anti-Bacterial Cricket Equipment Hygiene Spray'
     },
     {
       id: 'sleeves',
@@ -33,7 +33,7 @@ export default function SmartCollection({ onAddToCart }) {
       price: '$29.99',
       category: 'LEG PADS',
       image: '/images/product_sleeves.png',
-      alt: 'Pro-comfort compression sleeves'
+      alt: 'ARMOURCRAFT AS Pro-Comfort Moisture-Wicking Cricket Compression Sleeves'
     },
     {
       id: 'youth',
@@ -42,7 +42,7 @@ export default function SmartCollection({ onAddToCart }) {
       price: '$54.99',
       category: 'THIGH PADS',
       image: '/images/product_youth_guard.png',
-      alt: 'Youth elite thigh guard'
+      alt: 'ARMOURCRAFT AS Youth Elite Junior Cricket Thigh Guard for Academy Batsmen'
     }
   ]
 
@@ -55,9 +55,6 @@ export default function SmartCollection({ onAddToCart }) {
     if (onAddToCart) {
       onAddToCart(product)
     }
-    setTimeout(() => {
-      setAddedItem(null)
-    }, 1600)
   }
 
   return (
@@ -130,19 +127,12 @@ export default function SmartCollection({ onAddToCart }) {
 
                 {/* Dark ADD TO CART Button */}
                 <button
+                  type="button"
                   onClick={() => handleAdd(product)}
-                  className={`w-full py-2.5 px-4 rounded-xl font-bold text-xs uppercase tracking-wider transition-all duration-200 flex items-center justify-center gap-2 border ${
-                    isAdded
-                      ? 'bg-emerald-600 text-white border-emerald-500'
-                      : 'bg-[#090e1a] hover:bg-[#1762f0] text-slate-300 hover:text-white border-slate-800 hover:border-blue-500 active:scale-[0.98]'
-                  }`}
+                  className="w-full py-2.5 px-4 rounded-xl font-bold text-xs uppercase tracking-wider transition-all duration-200 flex items-center justify-center gap-2 border bg-[#090e1a] hover:bg-[#1762f0] text-slate-300 hover:text-white border-slate-800 hover:border-blue-500 active:scale-[0.98] cursor-pointer"
                 >
-                  <span>{isAdded ? 'ADDED' : 'ADD TO CART'}</span>
-                  {isAdded ? (
-                    <Check className="w-3.5 h-3.5 stroke-[3]" />
-                  ) : (
-                    <ShoppingCart className="w-3.5 h-3.5" />
-                  )}
+                  <span>ADD TO CART</span>
+                  <ShoppingCart className="w-3.5 h-3.5" />
                 </button>
               </div>
             )

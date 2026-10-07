@@ -1,5 +1,6 @@
 import React, { useState, useMemo } from 'react'
-import { Search, ShoppingCart, Check } from 'lucide-react'
+import { Search, ShoppingCart } from 'lucide-react'
+import CustomSquadBanner from '../components/CustomSquadBanner'
 
 export default function ShopPage({ onAddToCart }) {
   const [activeCategory, setActiveCategory] = useState('All Products')
@@ -94,9 +95,6 @@ export default function ShopPage({ onAddToCart }) {
     if (onAddToCart) {
       onAddToCart(product)
     }
-    setTimeout(() => {
-      setAddedItem(null)
-    }, 1500)
   }
 
   const resetFilters = () => {
@@ -196,7 +194,7 @@ export default function ShopPage({ onAddToCart }) {
                   <div className="w-full aspect-[4/3] rounded-xl bg-[#060a14] border border-slate-800/60 overflow-hidden flex items-center justify-center p-4 mb-5">
                     <img
                       src={product.image}
-                      alt={product.title}
+                      alt={`ARMOURCRAFT AS ${product.title} - Pro Cricket Protection`}
                       className="w-full h-full object-contain filter drop-shadow-[0_4px_16px_rgba(0,0,0,0.7)] group-hover:scale-105 transition-transform duration-300 ease-out select-none"
                       loading="lazy"
                     />
@@ -222,18 +220,10 @@ export default function ShopPage({ onAddToCart }) {
                       <button
                         type="button"
                         onClick={() => handleAdd(product)}
-                        className={`py-2.5 px-4 rounded-xl font-bold text-xs uppercase tracking-wider transition-all duration-200 flex items-center gap-1.5 cursor-pointer shadow-md ${
-                          isAdded
-                            ? 'bg-emerald-600 text-white shadow-emerald-600/30'
-                            : 'bg-[#1762f0] hover:bg-[#1354d4] text-white shadow-blue-600/30 hover:scale-[1.02] active:scale-[0.98]'
-                        }`}
+                        className="py-2.5 px-4 rounded-xl font-bold text-xs uppercase tracking-wider transition-all duration-200 flex items-center gap-1.5 cursor-pointer shadow-md bg-[#1762f0] hover:bg-[#1354d4] text-white shadow-blue-600/30 hover:scale-[1.02] active:scale-[0.98]"
                       >
-                        <span>{isAdded ? 'ADDED' : 'QUICK ADD'}</span>
-                        {isAdded ? (
-                          <Check className="w-3.5 h-3.5 stroke-[3]" />
-                        ) : (
-                          <ShoppingCart className="w-3.5 h-3.5 stroke-[2.5]" />
-                        )}
+                        <span>ADD TO CART</span>
+                        <ShoppingCart className="w-3.5 h-3.5 stroke-[2.5]" />
                       </button>
                     </div>
                   </div>
@@ -256,6 +246,9 @@ export default function ShopPage({ onAddToCart }) {
             </button>
           </div>
         )}
+
+        {/* Customization Callout Banner Section */}
+        <CustomSquadBanner />
 
       </div>
     </div>

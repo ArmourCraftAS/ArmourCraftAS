@@ -1,9 +1,11 @@
 import React, { useState } from 'react'
 import { ArrowRight, ShieldCheck, Sparkles, Activity } from 'lucide-react'
 import Armour3DModal from './Armour3DModal'
+import CustomQuoteModal from './CustomQuoteModal'
 
-export default function Hero({ onNavigate }) {
+export default function Hero({ onNavigate, onOpenCustomModal }) {
   const [is3DModalOpen, setIs3DModalOpen] = useState(false)
+  const [isCustomizationModalOpen, setIsCustomizationModalOpen] = useState(false)
   const [activeSlide, setActiveSlide] = useState(0)
 
   const heroSlides = [
@@ -94,10 +96,17 @@ export default function Hero({ onNavigate }) {
               <ArrowRight className="w-4 h-4 transition-transform duration-200 group-hover:translate-x-1" />
             </a>
 
-            {/* Secondary Dark Outlined Button (Opens 3D Customizer) */}
+            {/* Secondary Dark Outlined Button (Opens Customization Modal) */}
             <button
-              onClick={() => setIs3DModalOpen(true)}
-              className="inline-flex items-center justify-center gap-2.5 bg-[#0a1120]/80 hover:bg-[#111c33] border border-slate-700/80 hover:border-slate-500 text-white px-8 py-4 rounded-xl font-bold text-sm sm:text-base tracking-wide transition-all duration-200 backdrop-blur-sm hover:translate-y-[-1px] active:translate-y-[0px]"
+              type="button"
+              onClick={() => {
+                if (onOpenCustomModal) {
+                  onOpenCustomModal()
+                } else {
+                  setIsCustomizationModalOpen(true)
+                }
+              }}
+              className="inline-flex items-center justify-center gap-2.5 bg-[#0a1120]/80 hover:bg-[#111c33] border border-slate-700/80 hover:border-slate-500 text-white px-8 py-4 rounded-xl font-bold text-sm sm:text-base tracking-wide transition-all duration-200 backdrop-blur-sm hover:translate-y-[-1px] active:translate-y-[0px] cursor-pointer"
             >
               <span>Customize Your Stance</span>
             </button>
@@ -124,6 +133,12 @@ export default function Hero({ onNavigate }) {
 
         </div>
       </div>
+
+      {/* Custom Team Gear & Customization Modal Popup */}
+      <CustomQuoteModal
+        isOpen={isCustomizationModalOpen}
+        onClose={() => setIsCustomizationModalOpen(false)}
+      />
 
       {/* Interactive 3D Armour Modal */}
       <Armour3DModal

@@ -1,0 +1,37 @@
+# Robots.txt for ARMOURCRAFT AS
+# Allow full crawling for public storefront and protect internal administrative routes
+
+User-agent: *
+Allow: /
+Disallow: /api/
+Disallow: /admin/
+Disallow: /admin
+
+User-agent: Googlebot
+Allow: /
+Disallow: /admin/
+Disallow: /admin
+
+User-agent: Bingbot
+Allow: /
+Disallow: /admin/
+Disallow: /admin
+
+User-agent: Applebot
+Allow: /
+Disallow: /admin/
+Disallow: /admin
+
+User-agent: DuckDuckBot
+Allow: /
+Disallow: /admin/
+Disallow: /admin
+
+User-agent: YandexBot
+Allow: /
+Disallow: /admin/
+Disallow: /admin
+
+# Sitemap Location
+Sitemap: https://armourcraftas.vercel.app/sitemap.xml
+Host: https://armourcraftas.vercel.app

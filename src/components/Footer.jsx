@@ -4,9 +4,16 @@ import { Mail, MapPin, MessageCircle } from 'lucide-react'
 export default function Footer({ onNavigate }) {
   const quickNavLinks = [
     { name: 'Shop Thigh Guards', href: '/shop', path: '/shop' },
+    { name: 'What We Are', href: '/what-we-are', path: '/what-we-are' },
     { name: 'Custom Team Orders', href: '/#custom-team', hash: '#custom-team' },
-    { name: 'What We Are', href: '/#about', hash: '#about' },
-    { name: 'Cricket Blog', href: '/#blog', hash: '#blog' }
+    { name: 'Cricket Blog', href: '/blog', path: '/blog' }
+  ]
+
+  const supportLinks = [
+    { name: 'Shipping & Delivery', href: '/#faq', hash: '#faq' },
+    { name: 'Size & Fit Guide', href: '/#faq', hash: '#faq' },
+    { name: 'Bulk Club Discounts', href: '/#custom-team', hash: '#custom-team' },
+    { name: 'Warranty & Returns', href: '/#faq', hash: '#faq' }
   ]
 
   const handleLinkClick = (e, link) => {
@@ -45,9 +52,10 @@ export default function Footer({ onNavigate }) {
               className="inline-block mb-5 cursor-pointer"
             >
               <img
-                src="/images/logo.png"
+                src="/images/logo_transparent.png"
                 alt="ARMOURCRAFT AS"
-                className="h-10 sm:h-11 w-auto object-contain select-none drop-shadow-[0_2px_12px_rgba(23,98,240,0.25)]"
+                className="h-11 sm:h-12 w-auto object-contain select-none bg-transparent mix-blend-screen"
+                style={{ mixBlendMode: 'screen' }}
               />
             </a>
 
@@ -144,7 +152,8 @@ export default function Footer({ onNavigate }) {
                 <li key={link.name}>
                   <a
                     href={link.href}
-                    className="text-slate-400 hover:text-white transition-colors duration-200 text-xs sm:text-sm block"
+                    onClick={(e) => handleLinkClick(e, link)}
+                    className="text-slate-400 hover:text-white transition-colors duration-200 text-xs sm:text-sm block cursor-pointer"
                   >
                     {link.name}
                   </a>

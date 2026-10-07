@@ -1,26 +1,27 @@
 import React, { useState } from 'react'
 import { ShoppingBag, Menu, X } from 'lucide-react'
 
-export default function Navbar({ cartCount = 2, currentPath = '/', onNavigate }) {
+export default function Navbar({ cartCount = 0, currentPath = '/', onNavigate, onOpenCart }) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
 
   const isShop = currentPath === '/shop' || currentPath === '/shop-armours'
-  const activeNav = isShop ? 'Shop Armours' : 'Home'
+  const isWhatWeAre = currentPath === '/what-we-are' || currentPath === '/about'
+  const isBlog = currentPath === '/blog' || currentPath.startsWith('/blog')
+  const isContact = currentPath === '/contact' || currentPath.startsWith('/contact')
+  const activeNav = isShop ? 'Shop Armours' : isWhatWeAre ? 'What We Are' : isBlog ? 'Blog' : isContact ? 'Contact Us' : 'Home'
 
   const navLinks = [
     { name: 'Home', path: '/' },
     { name: 'Shop Armours', path: '/shop' },
-    { name: 'What We Are', path: '/#about', hash: '#about' },
-    { name: 'Blog', path: '/#blog', hash: '#blog' },
-    { name: 'Contact Us', path: '/#contact', hash: '#contact' },
+    { name: 'What We Are', path: '/what-we-are' },
+    { name: 'Blog', path: '/blog' },
+    { name: 'Contact Us', path: '/contact' },
   ]
 
   const handleNavClick = (link) => {
     if (onNavigate) {
-      if (link.path === '/shop') {
-        onNavigate('/shop')
-      } else if (link.path === '/') {
-        onNavigate('/')
+      if (link.path && !link.hash) {
+        onNavigate(link.path)
       } else if (link.hash) {
         if (currentPath !== '/') {
           onNavigate('/')
@@ -48,12 +49,13 @@ export default function Navbar({ cartCount = 2, currentPath = '/', onNavigate })
             e.preventDefault()
             if (onNavigate) onNavigate('/')
           }}
-          className="flex items-center group py-1 cursor-pointer"
+          className="flex items-center group py-1 cursor-pointer bg-transparent"
         >
           <img
-            src="/images/logo.png"
+            src="/images/logo_transparent.png"
             alt="ARMOURCRAFT AS"
-            className="h-10 sm:h-11 md:h-12 w-auto object-contain transition-transform duration-200 group-hover:scale-[1.02] drop-shadow-[0_2px_14px_rgba(37,99,235,0.3)] select-none"
+            className="h-11 sm:h-12 md:h-14 w-auto object-contain transition-transform duration-200 group-hover:scale-[1.02] select-none bg-transparent mix-blend-screen"
+            style={{ mixBlendMode: 'screen' }}
             loading="eager"
           />
         </a>
@@ -82,9 +84,14 @@ export default function Navbar({ cartCount = 2, currentPath = '/', onNavigate })
           })}
         </nav>
 
-        {/* Right Action: Cart Button */}
+        {/* Right Action: Dynamic Cart Button */}
         <div className="hidden md:flex items-center">
-          <button className="flex items-center gap-2.5 bg-[#1762f0] hover:bg-[#1354d4] text-white px-5 py-2.5 rounded-full text-xs font-bold tracking-wider transition-all duration-200 shadow-md shadow-blue-600/30 hover:shadow-blue-500/50 hover:scale-[1.02] active:scale-[0.98] cursor-pointer">
+          <button
+            type="button"
+            onClick={onOpenCart}
+            aria-label={`View Cart, currently ${cartCount} items`}
+            className="flex items-center gap-2.5 bg-[#1762f0] hover:bg-[#1354d4] text-white px-5 py-2.5 rounded-full text-xs font-bold tracking-wider transition-all duration-200 shadow-md shadow-blue-600/30 hover:shadow-blue-500/50 hover:scale-[1.02] active:scale-[0.98] cursor-pointer"
+          >
             <ShoppingBag className="w-3.5 h-3.5 stroke-[2.5]" />
             <span>CART ({cartCount})</span>
           </button>
@@ -92,7 +99,12 @@ export default function Navbar({ cartCount = 2, currentPath = '/', onNavigate })
 
         {/* Mobile Menu Button */}
         <div className="flex md:hidden items-center gap-3">
-          <button className="flex items-center gap-1.5 bg-[#1762f0] text-white px-3 py-1.5 rounded-full text-xs font-bold">
+          <button
+            type="button"
+            onClick={onOpenCart}
+            aria-label={`View Cart, currently ${cartCount} items`}
+            className="flex items-center gap-1.5 bg-[#1762f0] text-white px-3 py-1.5 rounded-full text-xs font-bold cursor-pointer transition-transform active:scale-95"
+          >
             <ShoppingBag className="w-3.5 h-3.5" />
             <span>({cartCount})</span>
           </button>

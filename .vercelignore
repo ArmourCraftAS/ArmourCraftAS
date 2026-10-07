@@ -1,0 +1,10 @@
+node_modules
+.npm-cache
+.antigravity-data
+.tmp
+.vite
+.next
+dist
+.git
+.agents
+.agentrules

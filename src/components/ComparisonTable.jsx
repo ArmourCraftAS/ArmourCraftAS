@@ -48,22 +48,24 @@ export default function ComparisonTable() {
           {/* Table Header */}
           <div className="grid grid-cols-12 items-center text-xs sm:text-sm font-bold tracking-wider uppercase border-b border-slate-800/80">
             {/* Column 1: Performance Feature */}
-            <div className="col-span-4 p-5 sm:p-7 text-slate-400 flex items-center">
+            <div className="col-span-4 p-4 sm:p-6 text-slate-400 flex items-center">
               <span>PERFORMANCE FEATURE</span>
             </div>
 
-            {/* Column 2: ARMOURCRAFT AS (Highlighted Column) */}
-            <div className="col-span-4 p-5 sm:p-7 flex items-center justify-center bg-[#0f2142] border-x border-blue-500/25 shadow-inner">
-              <img
-                src="/images/logo.png"
-                alt="ARMOURCRAFT AS"
-                className="h-5 sm:h-6 w-auto object-contain select-none drop-shadow-[0_2px_8px_rgba(59,130,246,0.3)]"
-                loading="lazy"
-              />
+            {/* Column 2: ARMOURCRAFT AS (Highlighted Column - Text Only) */}
+            <div className="col-span-4 p-4 sm:p-6 flex items-center justify-center bg-[#0f2142] border-x border-blue-500/25 shadow-inner">
+              <span className="text-base sm:text-lg md:text-xl lg:text-2xl font-black tracking-wider uppercase text-center inline-flex items-center justify-center gap-1.5 select-none">
+                <span className="text-[#2b7fff] drop-shadow-[0_0_16px_rgba(43,127,255,0.45)]">
+                  ARMOURCRAFT
+                </span>
+                <span className="text-slate-200 drop-shadow-sm">
+                  AS
+                </span>
+              </span>
             </div>
 
             {/* Column 3: Traditional Local Pads */}
-            <div className="col-span-4 p-5 sm:p-7 text-center text-slate-400 flex items-center justify-center">
+            <div className="col-span-4 p-4 sm:p-6 text-center text-slate-400 flex items-center justify-center">
               <span>TRADITIONAL LOCAL PADS</span>
             </div>
           </div>

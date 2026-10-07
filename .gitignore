@@ -49,6 +49,10 @@ web_modules/
 
 # Optional npm cache directory
 .npm
+.npm-cache/
+.tmp/
+.antigravity-data/
+
 
 # Optional eslint cache
 .eslintcache
@@ -98,3 +102,4 @@ dist
 vite.config.js.timestamp-*
 vite.config.ts.timestamp-*
 .vite/
+.env*

@@ -9,7 +9,8 @@
     "preview": "vite preview"
   },
   "devDependencies": {
-    "supabase": "^2.118.0"
+    "supabase": "^2.118.0",
+    "vercel": "^62.2.0"
   },
   "dependencies": {
     "@react-three/drei": "^10.7.9",

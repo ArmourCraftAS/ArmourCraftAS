@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { Hammer, Zap, ShieldCheck, Lock, ShoppingCart, Check, ExternalLink } from 'lucide-react'
+import { Hammer, Zap, ShieldCheck, Lock, ShoppingCart, ExternalLink } from 'lucide-react'
 
 export default function ProMatchEssentials({ onAddToCart, onNavigate }) {
   const [addedItem, setAddedItem] = useState(null)
@@ -33,21 +33,21 @@ export default function ProMatchEssentials({ onAddToCart, onNavigate }) {
       title: 'Pro Dual-Leg Thigh Guard Set',
       price: '$79.99',
       image: '/images/product_thigh_guard.png',
-      alt: 'Pro Dual-Leg Thigh Guard Set'
+      alt: 'ARMOURCRAFT AS Pro Dual-Leg Cricket Thigh Guard Set - 160+ km/h Impact Tested'
     },
     {
       id: 'aero-leg-guards',
       title: 'Aero Ultra-Light Leg Guards',
       price: '$119.99',
       image: '/images/product_leg_guard.png',
-      alt: 'Aero Ultra-Light Leg Guards'
+      alt: 'ARMOURCRAFT AS Aero Ultra-Light Cricket Batting Leg Guards'
     },
     {
       id: 'smart-inner-thigh',
       title: 'Smart Inner Thigh Guard',
       price: '$39.99',
       image: '/images/product_inner_guard.png',
-      alt: 'Smart Inner Thigh Guard'
+      alt: 'ARMOURCRAFT AS Smart Inner Cricket Thigh Guard - High Density EVA Protection'
     }
   ]
 
@@ -56,9 +56,6 @@ export default function ProMatchEssentials({ onAddToCart, onNavigate }) {
     if (onAddToCart) {
       onAddToCart(product)
     }
-    setTimeout(() => {
-      setAddedItem(null)
-    }, 1800)
   }
 
   return (
@@ -148,21 +145,14 @@ export default function ProMatchEssentials({ onAddToCart, onNavigate }) {
 
                 {/* Add to Cart Full-Width Blue Button */}
                 <button
+                  type="button"
                   onClick={() => handleAddToCart(product)}
-                  className={`w-full py-3.5 px-5 rounded-xl font-bold text-xs uppercase tracking-wider flex items-center justify-between transition-all duration-200 shadow-md ${
-                    isAdded
-                      ? 'bg-emerald-600 text-white shadow-emerald-500/30 scale-[0.99]'
-                      : 'bg-[#1762f0] hover:bg-[#1354d4] text-white shadow-blue-600/30 hover:shadow-blue-500/50 hover:scale-[1.01] active:scale-[0.98]'
-                  }`}
+                  className="w-full py-3.5 px-5 rounded-xl font-bold text-xs uppercase tracking-wider flex items-center justify-between transition-all duration-200 shadow-md bg-[#1762f0] hover:bg-[#1354d4] text-white shadow-blue-600/30 hover:shadow-blue-500/50 hover:scale-[1.01] active:scale-[0.98] cursor-pointer"
                 >
                   <span className="font-extrabold tracking-widest">
-                    {isAdded ? 'ADDED TO CART' : 'ADD TO CART'}
+                    ADD TO CART
                   </span>
-                  {isAdded ? (
-                    <Check className="w-4 h-4 stroke-[3]" />
-                  ) : (
-                    <ShoppingCart className="w-4 h-4 stroke-[2.5]" />
-                  )}
+                  <ShoppingCart className="w-4 h-4 stroke-[2.5]" />
                 </button>
               </div>
             )
