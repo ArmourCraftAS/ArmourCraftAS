@@ -271,22 +271,45 @@ export function AdminAuthProvider({ children }) {
       console.warn('Error saving reset token to localStorage:', e)
     }
 
-    // Connect Supabase Auth resetPasswordForEmail if configured
+    const origin = typeof window !== 'undefined' ? window.location.origin : 'http://localhost:3000'
+    const resetUrl = `${origin}/admin/reset-password?token=${token}`
+
+    // 1. Dispatch real email via API endpoint (supports Resend & Custom SMTP)
     try {
-      const redirectUrl = typeof window !== 'undefined'
-        ? `${window.location.origin}/admin/reset-password?token=${token}`
-        : `http://localhost:3000/admin/reset-password?token=${token}`
+      if (typeof window !== 'undefined') {
+        fetch('/api/admin/send-reset-email', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email: trimmedEmail, resetUrl })
+        }).catch((err) => console.warn('Direct email dispatch notice:', err))
+      }
+    } catch (apiError) {
+      console.warn('Direct email endpoint attempt:', apiError)
+    }
+
+    // 2. Ensure user exists in Supabase Auth and trigger resetPasswordForEmail
+    try {
+      if (supabase && supabase.auth && typeof supabase.auth.signUp === 'function') {
+        try {
+          await supabase.auth.signUp({
+            email: trimmedEmail,
+            password: `Auth_${Date.now()}_Reset!`
+          })
+        } catch (signupErr) {
+          // Ignore if user is already signed up in Supabase
+        }
+      }
 
       if (supabase && supabase.auth && typeof supabase.auth.resetPasswordForEmail === 'function') {
         const { error: supaError } = await supabase.auth.resetPasswordForEmail(trimmedEmail, {
-          redirectTo: redirectUrl
+          redirectTo: resetUrl
         })
         if (supaError) {
           console.warn('Supabase resetPasswordForEmail notice:', supaError.message)
         }
       }
     } catch (supabaseError) {
-      console.info('Supabase email reset notice (fallback to local token workflow):', supabaseError?.message || supabaseError)
+      console.info('Supabase email reset notice:', supabaseError?.message || supabaseError)
     }
 
     return {
