@@ -19,7 +19,7 @@ function apiResetPasswordPlugin() {
             try {
               const { email, resetUrl } = JSON.parse(body || '{}')
               if (resetUrl) {
-                console.log('RESET LINK:', resetUrl)
+                console.log('DEV RESET LINK:', resetUrl)
               }
               const { sendPasswordResetEmail } = await import('./lib/emailService.js')
               const result = await sendPasswordResetEmail({ to: email, resetUrl })

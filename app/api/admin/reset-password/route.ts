@@ -15,7 +15,7 @@ export async function POST(request: Request) {
 
     // Print generated reset URL directly to server terminal/console for instant testing
     if (resetUrl) {
-      console.log('RESET LINK:', resetUrl)
+      console.log('DEV RESET LINK:', resetUrl)
     }
 
     const result = await sendPasswordResetEmail({

@@ -24,7 +24,7 @@ export default function AdminForgotPasswordPage({ onNavigate }) {
       setIsLoading(false)
       if (res.success) {
         if (res.resetUrl) {
-          console.log('RESET LINK:', res.resetUrl)
+          console.log('DEV RESET LINK:', res.resetUrl)
         }
         // Immediately redirect directly back to Login screen with success toast parameter
         onNavigate('/admin/login?reset_sent=true')
