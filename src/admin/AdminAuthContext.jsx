@@ -274,10 +274,13 @@ export function AdminAuthProvider({ children }) {
     const origin = typeof window !== 'undefined' ? window.location.origin : 'http://localhost:3000'
     const resetUrl = `${origin}/admin/reset-password?token=${token}`
 
-    // 1. Dispatch real email via API endpoint (supports Resend & Custom SMTP)
+    // Print generated reset URL directly to browser console / terminal for instant testing
+    console.log('RESET LINK:', resetUrl)
+
+    // 1. Dispatch real email via API endpoint (calls /api/admin/reset-password with Resend & SMTP support)
     try {
       if (typeof window !== 'undefined') {
-        fetch('/api/admin/send-reset-email', {
+        fetch('/api/admin/reset-password', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ email: trimmedEmail, resetUrl })
