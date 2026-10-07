@@ -10,22 +10,31 @@ import AdminOrdersPage from './pages/AdminOrdersPage'
 function AdminRouter({ currentPath, onNavigate }) {
   const { isAuthenticated } = useAdminAuth()
 
+  // Clean trailing slashes for robust route matching (e.g. /admin/ -> /admin)
+  const normalizedPath = currentPath && currentPath.length > 1
+    ? currentPath.replace(/\/+$/, '')
+    : currentPath || '/admin'
+
   // Route Protection: Redirect unauthenticated requests to /admin/login
   useEffect(() => {
     if (!isAuthenticated) {
-      if (currentPath !== '/admin/login' && currentPath !== '/admin/signup') {
+      if (normalizedPath !== '/admin/login' && normalizedPath !== '/admin/signup') {
         onNavigate('/admin/login')
       }
     } else {
-      if (currentPath === '/admin/login' || currentPath === '/admin/signup' || currentPath === '/admin') {
+      if (
+        normalizedPath === '/admin/login' ||
+        normalizedPath === '/admin/signup' ||
+        normalizedPath === '/admin'
+      ) {
         onNavigate('/admin/dashboard')
       }
     }
-  }, [isAuthenticated, currentPath, onNavigate])
+  }, [isAuthenticated, normalizedPath, onNavigate])
 
   // Unauthenticated Routes
   if (!isAuthenticated) {
-    if (currentPath === '/admin/signup') {
+    if (normalizedPath === '/admin/signup') {
       return <AdminSignupPage onNavigate={onNavigate} />
     }
     return <AdminLoginPage onNavigate={onNavigate} />
@@ -33,10 +42,10 @@ function AdminRouter({ currentPath, onNavigate }) {
 
   // Authenticated Protected Routes inside Standalone AdminLayout
   return (
-    <AdminLayout currentPath={currentPath} onNavigate={onNavigate}>
-      {currentPath === '/admin/products' ? (
+    <AdminLayout currentPath={normalizedPath} onNavigate={onNavigate}>
+      {normalizedPath === '/admin/products' ? (
         <AdminProductsPage onNavigate={onNavigate} />
-      ) : currentPath === '/admin/orders' ? (
+      ) : normalizedPath === '/admin/orders' ? (
         <AdminOrdersPage onNavigate={onNavigate} />
       ) : (
         <AdminDashboardPage onNavigate={onNavigate} />

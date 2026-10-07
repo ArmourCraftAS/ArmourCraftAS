@@ -71,15 +71,16 @@ export default function App() {
     addToCart(configuredProduct)
   }
 
-  const isAdminRoute = currentPath.startsWith('/admin')
-  const isShopRoute = currentPath === '/shop' || currentPath === '/shop-armours'
-  const isWhatWeAreRoute = currentPath === '/what-we-are' || currentPath === '/about'
-  const isBlogDetailRoute = currentPath.startsWith('/blog/') && currentPath.length > 6
-  const isBlogRoute = currentPath === '/blog' || currentPath === '/blog/'
-  const isContactRoute = currentPath === '/contact' || currentPath.startsWith('/contact')
+  const normalizedPath = currentPath.length > 1 ? currentPath.replace(/\/+$/, '') : currentPath
+  const isAdminRoute = normalizedPath.startsWith('/admin')
+  const isShopRoute = normalizedPath === '/shop' || normalizedPath === '/shop-armours'
+  const isWhatWeAreRoute = normalizedPath === '/what-we-are' || normalizedPath === '/about'
+  const isBlogDetailRoute = normalizedPath.startsWith('/blog/') && normalizedPath.length > 6
+  const isBlogRoute = normalizedPath === '/blog'
+  const isContactRoute = normalizedPath === '/contact' || normalizedPath.startsWith('/contact')
 
   const blogSlug = isBlogDetailRoute
-    ? decodeURIComponent(currentPath.replace(/^\/blog\//, '').split('/')[0])
+    ? decodeURIComponent(normalizedPath.replace(/^\/blog\//, '').split('/')[0])
     : null
 
   // Enterprise Dynamic Metadata & On-Page SEO Synchronization
@@ -108,7 +109,7 @@ export default function App() {
       title = `Cricket Engineering Insights | ARMOURCRAFT AS Blog`
       desc =
         'Expert guides, ballistics testing, and cricket protection technology from the ARMOURCRAFT AS lab.'
-      canonicalUrl = `https://armourcraftas.vercel.app${currentPath}`
+      canonicalUrl = `https://armourcraftas.vercel.app${normalizedPath}`
     } else if (isBlogRoute) {
       title = 'Cricket Protection Lab & Engineering Blog | ARMOURCRAFT AS'
       desc =
@@ -141,11 +142,11 @@ export default function App() {
     // Synchronize Canonical Link
     const canonicalLink = document.querySelector('link[rel="canonical"]')
     if (canonicalLink) canonicalLink.setAttribute('href', canonicalUrl)
-  }, [currentPath, isAdminRoute, isShopRoute, isWhatWeAreRoute, isBlogRoute, isBlogDetailRoute, isContactRoute])
+  }, [normalizedPath, isAdminRoute, isShopRoute, isWhatWeAreRoute, isBlogRoute, isBlogDetailRoute, isContactRoute])
 
   // Isolated Admin Portal Route: Standalone Layout without customer header, footer, or cart
   if (isAdminRoute) {
-    return <AdminRoot currentPath={currentPath} onNavigate={navigate} />
+    return <AdminRoot currentPath={normalizedPath} onNavigate={navigate} />
   }
 
   return (

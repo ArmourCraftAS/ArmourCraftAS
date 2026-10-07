@@ -119,6 +119,37 @@ export default function CartCheckoutModal({
         itemsCount: selectedIndices.length
       }
 
+      // Persist the order to Admin Orders store for the Admin Portal
+      try {
+        const existingRaw = window.localStorage.getItem('armourcraft_admin_orders_v1')
+        const currentOrders = existingRaw ? JSON.parse(existingRaw) : []
+        const newAdminOrder = {
+          id: orderId,
+          customer: customerDetails.fullName.trim(),
+          email: customerDetails.email?.trim() || 'customer@gmail.com',
+          phone: fullPhone || '+92 300 0000000',
+          address: customerDetails.address.trim(),
+          items: selectedIndices.map((idx) => {
+            const it = cartItems[idx]
+            if (!it) return 'Armour Item'
+            const stance = it.stance ? (it.stance.includes('LH') ? 'LH' : 'RH') : 'RH'
+            const size = it.size || 'M'
+            const qty = it.quantity || 1
+            return `${it.title} (${stance} - ${size}${qty > 1 ? ` x${qty}` : ''})`
+          }),
+          total: totalPrice,
+          paymentMethod: 'Cash on Delivery',
+          status: 'Pending',
+          date: new Date().toISOString().replace('T', ' ').slice(0, 16)
+        }
+        window.localStorage.setItem(
+          'armourcraft_admin_orders_v1',
+          JSON.stringify([newAdminOrder, ...currentOrders])
+        )
+      } catch (err) {
+        console.warn('Failed to save order to admin orders store:', err)
+      }
+
       setOrderConfirmation(confirmation)
       setIsSubmitting(false)
 

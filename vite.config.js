@@ -4,6 +4,12 @@ import tailwindcss from '@tailwindcss/vite'
 
 export default defineConfig({
   cacheDir: './.vite',
+  server: {
+    port: 3000
+  },
+  preview: {
+    port: 3000
+  },
   plugins: [react(), tailwindcss()],
   build: {
     chunkSizeWarningLimit: 1600

@@ -218,10 +218,25 @@ export default function Footer({ onNavigate }) {
         </div>
 
         {/* Bottom Bar / Copyright */}
-        <div className="border-t border-slate-900/90 pt-8">
+        <div className="border-t border-slate-900/90 pt-8 flex flex-col sm:flex-row items-center justify-between gap-4">
           <p className="text-xs text-slate-500">
             © 2026 ArmourCraft Protection. All Rights Reserved. | <span className="text-slate-400">Crafted in Sialkot.</span>
           </p>
+          <div className="flex items-center gap-4 text-xs text-slate-600">
+            <a
+              href="/admin"
+              onClick={(e) => {
+                if (onNavigate) {
+                  e.preventDefault()
+                  onNavigate('/admin')
+                }
+              }}
+              className="hover:text-blue-400 transition-colors cursor-pointer flex items-center gap-1.5"
+            >
+              <span className="w-1.5 h-1.5 rounded-full bg-slate-700" />
+              <span>Admin Portal</span>
+            </a>
+          </div>
         </div>
       </div>
     </footer>
