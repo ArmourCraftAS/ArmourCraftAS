@@ -3,6 +3,7 @@ import { AdminAuthProvider, useAdminAuth } from './AdminAuthContext'
 import AdminLayout from './AdminLayout'
 import AdminLoginPage from './pages/AdminLoginPage'
 import AdminSignupPage from './pages/AdminSignupPage'
+import AdminForgotPasswordPage from './pages/AdminForgotPasswordPage'
 import AdminDashboardPage from './pages/AdminDashboardPage'
 import AdminProductsPage from './pages/AdminProductsPage'
 import AdminOrdersPage from './pages/AdminOrdersPage'
@@ -18,13 +19,18 @@ function AdminRouter({ currentPath, onNavigate }) {
   // Route Protection: Redirect unauthenticated requests to /admin/login
   useEffect(() => {
     if (!isAuthenticated) {
-      if (normalizedPath !== '/admin/login' && normalizedPath !== '/admin/signup') {
+      if (
+        normalizedPath !== '/admin/login' &&
+        normalizedPath !== '/admin/signup' &&
+        normalizedPath !== '/admin/forgot-password'
+      ) {
         onNavigate('/admin/login')
       }
     } else {
       if (
         normalizedPath === '/admin/login' ||
         normalizedPath === '/admin/signup' ||
+        normalizedPath === '/admin/forgot-password' ||
         normalizedPath === '/admin'
       ) {
         onNavigate('/admin/dashboard')
@@ -36,6 +42,9 @@ function AdminRouter({ currentPath, onNavigate }) {
   if (!isAuthenticated) {
     if (normalizedPath === '/admin/signup') {
       return <AdminSignupPage onNavigate={onNavigate} />
+    }
+    if (normalizedPath === '/admin/forgot-password') {
+      return <AdminForgotPasswordPage onNavigate={onNavigate} />
     }
     return <AdminLoginPage onNavigate={onNavigate} />
   }

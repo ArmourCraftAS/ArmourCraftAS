@@ -2,26 +2,56 @@ import React, { useState } from 'react'
 import { Lock, Mail, Eye, EyeOff, AlertCircle } from 'lucide-react'
 import { useAdminAuth } from '../AdminAuthContext'
 
+const REMEMBER_EMAIL_KEY = 'armourcraft_admin_remember_email_v1'
+const REMEMBER_TOGGLE_KEY = 'armourcraft_admin_remember_toggle_v1'
+
 export default function AdminLoginPage({ onNavigate }) {
   const { login } = useAdminAuth()
-  const [email, setEmail] = useState('admin@armourcraft.com')
+
+  const [rememberMe, setRememberMe] = useState(() => {
+    if (typeof window === 'undefined') return false
+    try {
+      return window.localStorage.getItem(REMEMBER_TOGGLE_KEY) === 'true'
+    } catch {
+      return false
+    }
+  })
+
+  const [email, setEmail] = useState(() => {
+    if (typeof window === 'undefined') return 'admin@armourcraft.com'
+    try {
+      const savedEmail = window.localStorage.getItem(REMEMBER_EMAIL_KEY)
+      return savedEmail || 'admin@armourcraft.com'
+    } catch {
+      return 'admin@armourcraft.com'
+    }
+  })
+
   const [password, setPassword] = useState('admin')
   const [showPassword, setShowPassword] = useState(false)
-  const [rememberMe, setRememberMe] = useState(false)
   const [error, setError] = useState('')
-  const [forgotNotice, setForgotNotice] = useState('')
   const [isLoading, setIsLoading] = useState(false)
 
   const handleSubmit = (e) => {
     e.preventDefault()
     setError('')
-    setForgotNotice('')
     setIsLoading(true)
 
     setTimeout(() => {
       const res = login(email, password)
       setIsLoading(false)
       if (res.success) {
+        try {
+          if (rememberMe) {
+            window.localStorage.setItem(REMEMBER_EMAIL_KEY, email.trim())
+            window.localStorage.setItem(REMEMBER_TOGGLE_KEY, 'true')
+          } else {
+            window.localStorage.removeItem(REMEMBER_EMAIL_KEY)
+            window.localStorage.removeItem(REMEMBER_TOGGLE_KEY)
+          }
+        } catch (err) {
+          console.warn('Could not persist remember me state:', err)
+        }
         onNavigate('/admin/dashboard')
       } else {
         setError(res.error)
@@ -30,10 +60,7 @@ export default function AdminLoginPage({ onNavigate }) {
   }
 
   const handleForgotPassword = () => {
-    setForgotNotice(
-      'Default Master Admin credentials: admin@armourcraft.com / admin. To register a new administrator account, use the Sign Up link below with passcode ARMOUR2026.'
-    )
-    setError('')
+    onNavigate('/admin/forgot-password')
   }
 
   return (
@@ -74,13 +101,6 @@ export default function AdminLoginPage({ onNavigate }) {
           <div className="mb-4 p-3 rounded-xl bg-rose-500/10 border border-rose-500/30 text-rose-300 text-xs flex items-start gap-2 animate-in fade-in duration-200">
             <AlertCircle className="w-4 h-4 shrink-0 mt-0.5 text-rose-400" />
             <span className="leading-relaxed">{error}</span>
-          </div>
-        )}
-
-        {/* Forgot Password Notice */}
-        {forgotNotice && (
-          <div className="mb-4 p-3 rounded-xl bg-blue-500/10 border border-blue-500/30 text-blue-300 text-xs flex items-start gap-2 animate-in fade-in duration-200">
-            <span className="leading-relaxed">{forgotNotice}</span>
           </div>
         )}
 
