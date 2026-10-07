@@ -1,13 +1,16 @@
 import React, { useState } from 'react'
-import { Mail, CheckCircle2, AlertCircle, ArrowLeft } from 'lucide-react'
+import { Mail, CheckCircle2, AlertCircle, ArrowLeft, ArrowRight, ExternalLink } from 'lucide-react'
+import { useAdminAuth } from '../AdminAuthContext'
 
 export default function AdminForgotPasswordPage({ onNavigate }) {
+  const { requestPasswordReset } = useAdminAuth()
   const [email, setEmail] = useState('')
   const [isLoading, setIsLoading] = useState(false)
   const [isSubmitted, setIsSubmitted] = useState(false)
+  const [resetToken, setResetToken] = useState('')
   const [error, setError] = useState('')
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault()
     setError('')
 
@@ -18,10 +21,19 @@ export default function AdminForgotPasswordPage({ onNavigate }) {
 
     setIsLoading(true)
 
-    setTimeout(() => {
+    try {
+      const res = await requestPasswordReset(email.trim())
       setIsLoading(false)
-      setIsSubmitted(true)
-    }, 500)
+      if (res.success) {
+        setResetToken(res.token)
+        setIsSubmitted(true)
+      } else {
+        setError(res.error || 'Failed to dispatch reset link.')
+      }
+    } catch (err) {
+      setIsLoading(false)
+      setError('An error occurred while generating reset link. Please try again.')
+    }
   }
 
   return (
@@ -65,10 +77,21 @@ export default function AdminForgotPasswordPage({ onNavigate }) {
             </div>
 
             <div className="pt-2 space-y-3">
+              {resetToken && (
+                <button
+                  type="button"
+                  onClick={() => onNavigate(`/admin/reset-password?token=${resetToken}`)}
+                  className="w-full py-3.5 rounded-xl bg-[#2563eb] hover:bg-[#1d4ed8] text-white font-bold text-sm tracking-wider uppercase transition-colors shadow-lg shadow-blue-600/30 cursor-pointer flex items-center justify-center gap-2"
+                >
+                  <span>Set New Password Now</span>
+                  <ArrowRight className="w-4 h-4" />
+                </button>
+              )}
+
               <button
                 type="button"
                 onClick={() => onNavigate('/admin/login')}
-                className="w-full py-3.5 rounded-xl bg-[#2563eb] hover:bg-[#1d4ed8] text-white font-bold text-sm tracking-wider uppercase transition-colors shadow-lg shadow-blue-600/30 cursor-pointer"
+                className="w-full py-3 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 font-semibold text-xs tracking-wider uppercase transition-colors cursor-pointer"
               >
                 Return to Login
               </button>
@@ -78,8 +101,9 @@ export default function AdminForgotPasswordPage({ onNavigate }) {
                 onClick={() => {
                   setIsSubmitted(false)
                   setEmail('')
+                  setResetToken('')
                 }}
-                className="text-xs text-slate-500 hover:text-slate-300 transition-colors cursor-pointer block mx-auto"
+                className="text-xs text-slate-500 hover:text-slate-300 transition-colors cursor-pointer block mx-auto pt-1"
               >
                 Send to a different email address
               </button>

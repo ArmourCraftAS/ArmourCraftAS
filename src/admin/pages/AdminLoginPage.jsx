@@ -1,5 +1,5 @@
-import React, { useState } from 'react'
-import { Lock, Mail, Eye, EyeOff, AlertCircle } from 'lucide-react'
+import React, { useState, useEffect } from 'react'
+import { Lock, Mail, Eye, EyeOff, AlertCircle, CheckCircle2 } from 'lucide-react'
 import { useAdminAuth } from '../AdminAuthContext'
 
 const REMEMBER_EMAIL_KEY = 'armourcraft_admin_remember_email_v1'
@@ -30,11 +30,30 @@ export default function AdminLoginPage({ onNavigate }) {
   const [password, setPassword] = useState('admin')
   const [showPassword, setShowPassword] = useState(false)
   const [error, setError] = useState('')
+  const [successToast, setSuccessToast] = useState('')
   const [isLoading, setIsLoading] = useState(false)
+
+  // Listen for reset=success in URL query parameters
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const params = new URLSearchParams(window.location.search)
+      if (params.get('reset') === 'success') {
+        setSuccessToast('Password updated successfully! Please log in with your new password.')
+        try {
+          const url = new URL(window.location.href)
+          url.searchParams.delete('reset')
+          window.history.replaceState({}, '', url.pathname + (url.search ? url.search : ''))
+        } catch (e) {
+          // ignore url state update error
+        }
+      }
+    }
+  }, [])
 
   const handleSubmit = (e) => {
     e.preventDefault()
     setError('')
+    setSuccessToast('')
     setIsLoading(true)
 
     setTimeout(() => {
@@ -95,6 +114,14 @@ export default function AdminLoginPage({ onNavigate }) {
             Sign in to manage your live store & products
           </p>
         </div>
+
+        {/* Success Toast Notification */}
+        {successToast && (
+          <div className="mb-4 p-3.5 rounded-xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-300 text-xs sm:text-sm flex items-center gap-2.5 animate-in fade-in slide-in-from-top-2 duration-300">
+            <CheckCircle2 className="w-5 h-5 shrink-0 text-emerald-400" />
+            <span className="leading-relaxed font-medium">{successToast}</span>
+          </div>
+        )}
 
         {/* Error Alert */}
         {error && (
