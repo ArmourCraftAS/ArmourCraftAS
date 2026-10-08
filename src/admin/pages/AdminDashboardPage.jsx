@@ -95,7 +95,7 @@ export default function AdminDashboardPage({ onNavigate }) {
       {/* 2. SINGLE 100% FULL-WIDTH LANDING PAGE CANVAS (BOTH RIGHT PANELS REMOVED) */}
       {/* The canvas spans width: 100% with smooth vertical scrolling (overflow-y: auto) */}
       {/* ========================================================================= */}
-      <main className="w-full flex-1 h-[calc(100vh-4rem)] overflow-y-auto overflow-x-hidden relative z-0 scroll-smooth custom-scrollbar">
+      <main className="w-full flex-1 h-[calc(100vh-4rem)] overflow-y-auto overflow-x-hidden relative z-0 scroll-smooth custom-scrollbar cursor-default select-none">
         <CanvasPreview
           activePage={activePage}
         />
