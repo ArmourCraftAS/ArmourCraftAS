@@ -3,10 +3,27 @@ import { ArrowRight, ShieldCheck, Sparkles, Activity } from 'lucide-react'
 import Armour3DModal from './Armour3DModal'
 import CustomQuoteModal from './CustomQuoteModal'
 
+import { getCmsData } from '../admin/cmsStore'
+
 export default function Hero({ onNavigate, onOpenCustomModal }) {
   const [is3DModalOpen, setIs3DModalOpen] = useState(false)
   const [isCustomizationModalOpen, setIsCustomizationModalOpen] = useState(false)
   const [activeSlide, setActiveSlide] = useState(0)
+
+  // Listen to CMS publish events
+  const [cmsHero, setCmsHero] = useState(() => getCmsData().home?.hero || null)
+
+  React.useEffect(() => {
+    const handleCmsUpdate = () => {
+      setCmsHero(getCmsData().home?.hero || null)
+    }
+    window.addEventListener('armourcraft_cms_published', handleCmsUpdate)
+    window.addEventListener('armourcraft_cms_updated', handleCmsUpdate)
+    return () => {
+      window.removeEventListener('armourcraft_cms_published', handleCmsUpdate)
+      window.removeEventListener('armourcraft_cms_updated', handleCmsUpdate)
+    }
+  }, [])
 
   const heroSlides = [
     {
@@ -66,16 +83,36 @@ export default function Hero({ onNavigate, onOpenCustomModal }) {
 
           {/* Main Headline */}
           <h1 className="text-5xl sm:text-6xl md:text-7xl lg:text-[76px] font-black text-white tracking-tight leading-[1.06] mb-6">
-            Next-Gen <br />
-            Ergonomic <br />
-            <span className="text-[#3b82f6] drop-shadow-[0_0_30px_rgba(59,130,246,0.35)]">
-              Thigh Protection
-            </span>
+            {cmsHero?.mainHeading ? (
+              (() => {
+                const parts = cmsHero.mainHeading.split(' ')
+                if (parts.length >= 3) {
+                  return (
+                    <>
+                      {parts[0]} <br />
+                      {parts[1]} <br />
+                      <span className="text-[#3b82f6] drop-shadow-[0_0_30px_rgba(59,130,246,0.35)]">
+                        {parts.slice(2).join(' ')}
+                      </span>
+                    </>
+                  )
+                }
+                return cmsHero.mainHeading
+              })()
+            ) : (
+              <>
+                Next-Gen <br />
+                Ergonomic <br />
+                <span className="text-[#3b82f6] drop-shadow-[0_0_30px_rgba(59,130,246,0.35)]">
+                  Thigh Protection
+                </span>
+              </>
+            )}
           </h1>
 
           {/* Subtitle */}
           <p className="text-slate-300 text-base sm:text-lg md:text-xl font-normal leading-relaxed max-w-xl mb-10 text-slate-300/90">
-            Engineered for maximum mobility &amp; impact absorption in every stance. Tested against 160+ km/h deliveries.
+            {cmsHero?.subHeading || 'Engineered for maximum mobility & impact absorption in every stance. Tested against 160+ km/h deliveries.'}
           </p>
 
           {/* Action Buttons */}

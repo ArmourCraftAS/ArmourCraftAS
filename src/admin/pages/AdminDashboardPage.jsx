@@ -4,41 +4,31 @@ import CanvasPreview from '../dashboard/CanvasPreview'
 import ElementPropertiesPanel from '../dashboard/ElementPropertiesPanel'
 import NavigationMenuDrawer from '../dashboard/NavigationMenuDrawer'
 import { CheckCircle2, Sparkles, X, AlertCircle } from 'lucide-react'
-
-const DEFAULT_ELEMENT_DATA = {
-  mainHeading: 'Next-Gen Ergonomic Thigh Protection',
-  subHeading:
-    'Engineered for maximum mobility & impact absorption in every stroke. Trusted against 150+ km/h deliveries.',
-  textColor: '#FFFFFF',
-  fontSize: 48,
-  ctaLink: '/shop-armours',
-  isHeadingHidden: false,
-  isSubHeadingHidden: false,
-  isButtonsHidden: false,
-  isBold: true,
-  isItalic: false,
-  alignment: 'left',
-  activeElement: 'heading'
-}
+import { getCmsData, saveCmsData, publishCmsData, resetCmsData, DEFAULT_CMS_DATA } from '../cmsStore'
 
 export default function AdminDashboardPage({ onNavigate }) {
-  // 1. Element State & Local Storage Persistence
-  const [elementData, setElementData] = useState(() => {
-    try {
-      const saved = localStorage.getItem('armourcraft_admin_dashboard_element')
-      if (saved) return JSON.parse(saved)
-    } catch (e) {}
-    return DEFAULT_ELEMENT_DATA
-  })
+  // 1. Landing Page Selector State (Home, Shop Armours, What We Are, Blog, Contact Us)
+  const [activePage, setActivePage] = useState('Home')
+  const [activeTab, setActiveTab] = useState('Home')
 
-  // 2. Undo / Redo History Stack
-  const [history, setHistory] = useState([DEFAULT_ELEMENT_DATA])
+  // 2. Centralized CMS Data
+  const [cmsData, setCmsData] = useState(() => getCmsData())
+
+  // Current active element: null (off-canvas by default) | 'heading' | 'subheading' | 'buttons' | 'media'
+  const [activeElement, setActiveElement] = useState(null)
+
+  // 3. Current Page Element Data Helper
+  const currentHeroData = {
+    ...cmsData.home.hero,
+    activeElement
+  }
+
+  // 4. Undo / Redo History Stack
+  const [history, setHistory] = useState([cmsData])
   const [historyIndex, setHistoryIndex] = useState(0)
 
-  // 3. UI Modes & Feedback
+  // 5. UI Modes & Feedback
   const [isPreviewMode, setIsPreviewMode] = useState(false)
-  const [activeTab, setActiveTab] = useState('Home')
-  const [activeDrawerPage, setActiveDrawerPage] = useState('Home')
   const [toastMessage, setToastMessage] = useState(null)
   const [isPublishing, setIsPublishing] = useState(false)
   const [isSaving, setIsSaving] = useState(false)
@@ -53,30 +43,43 @@ export default function AdminDashboardPage({ onNavigate }) {
 
   // Update Element Data & Push to History
   const handleUpdateElement = useCallback((partial) => {
-    setElementData((prev) => {
-      const updated = { ...prev, ...partial }
-      // Update history
+    setCmsData((prev) => {
+      const updated = {
+        ...prev,
+        home: {
+          ...prev.home,
+          hero: {
+            ...prev.home.hero,
+            ...partial
+          }
+        }
+      }
+      // Save locally
+      saveCmsData(updated)
+
+      // Push to history
       setHistory((prevHist) => {
         const sliced = prevHist.slice(0, historyIndex + 1)
         return [...sliced, updated]
       })
       setHistoryIndex((prevIdx) => prevIdx + 1)
-      try {
-        localStorage.setItem(
-          'armourcraft_admin_dashboard_element',
-          JSON.stringify(updated)
-        )
-      } catch (e) {}
+
       return updated
     })
   }, [historyIndex])
+
+  // Select Element on Canvas (opens sidebar dynamically)
+  const handleSelectElement = (elementId) => {
+    setActiveElement(elementId)
+  }
 
   // Undo Handler
   const handleUndo = () => {
     if (historyIndex > 0) {
       const nextIdx = historyIndex - 1
       setHistoryIndex(nextIdx)
-      setElementData(history[nextIdx])
+      setCmsData(history[nextIdx])
+      saveCmsData(history[nextIdx])
       showToast('Undone previous change', 'info')
     }
   }
@@ -86,54 +89,50 @@ export default function AdminDashboardPage({ onNavigate }) {
     if (historyIndex < history.length - 1) {
       const nextIdx = historyIndex + 1
       setHistoryIndex(nextIdx)
-      setElementData(history[nextIdx])
+      setCmsData(history[nextIdx])
+      saveCmsData(history[nextIdx])
       showToast('Redone change', 'info')
     }
   }
 
-  // Reset to Default
+  // Reset to Factory Default
   const handleResetDefaults = () => {
-    setElementData(DEFAULT_ELEMENT_DATA)
-    handleUpdateElement(DEFAULT_ELEMENT_DATA)
-    showToast('Reset elements to default values', 'info')
+    const defaultData = resetCmsData()
+    setCmsData(defaultData)
+    setHistory([defaultData])
+    setHistoryIndex(0)
+    showToast('Reset elements to factory defaults', 'info')
   }
 
-  // Select Element on Canvas
-  const handleSelectElement = (elementId) => {
-    setElementData((prev) => ({ ...prev, activeElement: elementId }))
-  }
-
-  // Save / Update Element Action
+  // Save / Update Element Action (from sidebar bottom button)
   const handleSaveElement = () => {
     setIsSaving(true)
     setTimeout(() => {
-      try {
-        localStorage.setItem(
-          'armourcraft_admin_dashboard_element',
-          JSON.stringify(elementData)
-        )
-      } catch (e) {}
+      saveCmsData(cmsData)
       setIsSaving(false)
       showToast('Element properties updated successfully!')
     }, 400)
   }
 
-  // Publish to Storefront Action
+  // Publish Directly to Live Store Database / JSON Store
   const handlePublish = () => {
     setIsPublishing(true)
     setTimeout(() => {
+      publishCmsData(cmsData)
       setIsPublishing(false)
-      showToast('Storefront changes published live to production!')
-    }, 900)
+      showToast('Content published live to storefront!')
+    }, 800)
   }
 
   return (
     <div className="h-screen w-screen bg-[#070b14] text-slate-100 flex flex-col font-sans overflow-hidden select-none">
       
       {/* ========================================================================= */}
-      {/* 1. TOP BAR HEADER                                                         */}
+      {/* 1. TOP BAR HEADER WITH PAGE SELECTOR DROPDOWN & GLOBAL ACTIONS            */}
       {/* ========================================================================= */}
       <TopBarHeader
+        activePage={activePage}
+        onSelectPage={setActivePage}
         activeTab={activeTab}
         setActiveTab={setActiveTab}
         canUndo={historyIndex > 0}
@@ -148,23 +147,26 @@ export default function AdminDashboardPage({ onNavigate }) {
       />
 
       {/* ========================================================================= */}
-      {/* 2. MAIN WORKSPACE CONTAINER                                               */}
+      {/* 2. MAIN CMS WORKSPACE                                                     */}
       {/* ========================================================================= */}
       <div className="flex-1 flex overflow-hidden relative">
         
-        {/* A. Live Interactive Preview Canvas (Left Area) */}
+        {/* A. Live Fully-Scrollable Preview Canvas (Fixed Layout, Editable Content) */}
         <CanvasPreview
-          elementData={elementData}
+          activePage={activePage}
+          elementData={currentHeroData}
           onSelectElement={handleSelectElement}
           onUpdateElement={handleUpdateElement}
           isPreviewMode={isPreviewMode}
           onNavigate={onNavigate}
         />
 
-        {/* B. Element Properties Panel (Right Sidebar) - Hidden in Preview Mode */}
-        {!isPreviewMode && (
+        {/* B. Dynamic Context-Aware Sidebar (Off-Canvas by Default, opens on element click) */}
+        {!isPreviewMode && Boolean(activeElement) && (
           <ElementPropertiesPanel
-            elementData={elementData}
+            isOpen={Boolean(activeElement)}
+            onClose={() => setActiveElement(null)}
+            elementData={currentHeroData}
             onUpdateElement={handleUpdateElement}
             onResetDefaults={handleResetDefaults}
             onSaveElement={handleSaveElement}
@@ -175,8 +177,8 @@ export default function AdminDashboardPage({ onNavigate }) {
         {/* C. Floating Navigation Menu Drawer (Far Right Panel) */}
         {!isPreviewMode && (
           <NavigationMenuDrawer
-            activePage={activeDrawerPage}
-            onSelectPage={setActiveDrawerPage}
+            activePage={activePage}
+            onSelectPage={setActivePage}
             onNavigate={onNavigate}
           />
         )}

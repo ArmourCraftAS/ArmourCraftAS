@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useRef, useEffect } from 'react'
 import {
   Bell,
   Undo2,
@@ -11,11 +11,18 @@ import {
   Shield,
   Layers,
   Sparkles,
-  ExternalLink
+  ExternalLink,
+  FileText,
+  ShoppingBag,
+  Info,
+  BookOpen,
+  Mail
 } from 'lucide-react'
 import { useAdminAuth } from '../AdminAuthContext'
 
 export default function TopBarHeader({
+  activePage = 'Home',
+  onSelectPage,
   activeTab = 'Home',
   setActiveTab,
   canUndo = false,
@@ -30,13 +37,24 @@ export default function TopBarHeader({
 }) {
   const { logout } = useAdminAuth()
   const [showNotifications, setShowNotifications] = useState(false)
-  const [showHomeDropdown, setShowHomeDropdown] = useState(false)
+  const [showPageDropdown, setShowPageDropdown] = useState(false)
+  const dropdownRef = useRef(null)
 
-  const tabs = [
-    { id: 'Home', label: 'Home', hasDropdown: true },
+  // Landing pages listed in the user prompt:
+  // "Page Selector Dropdown containing all landing pages (Home, Shop Armours, What We Are, Blog, Contact Us)"
+  const landingPages = [
+    { id: 'Home', label: 'Home', icon: FileText },
+    { id: 'Shop Armours', label: 'Shop Armours', icon: ShoppingBag },
+    { id: 'What We Are', label: 'What We Are', icon: Info },
+    { id: 'Blog', label: 'Blog', icon: BookOpen },
+    { id: 'Contact Us', label: 'Contact Us', icon: Mail }
+  ]
+
+  // Secondary tabs matching screenshot
+  const quickTabs = [
     { id: 'product', label: 'product', path: '/admin/products' },
-    { id: 'Blog', label: 'Blog', path: '/blog' },
-    { id: 'FAQs', label: 'FAQs', path: '/#faq' }
+    { id: 'Blog', label: 'Blog', pageId: 'Blog' },
+    { id: 'FAQs', label: 'FAQs', pageId: 'Home', anchor: '#faq' }
   ]
 
   const notifications = [
@@ -48,27 +66,42 @@ export default function TopBarHeader({
     },
     {
       id: 2,
+      title: 'CMS Sync Notice',
+      time: '20 min ago',
+      desc: 'Hero Section content modified by Admin.'
+    },
+    {
+      id: 3,
       title: 'Low Stock Alert',
       time: '1 hour ago',
       desc: 'Advantage Carbon Guard has 4 units left in inventory.'
     }
   ]
 
-  const handleTabClick = (tab) => {
-    if (tab.id === 'Home') {
-      setShowHomeDropdown((prev) => !prev)
-      if (setActiveTab) setActiveTab('Home')
-      return
-    }
-    if (tab.path && onNavigate) {
-      if (tab.path.startsWith('/admin')) {
-        onNavigate(tab.path)
-      } else {
-        window.open(tab.path, '_blank')
+  // Close dropdown on outside click
+  useEffect(() => {
+    function handleClickOutside(e) {
+      if (dropdownRef.current && !dropdownRef.current.contains(e.target)) {
+        setShowPageDropdown(false)
+        setShowNotifications(false)
       }
     }
+    document.addEventListener('mousedown', handleClickOutside)
+    return () => document.removeEventListener('mousedown', handleClickOutside)
+  }, [])
+
+  const handleSelectPageItem = (pageId) => {
+    if (onSelectPage) onSelectPage(pageId)
+    setShowPageDropdown(false)
+  }
+
+  const handleTabClick = (tab) => {
+    if (tab.path && onNavigate) {
+      onNavigate(tab.path)
+    } else if (tab.pageId && onSelectPage) {
+      onSelectPage(tab.pageId)
+    }
     if (setActiveTab) setActiveTab(tab.id)
-    setShowHomeDropdown(false)
   }
 
   const handleLogout = () => {
@@ -79,14 +112,14 @@ export default function TopBarHeader({
   return (
     <header className="h-16 w-full bg-[#090e1a] border-b border-slate-800/80 px-4 sm:px-6 flex items-center justify-between z-40 select-none sticky top-0 backdrop-blur-md">
       {/* ========================================================================= */}
-      {/* 1. LEFT: ARMOURCRAFT AS METALLIC 3D BRAND LOGO                           */}
+      {/* 1. LEFT: ARMOURCRAFT AS METALLIC 3D LOGO                                 */}
       {/* ========================================================================= */}
       <div className="flex items-center gap-3">
         <button
           type="button"
-          onClick={() => onNavigate && onNavigate('/admin/dashboard')}
+          onClick={() => onSelectPage && onSelectPage('Home')}
           className="flex items-center gap-2.5 group cursor-pointer text-left"
-          title="ARMOURCRAFT AS - Admin Studio"
+          title="ARMOURCRAFT AS - Visual CMS Dashboard"
         >
           {/* Metallic 3D emblem */}
           <div className="relative w-8 h-8 rounded-lg bg-gradient-to-tr from-slate-700 via-slate-900 to-blue-600 p-[1.5px] shadow-lg shadow-blue-900/20 group-hover:scale-105 transition-transform">
@@ -119,62 +152,79 @@ export default function TopBarHeader({
       </div>
 
       {/* ========================================================================= */}
-      {/* 2. CENTER: NAVIGATION TABS WITH SELECTION INDICATOR                     */}
+      {/* 2. CENTER: PAGE SELECTOR DROPDOWN & QUICK TABS                            */}
       {/* ========================================================================= */}
-      <nav className="hidden md:flex items-center gap-1.5 relative">
-        {tabs.map((tab) => {
-          const isActive = activeTab === tab.id
-          return (
-            <div key={tab.id} className="relative">
+      <nav className="flex items-center gap-2 relative" ref={dropdownRef}>
+        {/* Page Selector Dropdown */}
+        <div className="relative">
+          <button
+            type="button"
+            onClick={() => setShowPageDropdown((prev) => !prev)}
+            className="px-3.5 py-1.5 text-xs font-bold rounded-lg transition-all duration-150 flex items-center gap-2 cursor-pointer bg-[#121a2d] text-white border border-slate-700/80 hover:border-blue-500/60 shadow-sm"
+          >
+            <span className="text-blue-400 font-extrabold">Page:</span>
+            <span>{activePage}</span>
+            <ChevronDown
+              className={`w-3.5 h-3.5 text-slate-400 transition-transform ${
+                showPageDropdown ? 'rotate-180 text-blue-400' : ''
+              }`}
+            />
+          </button>
+
+          {/* Dropdown Menu */}
+          {showPageDropdown && (
+            <div className="absolute top-full left-0 mt-2 w-56 bg-[#0c1322] border border-slate-800 rounded-xl shadow-2xl p-1.5 z-50 animate-in fade-in zoom-in-95 backdrop-blur-md">
+              <div className="px-3 py-1.5 text-[10px] font-black uppercase tracking-wider text-slate-500 border-b border-slate-800/80 mb-1">
+                SELECT LANDING PAGE
+              </div>
+              <div className="space-y-0.5">
+                {landingPages.map((page) => {
+                  const isSelected = activePage === page.id
+                  const PageIcon = page.icon
+                  return (
+                    <button
+                      key={page.id}
+                      type="button"
+                      onClick={() => handleSelectPageItem(page.id)}
+                      className={`w-full text-left px-3 py-2 rounded-lg text-xs font-semibold flex items-center justify-between transition-colors cursor-pointer ${
+                        isSelected
+                          ? 'bg-blue-600/20 text-white font-bold border border-blue-500/30'
+                          : 'text-slate-300 hover:text-white hover:bg-slate-800/60'
+                      }`}
+                    >
+                      <div className="flex items-center gap-2.5">
+                        <PageIcon className={`w-3.5 h-3.5 ${isSelected ? 'text-blue-400' : 'text-slate-400'}`} />
+                        <span>{page.label}</span>
+                      </div>
+                      {isSelected && <Check className="w-3.5 h-3.5 text-blue-400" />}
+                    </button>
+                  )
+                })}
+              </div>
+            </div>
+          )}
+        </div>
+
+        {/* Secondary Quick Navigation Tabs */}
+        <div className="hidden md:flex items-center gap-1.5 pl-2 border-l border-slate-800/80">
+          {quickTabs.map((tab) => {
+            const isActive = (tab.pageId && activePage === tab.pageId) || activeTab === tab.id
+            return (
               <button
+                key={tab.id}
                 type="button"
                 onClick={() => handleTabClick(tab)}
-                className={`px-3.5 py-1.5 text-xs font-medium rounded-lg transition-all duration-150 flex items-center gap-1 cursor-pointer ${
+                className={`px-3 py-1.5 text-xs font-medium rounded-lg transition-all duration-150 cursor-pointer ${
                   isActive
-                    ? 'bg-[#121a2d] text-white border border-slate-700/80 shadow-sm'
+                    ? 'text-white bg-slate-800/60 border border-slate-700/60'
                     : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/40 border border-transparent'
                 }`}
               >
-                <span>{tab.label}</span>
-                {tab.hasDropdown && (
-                  <ChevronDown
-                    className={`w-3.5 h-3.5 text-slate-400 transition-transform ${
-                      showHomeDropdown ? 'rotate-180' : ''
-                    }`}
-                  />
-                )}
+                {tab.label}
               </button>
-
-              {/* Home dropdown menu for canvas sections */}
-              {tab.hasDropdown && showHomeDropdown && (
-                <div className="absolute top-full left-0 mt-2 w-44 bg-[#0d1424] border border-slate-800 rounded-xl shadow-2xl p-1.5 z-50 animate-in fade-in zoom-in-95">
-                  <button
-                    type="button"
-                    onClick={() => {
-                      if (setActiveTab) setActiveTab('Home')
-                      setShowHomeDropdown(false)
-                    }}
-                    className="w-full text-left px-3 py-2 text-xs font-semibold text-white bg-blue-600/20 text-blue-300 rounded-lg flex items-center justify-between"
-                  >
-                    <span>Hero Section</span>
-                    <Check className="w-3.5 h-3.5" />
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setShowHomeDropdown(false)
-                      if (onNavigate) onNavigate('/shop')
-                    }}
-                    className="w-full text-left px-3 py-2 text-xs text-slate-300 hover:text-white hover:bg-slate-800/60 rounded-lg flex items-center justify-between transition-colors"
-                  >
-                    <span>Storefront View</span>
-                    <ExternalLink className="w-3 h-3 text-slate-500" />
-                  </button>
-                </div>
-              )}
-            </div>
-          )
-        })}
+            )
+          })}
+        </div>
       </nav>
 
       {/* ========================================================================= */}
@@ -187,11 +237,11 @@ export default function TopBarHeader({
             type="button"
             onClick={() => setShowNotifications((prev) => !prev)}
             className="p-2 text-slate-400 hover:text-white rounded-lg hover:bg-slate-800/50 transition-colors relative cursor-pointer"
-            title="Notifications"
+            title="Admin Alerts"
           >
             <Bell className="w-4 h-4" />
             <span className="absolute top-1 right-1 w-4 h-4 rounded-full bg-rose-500 text-[9px] font-black text-white flex items-center justify-center border-2 border-[#090e1a] shadow-sm">
-              2
+              3
             </span>
           </button>
 
@@ -202,7 +252,7 @@ export default function TopBarHeader({
                 <span className="text-xs font-bold text-white uppercase tracking-wider">
                   Admin Alerts
                 </span>
-                <span className="text-[10px] text-blue-400 font-semibold">2 New</span>
+                <span className="text-[10px] text-blue-400 font-semibold">3 New</span>
               </div>
               <div className="space-y-2">
                 {notifications.map((n) => (
