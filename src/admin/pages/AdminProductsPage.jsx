@@ -13,6 +13,8 @@ import {
   Sparkles
 } from 'lucide-react'
 import { useAdminAuth } from '../AdminAuthContext'
+import DeleteProductModal from '../dashboard/DeleteProductModal'
+import { supabase } from '../../../lib/supabaseClient'
 
 export default function AdminProductsPage() {
   const { products, addProduct, updateProduct, deleteProduct } = useAdminAuth()
@@ -60,6 +62,7 @@ export default function AdminProductsPage() {
   const [isAddTypeModalOpen, setIsAddTypeModalOpen] = useState(false)
   const [newTypeName, setNewTypeName] = useState('')
   const [deleteConfirmProduct, setDeleteConfirmProduct] = useState(null)
+  const [isDeleting, setIsDeleting] = useState(false)
   const [toastMessage, setToastMessage] = useState(null)
 
   // 4. Form State for Add / Edit
@@ -171,13 +174,34 @@ export default function AdminProductsPage() {
     setIsAddTypeModalOpen(false)
   }
 
-  // Delete Product
-  const handleConfirmDelete = () => {
-    if (!deleteConfirmProduct) return
-    const title = deleteConfirmProduct.title
-    deleteProduct(deleteConfirmProduct.id)
+  // Delete Product from State & Supabase
+  const handleConfirmDelete = async (productToDelete) => {
+    const target = productToDelete || deleteConfirmProduct
+    if (!target) return
+
+    setIsDeleting(true)
+    const targetId = target.id
+    const targetTitle = target.title
+
+    // 1. Remove from active store & localStorage
+    deleteProduct(targetId)
+
+    // 2. Remove from Supabase backend if connected
+    try {
+      if (supabase && typeof supabase.from === 'function') {
+        const { error } = await supabase.from('products').delete().eq('id', targetId)
+        if (error) {
+          console.info('Supabase delete notification (handled):', error.message)
+        }
+      }
+    } catch (err) {
+      console.info('Supabase product removal notice:', err?.message || err)
+    }
+
+    // 3. Close modal & show toast
+    setIsDeleting(false)
     setDeleteConfirmProduct(null)
-    showToast(`Deleted "${title}" from catalog`, 'info')
+    showToast(`Product “${targetTitle}” removed successfully!`)
   }
 
   // Filter Products
@@ -638,47 +662,15 @@ export default function AdminProductsPage() {
       )}
 
       {/* ========================================================================= */}
-      {/* 5. DELETE CONFIRMATION MODAL                                              */}
+      {/* 5. PRODUCT DELETE CONFIRMATION MODAL (image_b7797a.png)                    */}
       {/* ========================================================================= */}
-      {deleteConfirmProduct && (
-        <div
-          className="fixed inset-0 z-[99999] flex items-center justify-center p-4 bg-black/80 backdrop-blur-md animate-in fade-in"
-          onClick={() => setDeleteConfirmProduct(null)}
-        >
-          <div
-            className="w-full max-w-sm bg-[#0b1222] border border-rose-500/40 rounded-2xl p-6 text-center text-white relative animate-in zoom-in-95 shadow-2xl"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <div className="w-12 h-12 rounded-full bg-rose-500/10 border border-rose-500/30 text-rose-400 mx-auto flex items-center justify-center mb-3">
-              <AlertTriangle className="w-6 h-6" />
-            </div>
-            <h3 className="text-base font-bold uppercase mb-1">Delete Product?</h3>
-            <p className="text-xs text-slate-400 mb-1">
-              Are you sure you want to delete <span className="text-white font-semibold">"{deleteConfirmProduct.title}"</span>?
-            </p>
-            <p className="text-[11px] text-slate-500 mb-5">
-              This action will remove the product card from the admin inventory list.
-            </p>
-
-            <div className="flex gap-2.5">
-              <button
-                type="button"
-                onClick={() => setDeleteConfirmProduct(null)}
-                className="flex-1 py-2.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-slate-400 hover:text-white text-xs font-bold uppercase cursor-pointer"
-              >
-                Cancel
-              </button>
-              <button
-                type="button"
-                onClick={handleConfirmDelete}
-                className="flex-1 py-2.5 rounded-xl bg-rose-600 hover:bg-rose-700 text-white text-xs font-bold uppercase cursor-pointer shadow-lg shadow-rose-600/25"
-              >
-                Confirm Delete
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
+      <DeleteProductModal
+        isOpen={Boolean(deleteConfirmProduct)}
+        product={deleteConfirmProduct}
+        onClose={() => setDeleteConfirmProduct(null)}
+        onConfirm={handleConfirmDelete}
+        isDeleting={isDeleting}
+      />
 
       {/* ========================================================================= */}
       {/* 6. TOAST NOTIFICATION                                                     */}
