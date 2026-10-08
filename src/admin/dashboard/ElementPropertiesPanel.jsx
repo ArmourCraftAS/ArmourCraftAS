@@ -29,16 +29,21 @@ export default function ElementPropertiesPanel({
   const videoInputRef = useRef(null)
   const posterInputRef = useRef(null)
 
-  if (!isOpen) return null
+  if (!isOpen || !elementData) return null
 
   const {
-    mainHeading = 'Next-Gen Ergonomic Thigh Protection',
-    subHeading = 'Engineered for maximum mobility & impact absorption in every stroke. Trusted against 150+ km/h deliveries.',
+    type = 'text', // 'text' | 'media'
+    label = 'Element',
+    mainHeading = '',
+    subHeading = '',
+    mainHeadingLabel = 'Main Heading Text',
+    subHeadingLabel = 'Sub-heading / Description Text',
     textColor = '#FFFFFF',
     fontSize = 48,
     ctaLink = '/shop-armours',
+    ctaText = 'Explore Collection',
     isHeadingHidden = false,
-    activeElement = 'heading', // 'heading' | 'subheading' | 'buttons' | 'media'
+    activeElement = 'heading',
     // Media settings
     mediaType = 'image', // 'image' | 'video'
     imageSrc = '/images/nextgen_batsman_helmet.jpg',
@@ -53,10 +58,10 @@ export default function ElementPropertiesPanel({
     videoControls = false
   } = elementData || {}
 
-  const isMediaMode = activeElement === 'media'
+  const isMediaMode = type === 'media' || activeElement === 'media'
 
   const handleFontSizeChange = (delta) => {
-    const nextSize = Math.max(24, Math.min(72, (fontSize || 48) + delta))
+    const nextSize = Math.max(14, Math.min(96, (fontSize || 48) + delta))
     onUpdateElement({ fontSize: nextSize })
   }
 
@@ -65,7 +70,7 @@ export default function ElementPropertiesPanel({
     const file = e.target.files?.[0]
     if (file) {
       const url = URL.createObjectURL(file)
-      onUpdateElement({ imageSrc: url })
+      onUpdateElement({ imageSrc: url, mediaType: 'image' })
     }
   }
 
@@ -86,7 +91,7 @@ export default function ElementPropertiesPanel({
   }
 
   return (
-    <aside className="fixed md:sticky top-16 right-0 h-[calc(100vh-4rem)] w-80 lg:w-[340px] bg-[#0c1220] border-l border-slate-800/80 flex flex-col justify-between p-5 z-40 overflow-y-auto select-none shrink-0 shadow-2xl transition-transform duration-200">
+    <aside className="fixed md:sticky top-16 right-0 h-[calc(100vh-4rem)] w-80 lg:w-[350px] bg-[#0c1220] border-l border-slate-800/80 flex flex-col justify-between p-5 z-40 overflow-y-auto select-none shrink-0 shadow-2xl transition-transform duration-200">
       <div className="space-y-6">
         {/* ========================================================================= */}
         {/* 1. HEADER: ELEMENT PROPERTIES WITH MODE TAG & CLOSE ICON                   */}
@@ -115,15 +120,13 @@ export default function ElementPropertiesPanel({
               )}
             </div>
           </div>
-          {isMediaMode && (
-            <div className="text-[11px] font-black tracking-wider text-slate-400 uppercase mt-1">
-              MEDIA COMPONENT
-            </div>
-          )}
+          <div className="text-[11px] font-black tracking-wider text-blue-400 uppercase mt-1 truncate">
+            {label || (isMediaMode ? 'MEDIA COMPONENT' : 'TEXT COMPONENT')}
+          </div>
         </div>
 
         {/* ========================================================================= */}
-        {/* 2. MODE SWITCH: IF MEDIA COMPONENT (image_99e1d9.png & image_99e2d9.png)   */}
+        {/* 2. MEDIA COMPONENT MODE (image_99e1d9.png & image_99e2d9.png)               */}
         {/* ========================================================================= */}
         {isMediaMode ? (
           <div className="space-y-6 animate-in fade-in duration-150">
@@ -169,7 +172,7 @@ export default function ElementPropertiesPanel({
                     IMAGE SOURCE
                   </span>
 
-                  {/* Upload File Drag-and-Drop Box */}
+                  {/* Upload File Box */}
                   <div
                     onClick={() => fileInputRef.current?.click()}
                     className="w-full border-2 border-dashed border-slate-800 hover:border-blue-500/60 rounded-xl p-5 flex flex-col items-center justify-center gap-2 bg-[#080d19]/80 hover:bg-[#080d19] transition-all cursor-pointer group"
@@ -193,7 +196,7 @@ export default function ElementPropertiesPanel({
                       <LinkIcon className="w-3.5 h-3.5 text-slate-400 shrink-0" />
                       <input
                         type="text"
-                        value={imageSrc}
+                        value={imageSrc || ''}
                         onChange={(e) => onUpdateElement({ imageSrc: e.target.value })}
                         placeholder="https://assets.armourcraft.io/static/hero.jpg"
                         className="w-full bg-transparent text-xs text-slate-200 placeholder-slate-600 outline-none font-mono truncate"
@@ -286,13 +289,13 @@ export default function ElementPropertiesPanel({
                     </span>
                   </div>
 
-                  {/* YouTube or Vimeo Link */}
+                  {/* Video URL Input */}
                   <div className="space-y-1">
                     <div className="bg-[#080d19] border border-slate-800 focus-within:border-[#1d63ed] rounded-lg p-2.5 flex items-center gap-2 transition-colors">
                       <LinkIcon className="w-3.5 h-3.5 text-slate-400 shrink-0" />
                       <input
                         type="text"
-                        value={videoSrc}
+                        value={videoSrc || ''}
                         onChange={(e) => onUpdateElement({ videoSrc: e.target.value })}
                         placeholder="YouTube or Vimeo Link..."
                         className="w-full bg-transparent text-xs text-slate-200 placeholder-slate-600 outline-none font-mono truncate"
@@ -426,7 +429,7 @@ export default function ElementPropertiesPanel({
           </div>
         ) : (
           /* ========================================================================= */
-          /* 3. TEXT MODE PROPERTIES (image_998b67.jpg)                                 */
+          /* 3. TEXT COMPONENT MODE (image_998b67.jpg)                                 */
           /* ========================================================================= */
           <div className="space-y-6 animate-in fade-in duration-150">
             {/* CONTENT EDIT */}
@@ -435,30 +438,30 @@ export default function ElementPropertiesPanel({
                 CONTENT EDIT
               </span>
 
-              {/* Main Heading Text */}
+              {/* Main Heading / Title Text */}
               <div className="space-y-1.5">
                 <label className="text-[11px] font-bold text-slate-400 block">
-                  Main Heading Text
+                  {mainHeadingLabel}
                 </label>
                 <textarea
                   rows={3}
-                  value={mainHeading}
+                  value={mainHeading || ''}
                   onChange={(e) => onUpdateElement({ mainHeading: e.target.value })}
-                  placeholder="Next-Gen Ergonomic Thigh Protection"
+                  placeholder="Enter text..."
                   className="w-full bg-[#080d19] border border-slate-800 focus:border-[#1d63ed] focus:ring-1 focus:ring-[#1d63ed] rounded-lg p-2.5 text-xs text-white placeholder-slate-600 resize-none font-medium outline-none transition-colors leading-relaxed"
                 />
               </div>
 
-              {/* Sub-heading Text */}
+              {/* Sub-heading / Description Text */}
               <div className="space-y-1.5">
                 <label className="text-[11px] font-bold text-slate-400 block">
-                  Sub-heading Text
+                  {subHeadingLabel}
                 </label>
                 <textarea
                   rows={2}
-                  value={subHeading}
+                  value={subHeading || ''}
                   onChange={(e) => onUpdateElement({ subHeading: e.target.value })}
-                  placeholder="Engineered for maximum mobility..."
+                  placeholder="Enter description..."
                   className="w-full bg-[#080d19] border border-slate-800 focus:border-[#1d63ed] focus:ring-1 focus:ring-[#1d63ed] rounded-lg p-2.5 text-xs text-slate-300 placeholder-slate-600 resize-none font-normal outline-none transition-colors leading-relaxed"
                 />
               </div>
@@ -479,14 +482,14 @@ export default function ElementPropertiesPanel({
                   <div className="bg-[#080d19] border border-slate-800 rounded-lg p-2 flex items-center gap-2">
                     <input
                       type="color"
-                      value={textColor}
+                      value={textColor || '#FFFFFF'}
                       onChange={(e) => onUpdateElement({ textColor: e.target.value })}
                       className="w-4 h-4 rounded-full border border-slate-600 cursor-pointer bg-transparent p-0 overflow-hidden"
                       title="Choose text color"
                     />
                     <input
                       type="text"
-                      value={textColor}
+                      value={textColor || '#FFFFFF'}
                       onChange={(e) => onUpdateElement({ textColor: e.target.value })}
                       className="w-full bg-transparent text-[11px] font-mono text-slate-200 outline-none uppercase"
                     />
@@ -500,7 +503,7 @@ export default function ElementPropertiesPanel({
                   </label>
                   <div className="bg-[#080d19] border border-slate-800 rounded-lg p-2 flex items-center justify-between">
                     <span className="text-[11px] font-mono font-bold text-slate-200 pl-1">
-                      {fontSize}px
+                      {fontSize || 48}px
                     </span>
                     <div className="flex flex-col gap-0.5">
                       <button
@@ -531,7 +534,7 @@ export default function ElementPropertiesPanel({
                   <LinkIcon className="w-3.5 h-3.5 text-slate-400 shrink-0" />
                   <input
                     type="text"
-                    value={ctaLink}
+                    value={ctaLink || ''}
                     onChange={(e) => onUpdateElement({ ctaLink: e.target.value })}
                     placeholder="/shop-armours"
                     className="w-full bg-transparent text-xs text-slate-200 placeholder-slate-600 outline-none font-mono"

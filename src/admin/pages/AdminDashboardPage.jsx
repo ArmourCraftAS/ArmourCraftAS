@@ -14,20 +14,14 @@ export default function AdminDashboardPage({ onNavigate }) {
   // 2. Centralized CMS Data
   const [cmsData, setCmsData] = useState(() => getCmsData())
 
-  // Current active element: null (off-canvas by default) | 'heading' | 'subheading' | 'buttons' | 'media'
-  const [activeElement, setActiveElement] = useState(null)
+  // Current selected element object: null (off-canvas by default) | { id, type, label, ... }
+  const [selectedElement, setSelectedElement] = useState(null)
 
-  // 3. Current Page Element Data Helper
-  const currentHeroData = {
-    ...cmsData.home.hero,
-    activeElement
-  }
-
-  // 4. Undo / Redo History Stack
+  // 3. Undo / Redo History Stack
   const [history, setHistory] = useState([cmsData])
   const [historyIndex, setHistoryIndex] = useState(0)
 
-  // 5. UI Modes & Feedback
+  // 4. UI Modes & Feedback
   const [isPreviewMode, setIsPreviewMode] = useState(false)
   const [toastMessage, setToastMessage] = useState(null)
   const [isPublishing, setIsPublishing] = useState(false)
@@ -41,19 +35,56 @@ export default function AdminDashboardPage({ onNavigate }) {
     }, 4000)
   }
 
-  // Update Element Data & Push to History
+  // Universal Update Element Handler across all sections
   const handleUpdateElement = useCallback((partial) => {
+    setSelectedElement((prev) => (prev ? { ...prev, ...partial } : null))
+
     setCmsData((prev) => {
-      const updated = {
-        ...prev,
-        home: {
-          ...prev.home,
-          hero: {
-            ...prev.home.hero,
-            ...partial
-          }
-        }
+      const updated = JSON.parse(JSON.stringify(prev))
+
+      if (!selectedElement) return updated
+
+      const id = selectedElement.id
+
+      // Map updates to respective CMS store branches
+      if (id.startsWith('hero_')) {
+        if (!updated.home.hero) updated.home.hero = {}
+        Object.assign(updated.home.hero, partial)
+      } else if (id === 'essentials_header') {
+        if (partial.mainHeading) updated.home.essentials.heading = partial.mainHeading
+        if (partial.subHeading) updated.home.essentials.subheading = partial.subHeading
+      } else if (id === 'advantage_header') {
+        if (partial.mainHeading) updated.home.advantage.heading = partial.mainHeading
+        if (partial.subHeading) updated.home.advantage.subheading = partial.subHeading
+      } else if (id === 'custom_squad_text') {
+        if (partial.mainHeading) updated.home.customSquad.heading = partial.mainHeading
+        if (partial.subHeading) updated.home.customSquad.subheading = partial.subHeading
+        if (partial.ctaText) updated.home.customSquad.ctaText = partial.ctaText
+        if (partial.ctaLink) updated.home.customSquad.ctaLink = partial.ctaLink
+      } else if (id === 'custom_squad_media') {
+        if (partial.imageSrc) updated.home.customSquad.image = partial.imageSrc
+        if (partial.mediaType) updated.home.customSquad.mediaType = partial.mediaType
+      } else if (id === 'footer_brand') {
+        if (partial.subHeading) updated.home.footer.brandDesc = partial.subHeading
+      } else if (id === 'footer_newsletter') {
+        if (partial.mainHeading) updated.home.footer.newsletterTitle = partial.mainHeading
+        if (partial.subHeading) updated.home.footer.newsletterDesc = partial.subHeading
+      } else if (id === 'footer_legal') {
+        if (partial.subHeading) updated.home.footer.copyright = partial.subHeading
+      } else if (id === 'shop_header') {
+        if (partial.mainHeading) updated.shop.heading = partial.mainHeading
+        if (partial.subHeading) updated.shop.subheading = partial.subHeading
+      } else if (id === 'wwa_header') {
+        if (partial.mainHeading) updated.whatWeAre.heading = partial.mainHeading
+        if (partial.subHeading) updated.whatWeAre.subheading = partial.subHeading
+      } else if (id === 'blog_header') {
+        if (partial.mainHeading) updated.blog.heading = partial.mainHeading
+        if (partial.subHeading) updated.blog.subheading = partial.subHeading
+      } else if (id === 'contact_header') {
+        if (partial.mainHeading) updated.contact.heading = partial.mainHeading
+        if (partial.subHeading) updated.contact.subheading = partial.subHeading
       }
+
       // Save locally
       saveCmsData(updated)
 
@@ -66,11 +97,11 @@ export default function AdminDashboardPage({ onNavigate }) {
 
       return updated
     })
-  }, [historyIndex])
+  }, [historyIndex, selectedElement])
 
   // Select Element on Canvas (opens sidebar dynamically)
-  const handleSelectElement = (elementId) => {
-    setActiveElement(elementId)
+  const handleSelectElement = (elementObj) => {
+    setSelectedElement(elementObj)
   }
 
   // Undo Handler
@@ -101,6 +132,7 @@ export default function AdminDashboardPage({ onNavigate }) {
     setCmsData(defaultData)
     setHistory([defaultData])
     setHistoryIndex(0)
+    setSelectedElement(null)
     showToast('Reset elements to factory defaults', 'info')
   }
 
@@ -147,14 +179,15 @@ export default function AdminDashboardPage({ onNavigate }) {
       />
 
       {/* ========================================================================= */}
-      {/* 2. MAIN CMS WORKSPACE                                                     */}
+      {/* 2. MAIN CMS WORKSPACE WITH FULL SCROLLABLE CANVAS & OFF-CANVAS SIDEBAR     */}
       {/* ========================================================================= */}
       <div className="flex-1 flex overflow-hidden relative">
         
-        {/* A. Live Fully-Scrollable Preview Canvas (Fixed Layout, Editable Content) */}
+        {/* A. Live Fully-Scrollable Preview Canvas (Fixed Layout, Universal Editing) */}
         <CanvasPreview
           activePage={activePage}
-          elementData={currentHeroData}
+          cmsData={cmsData}
+          selectedElement={selectedElement}
           onSelectElement={handleSelectElement}
           onUpdateElement={handleUpdateElement}
           isPreviewMode={isPreviewMode}
@@ -162,11 +195,11 @@ export default function AdminDashboardPage({ onNavigate }) {
         />
 
         {/* B. Dynamic Context-Aware Sidebar (Off-Canvas by Default, opens on element click) */}
-        {!isPreviewMode && Boolean(activeElement) && (
+        {!isPreviewMode && Boolean(selectedElement) && (
           <ElementPropertiesPanel
-            isOpen={Boolean(activeElement)}
-            onClose={() => setActiveElement(null)}
-            elementData={currentHeroData}
+            isOpen={Boolean(selectedElement)}
+            onClose={() => setSelectedElement(null)}
+            elementData={selectedElement}
             onUpdateElement={handleUpdateElement}
             onResetDefaults={handleResetDefaults}
             onSaveElement={handleSaveElement}
