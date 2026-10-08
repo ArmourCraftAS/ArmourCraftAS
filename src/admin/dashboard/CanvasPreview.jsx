@@ -61,7 +61,7 @@ export default function CanvasPreview({
   }
 
   return (
-    <div className="w-full h-full overflow-y-auto overflow-x-hidden bg-[#060a12] text-slate-100 flex flex-col font-sans selection:bg-blue-600 selection:text-white custom-scrollbar">
+    <div className="w-full min-h-screen bg-[#060a12] text-slate-100 flex flex-col font-sans selection:bg-blue-600 selection:text-white">
       
       {/* ========================================================================= */}
       {/* FULL UNTOUCHED PAGE RENDERING ACCORDING TO HEADER DROPDOWN SELECTION       */}

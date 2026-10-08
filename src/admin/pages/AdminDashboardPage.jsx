@@ -90,15 +90,15 @@ export default function AdminDashboardPage({ onNavigate }) {
       />
 
       {/* ========================================================================= */}
-      {/* 2. FULL SCREEN LIVE UNTOUCHED LANDING PAGE CANVAS (RIGHT SIDEBAR REMOVED)  */}
-      {/* The canvas area spans 100% full screen width with top-to-bottom scrolling */}
+      {/* 2. SINGLE 100% FULL-WIDTH LANDING PAGE CANVAS (BOTH RIGHT PANELS REMOVED) */}
+      {/* The canvas spans width: 100% with smooth vertical scrolling (overflow-y: auto) */}
       {/* ========================================================================= */}
-      <div className="flex-1 w-full h-[calc(100vh-4rem)] overflow-hidden relative">
+      <main className="w-full flex-1 h-[calc(100vh-4rem)] overflow-y-auto overflow-x-hidden relative scroll-smooth custom-scrollbar">
         <CanvasPreview
           activePage={activePage}
           onNavigate={onNavigate}
         />
-      </div>
+      </main>
 
       {/* ========================================================================= */}
       {/* 3. FLOATING FEEDBACK TOAST NOTIFICATION                                   */}
