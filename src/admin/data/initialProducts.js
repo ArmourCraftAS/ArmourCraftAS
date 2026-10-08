@@ -76,5 +76,18 @@ export const initialAdminProducts = [
     stock: 20,
     status: 'In Stock',
     impactRating: '165+ km/h'
+  },
+  {
+    id: 'youth-elite-thigh',
+    title: 'Youth Elite Thigh Guard',
+    description: 'Ages 8-14 high impact EVA protection for junior & academy players.',
+    category: 'Thigh Guards',
+    stance: 'All Stances',
+    price: 54.99,
+    sizes: ['Youth (8-14)'],
+    image: '/images/product_youth_guard.png',
+    stock: 35,
+    status: 'In Stock',
+    impactRating: '130+ km/h'
   }
 ]
