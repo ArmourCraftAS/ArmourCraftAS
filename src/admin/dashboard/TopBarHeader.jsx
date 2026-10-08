@@ -91,15 +91,20 @@ export default function TopBarHeader({
   }, [])
 
   const handleSelectPageItem = (pageName) => {
+    if (setActiveTab) setActiveTab(null)
     if (onSelectPage) onSelectPage(pageName)
     setShowPageDropdown(false)
   }
 
   const handleTabClick = (tab) => {
+    if (setActiveTab) setActiveTab(tab.id)
+    if (tab.id === 'product') {
+      // Direct dedicated Product Management View
+      return
+    }
     if (tab.pageId && onSelectPage) {
       onSelectPage(tab.pageId)
     }
-    if (setActiveTab) setActiveTab(tab.id)
   }
 
   const handleLogout = () => {
@@ -201,16 +206,16 @@ export default function TopBarHeader({
         {/* Quick Tabs next to dropdown (image_a785dc.jpg: product, Blog, FAQs) */}
         <div className="hidden md:flex items-center gap-1.5 pl-2 border-l border-slate-800/80">
           {quickTabs.map((tab) => {
-            const isActive = activePage === tab.pageId
+            const isActive = activeTab === tab.id
             return (
               <button
                 key={tab.id}
                 type="button"
                 onClick={() => handleTabClick(tab)}
-                className={`px-3 py-1.5 text-xs font-medium rounded-lg transition-all duration-150 cursor-pointer ${
+                className={`px-3.5 py-1.5 text-xs rounded-lg transition-all duration-150 cursor-pointer ${
                   isActive
-                    ? 'text-white bg-slate-800/60 border border-slate-700/60'
-                    : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/40 border border-transparent'
+                    ? 'text-slate-950 bg-white font-bold shadow-sm'
+                    : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/40 border border-transparent font-medium'
                 }`}
               >
                 {tab.label}
