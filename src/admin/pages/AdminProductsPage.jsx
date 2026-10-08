@@ -14,6 +14,7 @@ import {
 } from 'lucide-react'
 import { useAdminAuth } from '../AdminAuthContext'
 import DeleteProductModal from '../dashboard/DeleteProductModal'
+import AddProductModal from '../dashboard/AddProductModal'
 import { supabase } from '../../../lib/supabaseClient'
 
 export default function AdminProductsPage() {
@@ -98,56 +99,46 @@ export default function AdminProductsPage() {
   // Open Add Product Modal
   const handleOpenAddModal = () => {
     setEditingProduct(null)
-    setFormData({
-      title: '',
-      description: '',
-      price: '',
-      category: activeCategory !== 'All Products' ? activeCategory : 'Thigh Guards',
-      stance: activeStance !== 'All Stances' ? activeStance : 'All Stances',
-      image: '/images/product_thigh_guard.png',
-      impactRating: '160+ km/h',
-      stock: 50
-    })
     setIsAddProductModalOpen(true)
   }
 
   // Open Edit Product Modal
   const handleOpenEditModal = (product) => {
     setEditingProduct(product)
-    setFormData({
-      title: product.title || '',
-      description: product.description || '',
-      price: product.price !== undefined ? String(product.price) : '',
-      category: product.category || 'Thigh Guards',
-      stance: product.stance || 'All Stances',
-      image: product.image || '/images/product_thigh_guard.png',
-      impactRating: product.impactRating || '160+ km/h',
-      stock: product.stock !== undefined ? product.stock : 40
-    })
     setIsAddProductModalOpen(true)
   }
 
-  // Submit Add / Edit Form
-  const handleSubmitProduct = (e) => {
-    e.preventDefault()
-
-    const parsedPrice = parseFloat(formData.price) || 0
-    const payload = {
-      title: formData.title.trim(),
-      description: formData.description.trim(),
-      price: parsedPrice,
-      category: formData.category,
-      stance: formData.stance,
-      image: formData.image.trim() || '/images/product_thigh_guard.png',
-      impactRating: formData.impactRating || '160+ km/h',
-      stock: parseInt(formData.stock, 10) || 30
-    }
-
+  // Save Product (Add or Edit) with Supabase synchronization
+  const handleSaveProduct = async (payload) => {
     if (editingProduct) {
+      // 1. Update in local state / context
       updateProduct(editingProduct.id, payload)
+
+      // 2. Sync with Supabase if table exists
+      try {
+        if (supabase && typeof supabase.from === 'function') {
+          await supabase.from('products').update(payload).eq('id', editingProduct.id)
+        }
+      } catch (err) {
+        console.info('Supabase product update notice:', err?.message || err)
+      }
+
       showToast(`Updated "${payload.title}" successfully!`)
     } else {
-      addProduct(payload)
+      // 1. Add to local state / context
+      const newId = `product-${Date.now()}`
+      const newProduct = { ...payload, id: newId }
+      addProduct(newProduct)
+
+      // 2. Sync with Supabase if table exists
+      try {
+        if (supabase && typeof supabase.from === 'function') {
+          await supabase.from('products').insert([newProduct])
+        }
+      } catch (err) {
+        console.info('Supabase product insert notice:', err?.message || err)
+      }
+
       showToast(`Added "${payload.title}" to catalog!`)
     }
 
@@ -429,171 +420,18 @@ export default function AdminProductsPage() {
       </div>
 
       {/* ========================================================================= */}
-      {/* 3. ADD / EDIT PRODUCT MODAL                                               */}
+      {/* 3. ADD / EDIT PRODUCT MODAL (image_c25b81.png)                            */}
       {/* ========================================================================= */}
-      {isAddProductModalOpen && (
-        <div
-          className="fixed inset-0 z-[99999] flex items-center justify-center p-4 bg-black/80 backdrop-blur-md animate-in fade-in"
-          onClick={() => setIsAddProductModalOpen(false)}
-        >
-          <div
-            className="w-full max-w-lg bg-[#0b1222] border border-slate-800 rounded-2xl p-6 sm:p-7 shadow-2xl text-white relative animate-in zoom-in-95 max-h-[90vh] overflow-y-auto"
-            onClick={(e) => e.stopPropagation()}
-          >
-            {/* Modal Header */}
-            <div className="flex items-center justify-between pb-4 border-b border-slate-800 mb-5">
-              <div className="flex items-center gap-2.5">
-                <div className="w-8 h-8 rounded-lg bg-blue-500/10 border border-blue-500/30 flex items-center justify-center text-blue-400">
-                  <Package className="w-4 h-4" />
-                </div>
-                <h3 className="text-base font-black uppercase text-white tracking-tight">
-                  {editingProduct ? 'Edit Product' : 'Add New Product'}
-                </h3>
-              </div>
-              <button
-                type="button"
-                onClick={() => setIsAddProductModalOpen(false)}
-                className="p-1.5 text-slate-400 hover:text-white rounded-lg cursor-pointer"
-              >
-                <X className="w-5 h-5" />
-              </button>
-            </div>
-
-            {/* Modal Form */}
-            <form onSubmit={handleSubmitProduct} className="space-y-4">
-              {/* Product Title */}
-              <div>
-                <label className="block text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1">
-                  Product Title *
-                </label>
-                <input
-                  type="text"
-                  required
-                  value={formData.title}
-                  onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-                  placeholder="e.g. Pro Dual-Leg Thigh Guard Set"
-                  className="w-full bg-[#080d19] border border-slate-800 text-white rounded-xl px-3.5 py-2.5 text-xs sm:text-sm focus:border-blue-500 focus:outline-none"
-                />
-              </div>
-
-              {/* Description */}
-              <div>
-                <label className="block text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1">
-                  Description
-                </label>
-                <textarea
-                  rows={2}
-                  value={formData.description}
-                  onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                  placeholder="Brief summary of product features and specs..."
-                  className="w-full bg-[#080d19] border border-slate-800 text-white rounded-xl px-3.5 py-2.5 text-xs sm:text-sm focus:border-blue-500 focus:outline-none"
-                />
-              </div>
-
-              {/* Price & Category in 2 Cols */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1">
-                    Price (USD) *
-                  </label>
-                  <input
-                    type="number"
-                    step="0.01"
-                    required
-                    value={formData.price}
-                    onChange={(e) => setFormData({ ...formData, price: e.target.value })}
-                    placeholder="79.99"
-                    className="w-full bg-[#080d19] border border-slate-800 text-white rounded-xl px-3.5 py-2.5 text-xs sm:text-sm focus:border-blue-500 focus:outline-none font-mono"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1">
-                    Category *
-                  </label>
-                  <select
-                    value={formData.category}
-                    onChange={(e) => setFormData({ ...formData, category: e.target.value })}
-                    className="w-full bg-[#080d19] border border-slate-800 text-white rounded-xl px-3.5 py-2.5 text-xs sm:text-sm focus:border-blue-500 focus:outline-none"
-                  >
-                    {allCategories
-                      .filter((c) => c !== 'All Products')
-                      .map((cat) => (
-                        <option key={cat} value={cat}>
-                          {cat}
-                        </option>
-                      ))}
-                  </select>
-                </div>
-              </div>
-
-              {/* Stance */}
-              <div>
-                <label className="block text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1">
-                  Stance Compatibility
-                </label>
-                <select
-                  value={formData.stance}
-                  onChange={(e) => setFormData({ ...formData, stance: e.target.value })}
-                  className="w-full bg-[#080d19] border border-slate-800 text-white rounded-xl px-3.5 py-2.5 text-xs sm:text-sm focus:border-blue-500 focus:outline-none"
-                >
-                  <option value="All Stances">All Stances (Universal)</option>
-                  <option value="Right-Handed">Right-Handed</option>
-                  <option value="Left-Handed">Left-Handed</option>
-                </select>
-              </div>
-
-              {/* Image URL & Presets */}
-              <div>
-                <label className="block text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1">
-                  Image Path / URL
-                </label>
-                <input
-                  type="text"
-                  value={formData.image}
-                  onChange={(e) => setFormData({ ...formData, image: e.target.value })}
-                  placeholder="/images/product_thigh_guard.png"
-                  className="w-full bg-[#080d19] border border-slate-800 text-white rounded-xl px-3.5 py-2.5 text-xs sm:text-sm focus:border-blue-500 focus:outline-none font-mono mb-2"
-                />
-
-                {/* Preset Chips */}
-                <div className="flex items-center gap-1.5 flex-wrap">
-                  <span className="text-[10px] text-slate-500 uppercase tracking-wider mr-1">
-                    Presets:
-                  </span>
-                  {imagePresets.map((preset) => (
-                    <button
-                      key={preset.label}
-                      type="button"
-                      onClick={() => setFormData({ ...formData, image: preset.url })}
-                      className="px-2 py-1 rounded bg-[#070b14] hover:bg-slate-800 border border-slate-800 text-[10px] text-slate-300 hover:text-white cursor-pointer transition-colors"
-                    >
-                      {preset.label}
-                    </button>
-                  ))}
-                </div>
-              </div>
-
-              {/* Action Buttons */}
-              <div className="pt-3 flex items-center justify-end gap-3 border-t border-slate-800 mt-5">
-                <button
-                  type="button"
-                  onClick={() => setIsAddProductModalOpen(false)}
-                  className="px-4 py-2.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-slate-400 hover:text-white text-xs font-bold uppercase cursor-pointer"
-                >
-                  Cancel
-                </button>
-                <button
-                  type="submit"
-                  className="px-6 py-2.5 rounded-xl bg-[#1965eb] hover:bg-blue-600 text-white text-xs font-bold uppercase tracking-wider shadow-md shadow-blue-600/30 cursor-pointer"
-                >
-                  {editingProduct ? 'Save Changes' : 'Create Product'}
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
-      )}
+      <AddProductModal
+        isOpen={isAddProductModalOpen}
+        onClose={() => {
+          setIsAddProductModalOpen(false)
+          setEditingProduct(null)
+        }}
+        onSave={handleSaveProduct}
+        initialData={editingProduct}
+        categories={allCategories}
+      />
 
       {/* ========================================================================= */}
       {/* 4. ADD NEW PRODUCT TYPE (CATEGORY) MODAL                                  */}
