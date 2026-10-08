@@ -7,16 +7,8 @@ import {
   EyeOff,
   LogOut,
   ChevronDown,
-  Check,
   Shield,
-  Layers,
-  Sparkles,
-  ExternalLink,
-  FileText,
-  ShoppingBag,
-  Info,
-  BookOpen,
-  Mail
+  Sparkles
 } from 'lucide-react'
 import { useAdminAuth } from '../AdminAuthContext'
 
@@ -40,21 +32,29 @@ export default function TopBarHeader({
   const [showPageDropdown, setShowPageDropdown] = useState(false)
   const dropdownRef = useRef(null)
 
-  // Landing pages listed in the user prompt:
-  // "Page Selector Dropdown containing all landing pages (Home, Shop Armours, What We Are, Blog, Contact Us)"
-  const landingPages = [
-    { id: 'Home', label: 'Home', icon: FileText },
-    { id: 'Shop Armours', label: 'Shop Armours', icon: ShoppingBag },
-    { id: 'What We Are', label: 'What We Are', icon: Info },
-    { id: 'Blog', label: 'Blog', icon: BookOpen },
-    { id: 'Contact Us', label: 'Contact Us', icon: Mail }
+  // Strictly exact menu values specified in prompt & screenshot image_a7895a.png:
+  // - Home
+  // - Shop Armours
+  // - What We Are
+  // - Blog / Insights
+  // - Contact Us
+  // - Header
+  // - Footer
+  const dropdownOptions = [
+    'Home',
+    'Shop Armours',
+    'What We Are',
+    'Blog / Insights',
+    'Contact Us',
+    'Header',
+    'Footer'
   ]
 
-  // Secondary tabs matching screenshot
+  // Secondary tabs matching screenshot image_a785dc.jpg
   const quickTabs = [
-    { id: 'product', label: 'product', path: '/admin/products' },
-    { id: 'Blog', label: 'Blog', pageId: 'Blog' },
-    { id: 'FAQs', label: 'FAQs', pageId: 'Home', anchor: '#faq' }
+    { id: 'product', label: 'product', pageId: 'Shop Armours' },
+    { id: 'Blog', label: 'Blog', pageId: 'Blog / Insights' },
+    { id: 'FAQs', label: 'FAQs', pageId: 'Home', anchor: 'faq' }
   ]
 
   const notifications = [
@@ -90,15 +90,13 @@ export default function TopBarHeader({
     return () => document.removeEventListener('mousedown', handleClickOutside)
   }, [])
 
-  const handleSelectPageItem = (pageId) => {
-    if (onSelectPage) onSelectPage(pageId)
+  const handleSelectPageItem = (pageName) => {
+    if (onSelectPage) onSelectPage(pageName)
     setShowPageDropdown(false)
   }
 
   const handleTabClick = (tab) => {
-    if (tab.path && onNavigate) {
-      onNavigate(tab.path)
-    } else if (tab.pageId && onSelectPage) {
+    if (tab.pageId && onSelectPage) {
       onSelectPage(tab.pageId)
     }
     if (setActiveTab) setActiveTab(tab.id)
@@ -119,7 +117,7 @@ export default function TopBarHeader({
           type="button"
           onClick={() => onSelectPage && onSelectPage('Home')}
           className="flex items-center gap-2.5 group cursor-pointer text-left"
-          title="ARMOURCRAFT AS - Visual CMS Dashboard"
+          title="ARMOURCRAFT AS - Admin Visual Studio"
         >
           {/* Metallic 3D emblem */}
           <div className="relative w-8 h-8 rounded-lg bg-gradient-to-tr from-slate-700 via-slate-900 to-blue-600 p-[1.5px] shadow-lg shadow-blue-900/20 group-hover:scale-105 transition-transform">
@@ -152,17 +150,16 @@ export default function TopBarHeader({
       </div>
 
       {/* ========================================================================= */}
-      {/* 2. CENTER: PAGE SELECTOR DROPDOWN & QUICK TABS                            */}
+      {/* 2. CENTER: NAVIGATION DROPDOWN (STRICTLY MATCHING image_a7895a.png)       */}
       {/* ========================================================================= */}
       <nav className="flex items-center gap-2 relative" ref={dropdownRef}>
-        {/* Page Selector Dropdown */}
+        {/* Dropdown Toggle Button (matching image_a785dc.jpg: Home ˇ) */}
         <div className="relative">
           <button
             type="button"
             onClick={() => setShowPageDropdown((prev) => !prev)}
-            className="px-3.5 py-1.5 text-xs font-bold rounded-lg transition-all duration-150 flex items-center gap-2 cursor-pointer bg-[#121a2d] text-white border border-slate-700/80 hover:border-blue-500/60 shadow-sm"
+            className="px-4 py-1.5 text-xs font-bold rounded-lg transition-all duration-150 flex items-center gap-2 cursor-pointer bg-[#121a2d] text-white border border-slate-700/80 hover:border-blue-500/60 shadow-sm"
           >
-            <span className="text-blue-400 font-extrabold">Page:</span>
             <span>{activePage}</span>
             <ChevronDown
               className={`w-3.5 h-3.5 text-slate-400 transition-transform ${
@@ -171,32 +168,28 @@ export default function TopBarHeader({
             />
           </button>
 
-          {/* Dropdown Menu */}
+          {/* Dropdown Menu Popup (Strictly matching image_a7895a.png) */}
           {showPageDropdown && (
-            <div className="absolute top-full left-0 mt-2 w-56 bg-[#0c1322] border border-slate-800 rounded-xl shadow-2xl p-1.5 z-50 animate-in fade-in zoom-in-95 backdrop-blur-md">
-              <div className="px-3 py-1.5 text-[10px] font-black uppercase tracking-wider text-slate-500 border-b border-slate-800/80 mb-1">
-                SELECT LANDING PAGE
-              </div>
-              <div className="space-y-0.5">
-                {landingPages.map((page) => {
-                  const isSelected = activePage === page.id
-                  const PageIcon = page.icon
+            <div className="absolute top-full left-0 mt-2 w-52 bg-[#0c1424] border border-slate-800/90 rounded-2xl shadow-2xl p-2 z-50 animate-in fade-in zoom-in-95 backdrop-blur-md">
+              <div className="space-y-1">
+                {dropdownOptions.map((option) => {
+                  const isSelected = activePage === option
                   return (
                     <button
-                      key={page.id}
+                      key={option}
                       type="button"
-                      onClick={() => handleSelectPageItem(page.id)}
-                      className={`w-full text-left px-3 py-2 rounded-lg text-xs font-semibold flex items-center justify-between transition-colors cursor-pointer ${
+                      onClick={() => handleSelectPageItem(option)}
+                      className={`w-full text-left rounded-xl text-sm transition-all duration-150 flex items-center cursor-pointer relative ${
                         isSelected
-                          ? 'bg-blue-600/20 text-white font-bold border border-blue-500/30'
-                          : 'text-slate-300 hover:text-white hover:bg-slate-800/60'
+                          ? 'bg-[#131d33] text-white font-bold pl-5 pr-3 py-2.5'
+                          : 'text-slate-400 hover:text-white hover:bg-slate-800/40 px-4 py-2.5 font-medium'
                       }`}
                     >
-                      <div className="flex items-center gap-2.5">
-                        <PageIcon className={`w-3.5 h-3.5 ${isSelected ? 'text-blue-400' : 'text-slate-400'}`} />
-                        <span>{page.label}</span>
-                      </div>
-                      {isSelected && <Check className="w-3.5 h-3.5 text-blue-400" />}
+                      {/* Active indicator: blue rounded vertical pill on the left edge (image_a7895a.png) */}
+                      {isSelected && (
+                        <div className="absolute left-1.5 top-2 bottom-2 w-1.5 bg-[#1d63ed] rounded-full shadow-[0_0_8px_rgba(29,99,237,0.8)]" />
+                      )}
+                      <span className="truncate">{option}</span>
                     </button>
                   )
                 })}
@@ -205,10 +198,10 @@ export default function TopBarHeader({
           )}
         </div>
 
-        {/* Secondary Quick Navigation Tabs */}
+        {/* Quick Tabs next to dropdown (image_a785dc.jpg: product, Blog, FAQs) */}
         <div className="hidden md:flex items-center gap-1.5 pl-2 border-l border-slate-800/80">
           {quickTabs.map((tab) => {
-            const isActive = (tab.pageId && activePage === tab.pageId) || activeTab === tab.id
+            const isActive = activePage === tab.pageId
             return (
               <button
                 key={tab.id}

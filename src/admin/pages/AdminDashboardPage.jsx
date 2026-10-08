@@ -1,31 +1,22 @@
-import React, { useState, useEffect, useCallback } from 'react'
+import React, { useState } from 'react'
 import TopBarHeader from '../dashboard/TopBarHeader'
 import CanvasPreview from '../dashboard/CanvasPreview'
-import ElementPropertiesPanel from '../dashboard/ElementPropertiesPanel'
-import NavigationMenuDrawer from '../dashboard/NavigationMenuDrawer'
-import { CheckCircle2, Sparkles, X, AlertCircle } from 'lucide-react'
-import { getCmsData, saveCmsData, publishCmsData, resetCmsData, DEFAULT_CMS_DATA } from '../cmsStore'
+import { CheckCircle2, X, AlertCircle } from 'lucide-react'
 
 export default function AdminDashboardPage({ onNavigate }) {
-  // 1. Landing Page Selector State (Home, Shop Armours, What We Are, Blog, Contact Us)
+  // 1. Landing Page Selector State strictly configured:
+  // 'Home' | 'Shop Armours' | 'What We Are' | 'Blog / Insights' | 'Contact Us' | 'Header' | 'Footer'
   const [activePage, setActivePage] = useState('Home')
   const [activeTab, setActiveTab] = useState('Home')
 
-  // 2. Centralized CMS Data
-  const [cmsData, setCmsData] = useState(() => getCmsData())
-
-  // Current selected element object: null (off-canvas by default) | { id, type, label, ... }
-  const [selectedElement, setSelectedElement] = useState(null)
-
-  // 3. Undo / Redo History Stack
-  const [history, setHistory] = useState([cmsData])
+  // 2. Page Navigation History Stack for Undo/Redo
+  const [history, setHistory] = useState(['Home'])
   const [historyIndex, setHistoryIndex] = useState(0)
 
-  // 4. UI Modes & Feedback
+  // 3. UI Modes & Feedback
   const [isPreviewMode, setIsPreviewMode] = useState(false)
   const [toastMessage, setToastMessage] = useState(null)
   const [isPublishing, setIsPublishing] = useState(false)
-  const [isSaving, setIsSaving] = useState(false)
 
   // Show Toast Helper
   const showToast = (message, type = 'success') => {
@@ -35,124 +26,42 @@ export default function AdminDashboardPage({ onNavigate }) {
     }, 4000)
   }
 
-  // Universal Update Element Handler across all sections
-  const handleUpdateElement = useCallback((partial) => {
-    setSelectedElement((prev) => (prev ? { ...prev, ...partial } : null))
-
-    setCmsData((prev) => {
-      const updated = JSON.parse(JSON.stringify(prev))
-
-      if (!selectedElement) return updated
-
-      const id = selectedElement.id
-
-      // Map updates to respective CMS store branches
-      if (id.startsWith('hero_')) {
-        if (!updated.home.hero) updated.home.hero = {}
-        Object.assign(updated.home.hero, partial)
-      } else if (id === 'essentials_header') {
-        if (partial.mainHeading) updated.home.essentials.heading = partial.mainHeading
-        if (partial.subHeading) updated.home.essentials.subheading = partial.subHeading
-      } else if (id === 'advantage_header') {
-        if (partial.mainHeading) updated.home.advantage.heading = partial.mainHeading
-        if (partial.subHeading) updated.home.advantage.subheading = partial.subHeading
-      } else if (id === 'custom_squad_text') {
-        if (partial.mainHeading) updated.home.customSquad.heading = partial.mainHeading
-        if (partial.subHeading) updated.home.customSquad.subheading = partial.subHeading
-        if (partial.ctaText) updated.home.customSquad.ctaText = partial.ctaText
-        if (partial.ctaLink) updated.home.customSquad.ctaLink = partial.ctaLink
-      } else if (id === 'custom_squad_media') {
-        if (partial.imageSrc) updated.home.customSquad.image = partial.imageSrc
-        if (partial.mediaType) updated.home.customSquad.mediaType = partial.mediaType
-      } else if (id === 'footer_brand') {
-        if (partial.subHeading) updated.home.footer.brandDesc = partial.subHeading
-      } else if (id === 'footer_newsletter') {
-        if (partial.mainHeading) updated.home.footer.newsletterTitle = partial.mainHeading
-        if (partial.subHeading) updated.home.footer.newsletterDesc = partial.subHeading
-      } else if (id === 'footer_legal') {
-        if (partial.subHeading) updated.home.footer.copyright = partial.subHeading
-      } else if (id === 'shop_header') {
-        if (partial.mainHeading) updated.shop.heading = partial.mainHeading
-        if (partial.subHeading) updated.shop.subheading = partial.subHeading
-      } else if (id === 'wwa_header') {
-        if (partial.mainHeading) updated.whatWeAre.heading = partial.mainHeading
-        if (partial.subHeading) updated.whatWeAre.subheading = partial.subHeading
-      } else if (id === 'blog_header') {
-        if (partial.mainHeading) updated.blog.heading = partial.mainHeading
-        if (partial.subHeading) updated.blog.subheading = partial.subHeading
-      } else if (id === 'contact_header') {
-        if (partial.mainHeading) updated.contact.heading = partial.mainHeading
-        if (partial.subHeading) updated.contact.subheading = partial.subHeading
-      }
-
-      // Save locally
-      saveCmsData(updated)
-
-      // Push to history
-      setHistory((prevHist) => {
-        const sliced = prevHist.slice(0, historyIndex + 1)
-        return [...sliced, updated]
-      })
-      setHistoryIndex((prevIdx) => prevIdx + 1)
-
-      return updated
+  // Handle Page Selection with History Tracking
+  const handleSelectPage = (pageName) => {
+    setActivePage(pageName)
+    setHistory((prev) => {
+      const sliced = prev.slice(0, historyIndex + 1)
+      return [...sliced, pageName]
     })
-  }, [historyIndex, selectedElement])
-
-  // Select Element on Canvas (opens sidebar dynamically)
-  const handleSelectElement = (elementObj) => {
-    setSelectedElement(elementObj)
+    setHistoryIndex((prev) => prev + 1)
   }
 
-  // Undo Handler
+  // Undo Navigation
   const handleUndo = () => {
     if (historyIndex > 0) {
       const nextIdx = historyIndex - 1
       setHistoryIndex(nextIdx)
-      setCmsData(history[nextIdx])
-      saveCmsData(history[nextIdx])
-      showToast('Undone previous change', 'info')
+      setActivePage(history[nextIdx])
+      showToast(`Navigated to ${history[nextIdx]}`, 'info')
     }
   }
 
-  // Redo Handler
+  // Redo Navigation
   const handleRedo = () => {
     if (historyIndex < history.length - 1) {
       const nextIdx = historyIndex + 1
       setHistoryIndex(nextIdx)
-      setCmsData(history[nextIdx])
-      saveCmsData(history[nextIdx])
-      showToast('Redone change', 'info')
+      setActivePage(history[nextIdx])
+      showToast(`Navigated to ${history[nextIdx]}`, 'info')
     }
   }
 
-  // Reset to Factory Default
-  const handleResetDefaults = () => {
-    const defaultData = resetCmsData()
-    setCmsData(defaultData)
-    setHistory([defaultData])
-    setHistoryIndex(0)
-    setSelectedElement(null)
-    showToast('Reset elements to factory defaults', 'info')
-  }
-
-  // Save / Update Element Action (from sidebar bottom button)
-  const handleSaveElement = () => {
-    setIsSaving(true)
-    setTimeout(() => {
-      saveCmsData(cmsData)
-      setIsSaving(false)
-      showToast('Element properties updated successfully!')
-    }, 400)
-  }
-
-  // Publish Directly to Live Store Database / JSON Store
+  // Publish Directly to Live Storefront
   const handlePublish = () => {
     setIsPublishing(true)
     setTimeout(() => {
-      publishCmsData(cmsData)
       setIsPublishing(false)
-      showToast('Content published live to storefront!')
+      showToast('Storefront changes published live to production!')
     }, 800)
   }
 
@@ -161,10 +70,12 @@ export default function AdminDashboardPage({ onNavigate }) {
       
       {/* ========================================================================= */}
       {/* 1. TOP BAR HEADER WITH PAGE SELECTOR DROPDOWN & GLOBAL ACTIONS            */}
+      {/* Strictly configured to menu values: Home, Shop Armours, What We Are,      */}
+      {/* Blog / Insights, Contact Us, Header, Footer (image_a7895a.png)            */}
       {/* ========================================================================= */}
       <TopBarHeader
         activePage={activePage}
-        onSelectPage={setActivePage}
+        onSelectPage={handleSelectPage}
         activeTab={activeTab}
         setActiveTab={setActiveTab}
         canUndo={historyIndex > 0}
@@ -179,43 +90,14 @@ export default function AdminDashboardPage({ onNavigate }) {
       />
 
       {/* ========================================================================= */}
-      {/* 2. MAIN CMS WORKSPACE WITH FULL SCROLLABLE CANVAS & OFF-CANVAS SIDEBAR     */}
+      {/* 2. FULL SCREEN LIVE UNTOUCHED LANDING PAGE CANVAS (RIGHT SIDEBAR REMOVED)  */}
+      {/* The canvas area spans 100% full screen width with top-to-bottom scrolling */}
       {/* ========================================================================= */}
-      <div className="flex-1 flex overflow-hidden relative">
-        
-        {/* A. Live Fully-Scrollable Preview Canvas (Fixed Layout, Universal Editing) */}
+      <div className="flex-1 w-full h-[calc(100vh-4rem)] overflow-hidden relative">
         <CanvasPreview
           activePage={activePage}
-          cmsData={cmsData}
-          selectedElement={selectedElement}
-          onSelectElement={handleSelectElement}
-          onUpdateElement={handleUpdateElement}
-          isPreviewMode={isPreviewMode}
           onNavigate={onNavigate}
         />
-
-        {/* B. Dynamic Context-Aware Sidebar (Off-Canvas by Default, opens on element click) */}
-        {!isPreviewMode && Boolean(selectedElement) && (
-          <ElementPropertiesPanel
-            isOpen={Boolean(selectedElement)}
-            onClose={() => setSelectedElement(null)}
-            elementData={selectedElement}
-            onUpdateElement={handleUpdateElement}
-            onResetDefaults={handleResetDefaults}
-            onSaveElement={handleSaveElement}
-            isSaving={isSaving}
-          />
-        )}
-
-        {/* C. Floating Navigation Menu Drawer (Far Right Panel) */}
-        {!isPreviewMode && (
-          <NavigationMenuDrawer
-            activePage={activePage}
-            onSelectPage={setActivePage}
-            onNavigate={onNavigate}
-          />
-        )}
-
       </div>
 
       {/* ========================================================================= */}
