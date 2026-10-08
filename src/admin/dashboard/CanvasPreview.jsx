@@ -132,64 +132,23 @@ export default function CanvasPreview({
         </div>
       ) : activePage === 'Header' ? (
         /* ----------------------------------------------------------------------- */
-        /* 5. HEADER SHOWCASE PREVIEW                                              */
+        /* 5. ISOLATED HEADER COMPONENT PREVIEW (image_a8845d.png)                 */
+        /* Render ONLY the navigation Header component. Hide body & footer.       */
         /* ----------------------------------------------------------------------- */
-        <div className="w-full min-h-screen flex flex-col bg-[#060a12]">
-          <div className="w-full sticky top-0 z-40">
-            <Navbar
-              cartCount={cartItems.length}
-              currentPath="/"
-              onNavigate={onNavigate}
-              onOpenCart={() => setIsCartOpen(true)}
-            />
-          </div>
-
-          <div className="flex-1 flex flex-col items-center justify-center p-8 sm:p-16 text-center max-w-4xl mx-auto">
-            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-blue-600/20 border border-blue-500/40 text-blue-400 text-xs font-bold uppercase tracking-widest mb-6">
-              <span>LIVE HEADER COMPONENT</span>
-            </div>
-            <h1 className="text-3xl sm:text-5xl font-black text-white tracking-tight uppercase mb-4">
-              ARMOURCRAFT NAVIGATION HEADER
-            </h1>
-            <p className="text-slate-400 text-sm sm:text-base max-w-2xl leading-relaxed mb-8">
-              Full desktop and responsive navigation bar with live shopping cart counter, direct category routing, mobile drawer integration, and branding.
-            </p>
-            <div className="flex flex-wrap items-center justify-center gap-4">
-              <button
-                type="button"
-                onClick={() => setIsCartOpen(true)}
-                className="px-6 py-3 rounded-xl bg-[#1762f0] hover:bg-[#1354d4] text-white text-xs font-bold uppercase tracking-wider transition-colors shadow-lg shadow-blue-600/30 cursor-pointer"
-              >
-                Open Shopping Cart ({cartItems.length})
-              </button>
-            </div>
-          </div>
-          <Footer onNavigate={onNavigate} />
+        <div className="w-full min-h-screen bg-[#060a12] flex flex-col">
+          <Navbar
+            cartCount={cartItems.length}
+            currentPath="/"
+            onNavigate={onNavigate}
+            onOpenCart={() => setIsCartOpen(true)}
+          />
         </div>
       ) : activePage === 'Footer' ? (
         /* ----------------------------------------------------------------------- */
-        /* 6. FOOTER SHOWCASE PREVIEW                                              */
+        /* 6. ISOLATED FOOTER COMPONENT PREVIEW (image_a8849c.png)                 */
+        /* Render ONLY the main Footer component. Hide header & body sections.    */
         /* ----------------------------------------------------------------------- */
-        <div className="w-full min-h-screen flex flex-col justify-between bg-[#060a12]">
-          <div className="w-full">
-            <Navbar
-              cartCount={cartItems.length}
-              currentPath="/"
-              onNavigate={onNavigate}
-              onOpenCart={() => setIsCartOpen(true)}
-            />
-            <div className="py-16 text-center max-w-3xl mx-auto px-6">
-              <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-blue-600/20 border border-blue-500/40 text-blue-400 text-xs font-bold uppercase tracking-widest mb-4">
-                <span>LIVE FOOTER COMPONENT</span>
-              </div>
-              <h2 className="text-2xl sm:text-4xl font-black text-white uppercase tracking-tight mb-3">
-                PERSISTENT STOREFRONT FOOTER
-              </h2>
-              <p className="text-slate-400 text-sm leading-relaxed">
-                Scroll below to inspect the complete production footer, newsletter subscription module, international delivery badges, and legal compliance links.
-              </p>
-            </div>
-          </div>
+        <div className="w-full min-h-screen bg-[#060a12] flex flex-col">
           <Footer onNavigate={onNavigate} />
         </div>
       ) : (
