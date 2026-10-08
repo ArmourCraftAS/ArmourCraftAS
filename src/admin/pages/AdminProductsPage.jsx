@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react'
+import { createPortal } from 'react-dom'
 import {
   Plus,
   Search,
@@ -436,13 +437,13 @@ export default function AdminProductsPage() {
       {/* ========================================================================= */}
       {/* 4. ADD NEW PRODUCT TYPE (CATEGORY) MODAL                                  */}
       {/* ========================================================================= */}
-      {isAddTypeModalOpen && (
+      {isAddTypeModalOpen && typeof document !== 'undefined' && createPortal(
         <div
-          className="fixed inset-0 z-[99999] flex items-center justify-center p-4 bg-black/80 backdrop-blur-md animate-in fade-in"
+          className="fixed inset-0 z-[99999] flex items-center justify-center p-4 md:p-8 bg-black/70 backdrop-blur-md animate-in fade-in"
           onClick={() => setIsAddTypeModalOpen(false)}
         >
           <div
-            className="w-full max-w-md bg-[#0b1222] border border-slate-800 rounded-2xl p-6 sm:p-7 shadow-2xl text-white relative animate-in zoom-in-95"
+            className="w-full max-w-md bg-[#0B0F17] border border-slate-800/80 rounded-3xl p-6 sm:p-7 shadow-2xl text-white relative animate-in zoom-in-95"
             onClick={(e) => e.stopPropagation()}
           >
             <div className="flex items-center justify-between pb-4 border-b border-slate-800 mb-5">
@@ -496,7 +497,8 @@ export default function AdminProductsPage() {
               </div>
             </form>
           </div>
-        </div>
+        </div>,
+        document.body
       )}
 
       {/* ========================================================================= */}

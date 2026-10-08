@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react'
+import { createPortal } from 'react-dom'
 import { CloudUpload, Plus, ChevronDown, X } from 'lucide-react'
 
 const defaultDescriptions = {
@@ -148,29 +149,25 @@ export default function AddProductModal({
     onSave(payload)
   }
 
-  return (
+  const modalContent = (
     <div
-      className="fixed inset-0 z-[99999] overflow-y-auto bg-black/60 backdrop-blur-sm animate-in fade-in duration-200"
+      className="fixed inset-0 z-[99999] flex items-center justify-center p-4 md:p-8 bg-black/70 backdrop-blur-md animate-in fade-in duration-200"
       onClick={onClose}
     >
-      {/* Outer Flex Container ensuring proper top, bottom, and side margins */}
-      <div className="min-h-full flex items-center justify-center p-4 sm:p-6 md:p-8 py-8 sm:py-12">
-        
-        {/* Floating Modal Card Container: fully rounded corners, max-width: 900px */}
-        <div
-          className="w-full bg-[#0c1322] border border-slate-800/90 rounded-2xl sm:rounded-3xl p-6 sm:p-8 md:p-9 shadow-2xl shadow-black/95 text-white relative animate-in zoom-in-95 duration-150 overflow-hidden"
-          style={{ maxWidth: '900px' }}
-          onClick={(e) => e.stopPropagation()}
+      {/* Inner Centered Floating Modal Card */}
+      <div
+        className="max-w-5xl w-full max-h-[90vh] overflow-y-auto rounded-3xl border border-slate-800/80 shadow-2xl bg-[#0B0F17] text-white relative animate-in zoom-in-95 duration-150 p-6 sm:p-8 md:p-9 custom-scrollbar"
+        onClick={(e) => e.stopPropagation()}
+      >
+        {/* Sleek Circular Close Button inside Top-Right Corner */}
+        <button
+          type="button"
+          onClick={onClose}
+          className="absolute top-5 right-5 sm:top-6 sm:right-6 w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-[#131d31] hover:bg-[#1c2a47] border border-slate-700/70 flex items-center justify-center text-slate-400 hover:text-white transition-all duration-150 cursor-pointer shadow-lg group z-30"
+          title="Close modal"
         >
-          {/* Sleek Circular Close Button inside Top-Right Corner */}
-          <button
-            type="button"
-            onClick={onClose}
-            className="absolute top-5 right-5 sm:top-6 sm:right-6 w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-[#131d31] hover:bg-[#1c2a47] border border-slate-700/70 flex items-center justify-center text-slate-400 hover:text-white transition-all duration-150 cursor-pointer shadow-lg group z-30"
-            title="Close modal"
-          >
-            <X className="w-4 h-4 sm:w-4.5 sm:h-4.5 transition-transform group-hover:scale-110" />
-          </button>
+          <X className="w-4 h-4 sm:w-4.5 sm:h-4.5 transition-transform group-hover:scale-110" />
+        </button>
 
           {/* Hidden File Input */}
           <input
@@ -454,10 +451,11 @@ export default function AddProductModal({
             </div>
 
           </form>
-
         </div>
-
       </div>
-    </div>
-  )
+    )
+
+  return typeof document !== 'undefined'
+    ? createPortal(modalContent, document.body)
+    : modalContent
 }

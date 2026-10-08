@@ -1,4 +1,5 @@
 import React from 'react'
+import { createPortal } from 'react-dom'
 import { AlertTriangle, ShieldAlert, Trash2 } from 'lucide-react'
 
 export default function DeleteProductModal({
@@ -10,13 +11,13 @@ export default function DeleteProductModal({
 }) {
   if (!isOpen || !product) return null
 
-  return (
+  const modalContent = (
     <div
-      className="fixed inset-0 z-[99999] flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm animate-in fade-in duration-200"
+      className="fixed inset-0 z-[99999] flex items-center justify-center p-4 md:p-8 bg-black/70 backdrop-blur-md animate-in fade-in duration-200"
       onClick={onClose}
     >
       <div
-        className="w-full max-w-[480px] bg-[#0c1322] border border-slate-800/90 rounded-2xl p-6 sm:p-7 shadow-2xl text-white relative animate-in zoom-in-95 duration-150"
+        className="w-full max-w-[480px] bg-[#0B0F17] border border-slate-800/80 rounded-3xl p-6 sm:p-7 shadow-2xl text-white relative animate-in zoom-in-95 duration-150"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header: Red warning icon circle with title Delete Product */}
@@ -66,4 +67,8 @@ export default function DeleteProductModal({
       </div>
     </div>
   )
+
+  return typeof document !== 'undefined'
+    ? createPortal(modalContent, document.body)
+    : modalContent
 }
