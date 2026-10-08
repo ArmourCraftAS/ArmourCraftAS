@@ -73,30 +73,31 @@ export default function AdminDashboardPage({ onNavigate }) {
       {/* Strictly configured to menu values: Home, Shop Armours, What We Are,      */}
       {/* Blog / Insights, Contact Us, Header, Footer (image_a7895a.png)            */}
       {/* ========================================================================= */}
-      <TopBarHeader
-        activePage={activePage}
-        onSelectPage={handleSelectPage}
-        activeTab={activeTab}
-        setActiveTab={setActiveTab}
-        canUndo={historyIndex > 0}
-        canRedo={historyIndex < history.length - 1}
-        onUndo={handleUndo}
-        onRedo={handleRedo}
-        isPreviewMode={isPreviewMode}
-        onTogglePreview={() => setIsPreviewMode((prev) => !prev)}
-        onPublish={handlePublish}
-        onNavigate={onNavigate}
-        isPublishing={isPublishing}
-      />
+      <div className="relative z-[9999] shrink-0">
+        <TopBarHeader
+          activePage={activePage}
+          onSelectPage={handleSelectPage}
+          activeTab={activeTab}
+          setActiveTab={setActiveTab}
+          canUndo={historyIndex > 0}
+          canRedo={historyIndex < history.length - 1}
+          onUndo={handleUndo}
+          onRedo={handleRedo}
+          isPreviewMode={isPreviewMode}
+          onTogglePreview={() => setIsPreviewMode((prev) => !prev)}
+          onPublish={handlePublish}
+          onNavigate={onNavigate}
+          isPublishing={isPublishing}
+        />
+      </div>
 
       {/* ========================================================================= */}
       {/* 2. SINGLE 100% FULL-WIDTH LANDING PAGE CANVAS (BOTH RIGHT PANELS REMOVED) */}
       {/* The canvas spans width: 100% with smooth vertical scrolling (overflow-y: auto) */}
       {/* ========================================================================= */}
-      <main className="w-full flex-1 h-[calc(100vh-4rem)] overflow-y-auto overflow-x-hidden relative scroll-smooth custom-scrollbar">
+      <main className="w-full flex-1 h-[calc(100vh-4rem)] overflow-y-auto overflow-x-hidden relative z-0 scroll-smooth custom-scrollbar">
         <CanvasPreview
           activePage={activePage}
-          onNavigate={onNavigate}
         />
       </main>
 

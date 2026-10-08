@@ -108,7 +108,7 @@ export default function TopBarHeader({
   }
 
   return (
-    <header className="h-16 w-full bg-[#090e1a] border-b border-slate-800/80 px-4 sm:px-6 flex items-center justify-between z-40 select-none sticky top-0 backdrop-blur-md">
+    <header className="h-16 w-full bg-[#090e1a] border-b border-slate-800/80 px-4 sm:px-6 flex items-center justify-between z-[9999] select-none sticky top-0 backdrop-blur-md">
       {/* ========================================================================= */}
       {/* 1. LEFT: ARMOURCRAFT AS METALLIC 3D LOGO                                 */}
       {/* ========================================================================= */}
@@ -152,7 +152,7 @@ export default function TopBarHeader({
       {/* ========================================================================= */}
       {/* 2. CENTER: NAVIGATION DROPDOWN (STRICTLY MATCHING image_a7895a.png)       */}
       {/* ========================================================================= */}
-      <nav className="flex items-center gap-2 relative" ref={dropdownRef}>
+      <nav className="flex items-center gap-2 relative z-[99999]" ref={dropdownRef}>
         {/* Dropdown Toggle Button (matching image_a785dc.jpg: Home ˇ) */}
         <div className="relative">
           <button
@@ -168,9 +168,9 @@ export default function TopBarHeader({
             />
           </button>
 
-          {/* Dropdown Menu Popup (Strictly matching image_a7895a.png) */}
+          {/* Dropdown Menu Popup (Strictly matching image_a7895a.png & image_a8e677.png) */}
           {showPageDropdown && (
-            <div className="absolute top-full left-0 mt-2 w-52 bg-[#0c1424] border border-slate-800/90 rounded-2xl shadow-2xl p-2 z-50 animate-in fade-in zoom-in-95 backdrop-blur-md">
+            <div className="absolute top-full left-0 mt-2 w-52 bg-[#0c1424] border border-slate-800/90 rounded-2xl shadow-2xl p-2 z-[99999] animate-in fade-in zoom-in-95 backdrop-blur-md">
               <div className="space-y-1">
                 {dropdownOptions.map((option) => {
                   const isSelected = activePage === option
@@ -240,7 +240,7 @@ export default function TopBarHeader({
 
           {/* Notifications Dropdown */}
           {showNotifications && (
-            <div className="absolute right-0 top-full mt-2 w-72 bg-[#0c1322] border border-slate-800 rounded-xl shadow-2xl p-3 z-50 animate-in fade-in">
+            <div className="absolute right-0 top-full mt-2 w-72 bg-[#0c1322] border border-slate-800 rounded-xl shadow-2xl p-3 z-[99999] animate-in fade-in">
               <div className="flex items-center justify-between pb-2 mb-2 border-b border-slate-800">
                 <span className="text-xs font-bold text-white uppercase tracking-wider">
                   Admin Alerts

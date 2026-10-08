@@ -22,8 +22,7 @@ import CustomQuoteModal from '../../components/CustomQuoteModal'
 import Armour3DModal from '../../components/Armour3DModal'
 
 export default function CanvasPreview({
-  activePage = 'Home',
-  onNavigate
+  activePage = 'Home'
 }) {
   // Modal states for full live interaction
   const [quickAddProduct, setQuickAddProduct] = useState(null)
@@ -45,6 +44,51 @@ export default function CanvasPreview({
     }
   ])
 
+  // Disable all standard link navigation and redirects inside preview canvas.
+  // Exclusive page switching is strictly managed via the top admin dropdown.
+  const disabledNavigate = () => {
+    // Intentionally no-op to prevent redirects away from admin dashboard
+  }
+
+  // Intercept click events across the preview canvas to prevent standard link redirects
+  const handleCanvasClickCapture = (e) => {
+    // 1. Intercept all anchor tag clicks (<a href="...">)
+    const anchor = e.target.closest('a')
+    if (anchor) {
+      e.preventDefault()
+      e.stopPropagation()
+      return
+    }
+
+    // 2. Intercept navigation buttons inside preview nav or footer
+    const button = e.target.closest('button')
+    if (button) {
+      const isCart =
+        button.getAttribute('aria-label')?.toLowerCase().includes('cart') ||
+        button.textContent?.trim().startsWith('CART') ||
+        button.getAttribute('data-cart')
+
+      // Block navigation buttons inside the preview navbar (e.g., Home, Shop Armours, Contact Us)
+      if (button.closest('nav') && !isCart) {
+        e.preventDefault()
+        e.stopPropagation()
+        return
+      }
+
+      // Block CTA buttons that attempt to navigate to catalog / external routes
+      const txt = button.textContent?.toLowerCase() || ''
+      if (
+        txt.includes('explore collection') ||
+        txt.includes('shop now') ||
+        txt.includes('view all')
+      ) {
+        e.preventDefault()
+        e.stopPropagation()
+        return
+      }
+    }
+  }
+
   const handleAddToCart = (product) => {
     setCartItems((prev) => [
       ...prev,
@@ -61,7 +105,29 @@ export default function CanvasPreview({
   }
 
   return (
-    <div className="w-full min-h-screen bg-[#060a12] text-slate-100 flex flex-col font-sans selection:bg-blue-600 selection:text-white">
+    <div
+      onClickCapture={handleCanvasClickCapture}
+      className="preview-canvas-scope w-full min-h-screen bg-[#060a12] text-slate-100 flex flex-col font-sans selection:bg-blue-600 selection:text-white"
+    >
+      {/* ========================================================================= */}
+      {/* SCOPED CSS: DISABLE POINTER EVENTS ON PREVIEW NAVIGATION LINKS & BUTTONS   */}
+      {/* ========================================================================= */}
+      <style>{`
+        .preview-canvas-scope a,
+        .preview-canvas-scope a * {
+          pointer-events: none !important;
+          cursor: default !important;
+        }
+        .preview-canvas-scope header nav button:not([aria-label*="cart"]):not([aria-label*="Cart"]) {
+          pointer-events: none !important;
+          cursor: default !important;
+        }
+        .preview-canvas-scope footer a,
+        .preview-canvas-scope footer a * {
+          pointer-events: none !important;
+          cursor: default !important;
+        }
+      `}</style>
       
       {/* ========================================================================= */}
       {/* FULL UNTOUCHED PAGE RENDERING ACCORDING TO HEADER DROPDOWN SELECTION       */}
@@ -74,13 +140,13 @@ export default function CanvasPreview({
           <Navbar
             cartCount={cartItems.length}
             currentPath="/shop"
-            onNavigate={onNavigate}
+            onNavigate={disabledNavigate}
             onOpenCart={() => setIsCartOpen(true)}
           />
           <main className="flex-1 w-full">
             <ShopPage onAddToCart={(prod) => setQuickAddProduct(prod)} />
           </main>
-          <Footer onNavigate={onNavigate} />
+          <Footer onNavigate={disabledNavigate} />
         </div>
       ) : activePage === 'What We Are' ? (
         /* ----------------------------------------------------------------------- */
@@ -90,13 +156,13 @@ export default function CanvasPreview({
           <Navbar
             cartCount={cartItems.length}
             currentPath="/what-we-are"
-            onNavigate={onNavigate}
+            onNavigate={disabledNavigate}
             onOpenCart={() => setIsCartOpen(true)}
           />
           <main className="flex-1 w-full">
-            <WhatWeArePage onNavigate={onNavigate} />
+            <WhatWeArePage onNavigate={disabledNavigate} />
           </main>
-          <Footer onNavigate={onNavigate} />
+          <Footer onNavigate={disabledNavigate} />
         </div>
       ) : activePage === 'Blog / Insights' ? (
         /* ----------------------------------------------------------------------- */
@@ -106,13 +172,13 @@ export default function CanvasPreview({
           <Navbar
             cartCount={cartItems.length}
             currentPath="/blog"
-            onNavigate={onNavigate}
+            onNavigate={disabledNavigate}
             onOpenCart={() => setIsCartOpen(true)}
           />
           <main className="flex-1 w-full">
-            <BlogPage onNavigate={onNavigate} />
+            <BlogPage onNavigate={disabledNavigate} />
           </main>
-          <Footer onNavigate={onNavigate} />
+          <Footer onNavigate={disabledNavigate} />
         </div>
       ) : activePage === 'Contact Us' ? (
         /* ----------------------------------------------------------------------- */
@@ -122,13 +188,13 @@ export default function CanvasPreview({
           <Navbar
             cartCount={cartItems.length}
             currentPath="/contact"
-            onNavigate={onNavigate}
+            onNavigate={disabledNavigate}
             onOpenCart={() => setIsCartOpen(true)}
           />
           <main className="flex-1 w-full">
-            <ContactPage onNavigate={onNavigate} />
+            <ContactPage onNavigate={disabledNavigate} />
           </main>
-          <Footer onNavigate={onNavigate} />
+          <Footer onNavigate={disabledNavigate} />
         </div>
       ) : activePage === 'Header' ? (
         /* ----------------------------------------------------------------------- */
@@ -139,7 +205,7 @@ export default function CanvasPreview({
           <Navbar
             cartCount={cartItems.length}
             currentPath="/"
-            onNavigate={onNavigate}
+            onNavigate={disabledNavigate}
             onOpenCart={() => setIsCartOpen(true)}
           />
         </div>
@@ -149,7 +215,7 @@ export default function CanvasPreview({
         /* Render ONLY the main Footer component. Hide header & body sections.    */
         /* ----------------------------------------------------------------------- */
         <div className="w-full min-h-screen bg-[#060a12] flex flex-col">
-          <Footer onNavigate={onNavigate} />
+          <Footer onNavigate={disabledNavigate} />
         </div>
       ) : (
         /* ----------------------------------------------------------------------- */
@@ -160,21 +226,21 @@ export default function CanvasPreview({
           <Navbar
             cartCount={cartItems.length}
             currentPath="/"
-            onNavigate={onNavigate}
+            onNavigate={disabledNavigate}
             onOpenCart={() => setIsCartOpen(true)}
           />
 
           <main className="flex-1 w-full">
             {/* B. Live Hero Section */}
             <Hero
-              onNavigate={onNavigate}
+              onNavigate={disabledNavigate}
               onOpenCustomModal={() => setIsCustomQuoteOpen(true)}
             />
 
             {/* C. Pro Match Essentials */}
             <ProMatchEssentials
               onAddToCart={(prod) => setQuickAddProduct(prod)}
-              onNavigate={onNavigate}
+              onNavigate={disabledNavigate}
             />
 
             {/* D. The ArmourCraft Advantage */}
@@ -197,7 +263,7 @@ export default function CanvasPreview({
           </main>
 
           {/* J. Production Global Footer */}
-          <Footer onNavigate={onNavigate} />
+          <Footer onNavigate={disabledNavigate} />
         </div>
       )}
 
@@ -227,7 +293,7 @@ export default function CanvasPreview({
           setIsCartOpen(false)
           setIsCheckoutOpen(true)
         }}
-        onNavigate={onNavigate}
+        onNavigate={disabledNavigate}
       />
 
       <CartCheckoutModal
@@ -236,7 +302,7 @@ export default function CanvasPreview({
         cartItems={cartItems}
         onRemoveItem={(id) => setCartItems((prev) => prev.filter((it) => it.id !== id))}
         onClearOrderedItems={() => setCartItems([])}
-        onNavigate={onNavigate}
+        onNavigate={disabledNavigate}
       />
 
       <CustomQuoteModal
