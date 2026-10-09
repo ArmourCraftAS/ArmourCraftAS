@@ -303,20 +303,20 @@ export default function AddProductModal({
 
               </div>
 
-              {/* Action Buttons (Bottom Left): Cancel & Primary Action Button */}
-              <div className="flex items-center justify-end gap-3 pt-4 border-t border-slate-800/60 mt-4">
+              {/* Action Buttons (Bottom Left): Discard Changes & Save & Update Live */}
+              <div className="flex items-center justify-end gap-3 pt-6 mt-2">
                 <button
                   type="button"
                   onClick={onClose}
-                  className="px-5 py-2.5 rounded-xl bg-[#0c1424] hover:bg-[#131f38] border border-slate-700/60 text-slate-300 hover:text-white text-xs sm:text-sm font-semibold transition-colors cursor-pointer"
+                  className="px-5 py-2.5 rounded-xl bg-[#0c1424] hover:bg-[#131f38] border border-slate-700/70 text-slate-300 hover:text-white text-xs sm:text-sm font-semibold transition-colors cursor-pointer"
                 >
-                  Cancel
+                  Discard Changes
                 </button>
                 <button
                   type="submit"
                   className="px-6 py-2.5 rounded-xl bg-[#1d68ed] hover:bg-blue-600 active:scale-[0.98] text-white text-xs sm:text-sm font-bold shadow-lg shadow-blue-600/30 transition-all cursor-pointer"
                 >
-                  {isEditMode ? 'Update Product' : 'Add Products'}
+                  Save & Update Live
                 </button>
               </div>
 
@@ -325,7 +325,7 @@ export default function AddProductModal({
             {/* ===================================================================== */}
             {/* RIGHT PANEL: MEDIA PREVIEW & UPLOAD                                   */}
             {/* ===================================================================== */}
-            <div className="lg:col-span-5 flex flex-col space-y-4">
+            <div className="lg:col-span-5 flex flex-col justify-between space-y-4">
               
               {/* Header */}
               <div>
@@ -374,7 +374,7 @@ export default function AddProductModal({
 
                 {/* Bottom Image Name Bar */}
                 <div
-                  className="w-full bg-[#050811]/90 border-t border-slate-800/80 px-4 py-2 flex items-center justify-between"
+                  className="w-full bg-[#050811]/90 border-t border-slate-800/80 px-4 py-2.5 flex items-center justify-between"
                   onClick={(e) => e.stopPropagation()}
                 >
                   <input
@@ -382,7 +382,7 @@ export default function AddProductModal({
                     value={imageName}
                     onChange={(e) => setImageName(e.target.value)}
                     placeholder="image name"
-                    className="w-full bg-transparent text-xs text-slate-300 placeholder-slate-600 outline-none truncate"
+                    className="w-full bg-transparent text-xs text-slate-300 placeholder-slate-600 outline-none truncate font-mono"
                   />
                   {image && (
                     <button
@@ -399,14 +399,14 @@ export default function AddProductModal({
 
               {/* Media Action Buttons */}
               <div className="space-y-2.5 pt-1">
-                {/* + Add image button */}
+                {/* + Replace Product Image button */}
                 <button
                   type="button"
                   onClick={() => fileInputRef.current?.click()}
                   className="w-full py-2.5 rounded-xl bg-[#0c1424] hover:bg-[#131f38] border border-slate-700/70 text-white font-bold text-xs sm:text-sm flex items-center justify-center gap-2 cursor-pointer transition-all active:scale-[0.99]"
                 >
                   <Plus className="w-4 h-4 stroke-[2.5]" />
-                  <span>+ Add image</span>
+                  <span>Replace Product Image</span>
                 </button>
 
                 {/* Remove Product Image red outline button */}
