@@ -12,10 +12,13 @@ import {
   Bell
 } from 'lucide-react'
 import { useAdminAuth } from './AdminAuthContext'
+import LogoutConfirmModal from './dashboard/LogoutConfirmModal'
 
 export default function AdminLayout({ children, currentPath, onNavigate }) {
   const { adminUser, logout } = useAdminAuth()
   const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false)
+  const [isLogoutModalOpen, setIsLogoutModalOpen] = useState(false)
+  const [isLoggingOut, setIsLoggingOut] = useState(false)
 
   const navItems = [
     {
@@ -35,9 +38,29 @@ export default function AdminLayout({ children, currentPath, onNavigate }) {
     }
   ]
 
-  const handleLogout = () => {
-    logout()
-    onNavigate('/admin/login')
+  const handleLogoutClick = () => {
+    setIsLogoutModalOpen(true)
+  }
+
+  const handleConfirmLogout = async () => {
+    setIsLoggingOut(true)
+    try {
+      if (logout) {
+        await logout()
+      }
+      setTimeout(() => {
+        setIsLoggingOut(false)
+        setIsLogoutModalOpen(false)
+        if (onNavigate) {
+          onNavigate('/admin/login')
+        } else if (typeof window !== 'undefined') {
+          window.location.href = '/admin/login'
+        }
+      }, 350)
+    } catch (err) {
+      console.error('Logout error:', err)
+      setIsLoggingOut(false)
+    }
   }
 
   const activeItem = navItems.find((item) => item.path === currentPath) || navItems[0]
@@ -205,7 +228,7 @@ export default function AdminLayout({ children, currentPath, onNavigate }) {
             {/* Standalone Logout Button */}
             <button
               type="button"
-              onClick={handleLogout}
+              onClick={handleLogoutClick}
               title="Logout from Admin Portal"
               className="flex items-center gap-2 px-3.5 py-2 rounded-xl bg-slate-900 hover:bg-rose-500/10 border border-slate-800 hover:border-rose-500/30 text-slate-300 hover:text-rose-400 text-xs font-bold transition-all duration-200 cursor-pointer group"
             >
@@ -222,6 +245,14 @@ export default function AdminLayout({ children, currentPath, onNavigate }) {
         </main>
       </div>
 
+      {/* Logout Confirmation Popup Modal (image_13.png) */}
+      <LogoutConfirmModal
+        isOpen={isLogoutModalOpen}
+        onClose={() => !isLoggingOut && setIsLogoutModalOpen(false)}
+        onConfirm={handleConfirmLogout}
+        isLoggingOut={isLoggingOut}
+        activePageName={activeItem?.name ? `${activeItem.name} View` : 'SmartThighs Symmetry Landing Page'}
+      />
     </div>
   )
 }

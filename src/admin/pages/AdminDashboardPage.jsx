@@ -91,6 +91,7 @@ export default function AdminDashboardPage({ onNavigate }) {
           onPublish={handlePublish}
           onNavigate={onNavigate}
           isPublishing={isPublishing}
+          showToast={showToast}
         />
       </div>
 

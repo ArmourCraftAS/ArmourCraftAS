@@ -11,6 +11,7 @@ import {
   Sparkles
 } from 'lucide-react'
 import { useAdminAuth } from '../AdminAuthContext'
+import LogoutConfirmModal from './LogoutConfirmModal'
 
 export default function TopBarHeader({
   activePage = 'Home',
@@ -25,11 +26,14 @@ export default function TopBarHeader({
   onTogglePreview,
   onPublish,
   onNavigate,
-  isPublishing = false
+  isPublishing = false,
+  showToast
 }) {
   const { logout } = useAdminAuth()
   const [showNotifications, setShowNotifications] = useState(false)
   const [showPageDropdown, setShowPageDropdown] = useState(false)
+  const [isLogoutModalOpen, setIsLogoutModalOpen] = useState(false)
+  const [isLoggingOut, setIsLoggingOut] = useState(false)
   const dropdownRef = useRef(null)
 
   // Strictly exact menu values specified in prompt & screenshot image_a7895a.png:
@@ -107,9 +111,32 @@ export default function TopBarHeader({
     }
   }
 
-  const handleLogout = () => {
-    if (logout) logout()
-    if (onNavigate) onNavigate('/admin/login')
+  const handleLogoutClick = () => {
+    setIsLogoutModalOpen(true)
+  }
+
+  const handleConfirmLogout = async () => {
+    setIsLoggingOut(true)
+    try {
+      if (logout) {
+        await logout()
+      }
+      if (showToast) {
+        showToast('Logged out of ARMOURCRAFT CMS Admin Session successfully.')
+      }
+      setTimeout(() => {
+        setIsLoggingOut(false)
+        setIsLogoutModalOpen(false)
+        if (onNavigate) {
+          onNavigate('/admin/login')
+        } else if (typeof window !== 'undefined') {
+          window.location.href = '/admin/login'
+        }
+      }, 350)
+    } catch (err) {
+      console.error('Logout error:', err)
+      setIsLoggingOut(false)
+    }
   }
 
   return (
@@ -333,13 +360,22 @@ export default function TopBarHeader({
         {/* Logout Icon */}
         <button
           type="button"
-          onClick={handleLogout}
+          onClick={handleLogoutClick}
           className="p-2 text-rose-400 hover:text-rose-300 hover:bg-rose-500/10 rounded-lg transition-colors cursor-pointer ml-1"
           title="Sign Out of Admin Console"
         >
           <LogOut className="w-4 h-4" />
         </button>
       </div>
+
+      {/* Logout Confirmation Popup Modal (image_13.png) */}
+      <LogoutConfirmModal
+        isOpen={isLogoutModalOpen}
+        onClose={() => !isLoggingOut && setIsLogoutModalOpen(false)}
+        onConfirm={handleConfirmLogout}
+        isLoggingOut={isLoggingOut}
+        activePageName={activePage && activePage !== 'Home' ? `${activePage} Page` : 'SmartThighs Symmetry Landing Page'}
+      />
     </header>
   )
 }

@@ -215,8 +215,27 @@ export function AdminAuthProvider({ children }) {
   }
 
   // Logout handler
-  const logout = () => {
+  const logout = async () => {
+    try {
+      if (supabase && supabase.auth && typeof supabase.auth.signOut === 'function') {
+        await supabase.auth.signOut()
+      }
+    } catch (e) {
+      console.warn('Supabase signOut notice:', e?.message || e)
+    }
     setAdminUser(null)
+    if (typeof window !== 'undefined') {
+      try {
+        window.localStorage.removeItem(ADMIN_SESSION_KEY)
+        window.sessionStorage.clear()
+        document.cookie = 'sb-access-token=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT; SameSite=Lax'
+        document.cookie = 'sb-refresh-token=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT; SameSite=Lax'
+        document.cookie = 'armourcraft_admin_session=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT; SameSite=Lax'
+      } catch (err) {
+        console.warn('Error clearing session storage/cookies:', err)
+      }
+    }
+    return { success: true }
   }
 
   // Product CRUD
