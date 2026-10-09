@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react'
 import { createPortal } from 'react-dom'
-import { CloudUpload, Plus, ChevronDown, X } from 'lucide-react'
+import { CloudUpload, Plus, ChevronDown, X, Check } from 'lucide-react'
 
 const defaultDescriptions = {
   'pro-dual-thigh': 'Ultra-lightweight high-density foam construction with carbon fiber inserts for maximum impact protection.',
@@ -55,6 +55,8 @@ export default function AddProductModal({
   const [isDragging, setIsDragging] = useState(false)
   const [impactRating, setImpactRating] = useState('160+ km/h')
   const [stock, setStock] = useState(50)
+  const [showConfirmation, setShowConfirmation] = useState(false)
+  const [pendingPayload, setPendingPayload] = useState(null)
 
   // Stance Options matching image_c27943.png & image_c25b81.png
   const stanceOptions = ['All Stances', 'Right-Handed Only', 'Left-Handed Only']
@@ -62,6 +64,8 @@ export default function AddProductModal({
   // Pre-fill on Edit Mode or reset on Add Mode
   useEffect(() => {
     if (isOpen) {
+      setShowConfirmation(false)
+      setPendingPayload(null)
       if (initialData) {
         setTitle(initialData.title || '')
         setCategory(initialData.category || availableCategories[0] || 'Thigh Guards')
@@ -146,14 +150,28 @@ export default function AddProductModal({
       stock: parseInt(stock, 10) || 45
     }
 
-    onSave(payload)
+    setPendingPayload(payload)
+    setShowConfirmation(true)
+  }
+
+  const handleConfirmAction = () => {
+    if (pendingPayload) {
+      onSave(pendingPayload)
+    }
+    setShowConfirmation(false)
+    setPendingPayload(null)
+  }
+
+  const handleDismissConfirmation = () => {
+    setShowConfirmation(false)
   }
 
   const modalContent = (
-    <div
-      className="fixed inset-0 z-[99999] flex items-center justify-center p-4 md:p-8 bg-black/70 backdrop-blur-md animate-in fade-in duration-200"
-      onClick={onClose}
-    >
+    <>
+      <div
+        className="fixed inset-0 z-[99999] flex items-center justify-center p-4 md:p-8 bg-black/70 backdrop-blur-md animate-in fade-in duration-200"
+        onClick={onClose}
+      >
       {/* Inner Centered Floating Modal Card */}
       <div
         className="max-w-5xl w-full max-h-[90vh] overflow-y-auto rounded-3xl border border-slate-800/80 shadow-2xl bg-[#0B0F17] text-white relative animate-in zoom-in-95 duration-150 p-6 sm:p-8 md:p-9 custom-scrollbar"
@@ -424,7 +442,100 @@ export default function AddProductModal({
           </form>
         </div>
       </div>
-    )
+
+      {/* ===================================================================== */}
+      {/* CONDITIONAL CONFIRMATION MODAL OVERLAY (image_5b8f07.png & image_5b92cb.png) */}
+      {/* ===================================================================== */}
+      {showConfirmation && (
+        <div
+          className="fixed inset-0 z-[100001] flex items-center justify-center p-4 bg-black/80 backdrop-blur-md animate-in fade-in duration-200"
+          onClick={handleDismissConfirmation}
+        >
+          {isEditMode ? (
+            /* Edit Mode Confirmation Flow (image_5b8f07.png) */
+            <div
+              className="w-full max-w-[460px] bg-[#141820] border border-slate-800/90 rounded-3xl p-7 sm:p-8 shadow-2xl text-white relative animate-in zoom-in-95 duration-150"
+              onClick={(e) => e.stopPropagation()}
+            >
+              {/* Blue upload cloud icon */}
+              <div className="w-12 h-12 rounded-full bg-blue-950/60 border border-blue-500/20 flex items-center justify-center text-blue-500 mb-5">
+                <CloudUpload className="w-6 h-6 text-blue-500" />
+              </div>
+
+              {/* Title */}
+              <h3 className="text-xl sm:text-2xl font-bold text-white tracking-tight mb-3">
+                Confirm Update Live
+              </h3>
+
+              {/* Subtext */}
+              <p className="text-sm text-slate-400 font-normal leading-relaxed mb-7">
+                You have unsaved changes. Are you sure you want to save and update the live product listing? This action will reflect immediately on the storefront.
+              </p>
+
+              {/* Action Buttons */}
+              <div className="space-y-3">
+                <button
+                  type="button"
+                  onClick={handleConfirmAction}
+                  className="w-full py-3 px-4 rounded-xl bg-[#1264e8] hover:bg-blue-600 active:scale-[0.99] text-white font-bold text-sm sm:text-base shadow-lg shadow-blue-600/30 transition-all cursor-pointer"
+                >
+                  Yes, Update Live Listing
+                </button>
+                <button
+                  type="button"
+                  onClick={handleDismissConfirmation}
+                  className="w-full py-3 px-4 rounded-xl bg-[#181d27] hover:bg-[#1f2633] text-slate-300 hover:text-white font-semibold text-sm sm:text-base border border-slate-700/60 transition-colors cursor-pointer"
+                >
+                  Go Back and Review
+                </button>
+              </div>
+            </div>
+          ) : (
+            /* Add Mode Confirmation Flow (image_5b92cb.png) */
+            <div
+              className="w-full max-w-[460px] bg-[#141820] border border-slate-800/90 rounded-3xl p-7 sm:p-8 shadow-2xl text-white relative animate-in zoom-in-95 duration-150 text-center flex flex-col items-center"
+              onClick={(e) => e.stopPropagation()}
+            >
+              {/* Blue checkmark circle icon */}
+              <div className="w-14 h-14 rounded-2xl bg-[#0c1e3d] border border-blue-500/30 flex items-center justify-center mb-5">
+                <div className="w-7 h-7 rounded-full bg-[#1665ec] flex items-center justify-center text-white">
+                  <Check className="w-4 h-4 stroke-[3]" />
+                </div>
+              </div>
+
+              {/* Title */}
+              <h3 className="text-xl sm:text-2xl font-bold text-white tracking-tight mb-3">
+                Confirm Add New Product
+              </h3>
+
+              {/* Subtext */}
+              <p className="text-sm text-slate-400 font-normal leading-relaxed mb-7 max-w-sm">
+                Are you sure you want to add this new product to the <strong className="text-white font-semibold">ArmourCraft</strong> catalog and publish it live?
+              </p>
+
+              {/* Action Buttons */}
+              <div className="space-y-3 w-full">
+                <button
+                  type="button"
+                  onClick={handleConfirmAction}
+                  className="w-full py-3 px-4 rounded-xl bg-[#1264e8] hover:bg-blue-600 active:scale-[0.99] text-white font-bold text-sm sm:text-base shadow-lg shadow-blue-600/30 transition-all cursor-pointer"
+                >
+                  Yes, Add Product
+                </button>
+                <button
+                  type="button"
+                  onClick={handleDismissConfirmation}
+                  className="w-full py-3 px-4 rounded-xl bg-[#181d27] hover:bg-[#1f2633] text-slate-300 hover:text-white font-semibold text-sm sm:text-base border border-slate-700/60 transition-colors cursor-pointer"
+                >
+                  Keep Editing
+                </button>
+              </div>
+            </div>
+          )}
+        </div>
+      )}
+    </>
+  )
 
   return typeof document !== 'undefined'
     ? createPortal(modalContent, document.body)
