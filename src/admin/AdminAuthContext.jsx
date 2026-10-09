@@ -239,6 +239,17 @@ export function AdminAuthProvider({ children }) {
     setProducts((prev) => prev.filter((p) => p.id !== id))
   }
 
+  // Category batch update / cascade delete
+  const renameCategory = (oldCategory, newCategory) => {
+    setProducts((prev) =>
+      prev.map((p) => (p.category === oldCategory ? { ...p, category: newCategory } : p))
+    )
+  }
+
+  const deleteCategoryCascade = (categoryToDelete) => {
+    setProducts((prev) => prev.filter((p) => p.category !== categoryToDelete))
+  }
+
   // Order status update
   const updateOrderStatus = (orderId, newStatus) => {
     setOrders((prev) =>
@@ -457,6 +468,8 @@ export function AdminAuthProvider({ children }) {
         addProduct,
         updateProduct,
         deleteProduct,
+        renameCategory,
+        deleteCategoryCascade,
         orders,
         updateOrderStatus
       }}

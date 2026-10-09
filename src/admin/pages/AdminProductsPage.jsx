@@ -19,42 +19,61 @@ import AddProductModal from '../dashboard/AddProductModal'
 import { supabase } from '../../../lib/supabaseClient'
 
 export default function AdminProductsPage() {
-  const { products, addProduct, updateProduct, deleteProduct } = useAdminAuth()
+  const {
+    products,
+    addProduct,
+    updateProduct,
+    deleteProduct,
+    renameCategory,
+    deleteCategoryCascade
+  } = useAdminAuth()
 
   // 1. Interactive Filters State
   const [activeCategory, setActiveCategory] = useState('All Products')
   const [activeStance, setActiveStance] = useState('All Stances')
   const [searchQuery, setSearchQuery] = useState('')
 
-  // 2. Custom Categories management with persistent storage
-  const [customCategories, setCustomCategories] = useState(() => {
-    if (typeof window === 'undefined') return []
-    try {
-      const saved = window.localStorage.getItem('armourcraft_admin_custom_categories')
-      return saved ? JSON.parse(saved) : []
-    } catch {
-      return []
-    }
-  })
+  // 2. Categories List Management with persistent storage
+  const CATEGORIES_STORAGE_KEY = 'armourcraft_admin_categories_list_v2'
+  const defaultInitialCategories = ['All Products', 'Thigh Guards', 'Inner Pads', 'Leg Guards', 'chest guards']
 
-  // Persist custom categories
-  useEffect(() => {
-    if (typeof window === 'undefined') return
+  const [categoriesList, setCategoriesList] = useState(() => {
+    if (typeof window === 'undefined') return defaultInitialCategories
     try {
-      window.localStorage.setItem(
-        'armourcraft_admin_custom_categories',
-        JSON.stringify(customCategories)
-      )
+      const saved = window.localStorage.getItem(CATEGORIES_STORAGE_KEY)
+      if (saved) {
+        const parsed = JSON.parse(saved)
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          const withoutAll = parsed.filter((c) => c !== 'All Products')
+          return ['All Products', ...withoutAll]
+        }
+      }
+      // Migrate from old customCategories if present
+      const oldSaved = window.localStorage.getItem('armourcraft_admin_custom_categories')
+      if (oldSaved) {
+        const oldParsed = JSON.parse(oldSaved)
+        if (Array.isArray(oldParsed)) {
+          const merged = new Set([...defaultInitialCategories, ...oldParsed])
+          return Array.from(merged)
+        }
+      }
     } catch {
       // ignore
     }
-  }, [customCategories])
+    return defaultInitialCategories
+  })
 
-  const baseCategories = ['All Products', 'Thigh Guards', 'Inner Pads', 'Leg Guards']
-  const allCategories = useMemo(() => {
-    const set = new Set([...baseCategories, ...customCategories])
-    return Array.from(set)
-  }, [customCategories])
+  // Persist categories list
+  useEffect(() => {
+    if (typeof window === 'undefined') return
+    try {
+      window.localStorage.setItem(CATEGORIES_STORAGE_KEY, JSON.stringify(categoriesList))
+    } catch {
+      // ignore
+    }
+  }, [categoriesList])
+
+  const allCategories = categoriesList
 
   const stances = ['All Stances', 'Right-Handed', 'Left-Handed']
 
@@ -63,6 +82,8 @@ export default function AdminProductsPage() {
   const [editingProduct, setEditingProduct] = useState(null)
   const [isAddTypeModalOpen, setIsAddTypeModalOpen] = useState(false)
   const [newTypeName, setNewTypeName] = useState('')
+  const [editingCategory, setEditingCategory] = useState(null)
+  const [editCategoryName, setEditCategoryName] = useState('')
   const [deleteConfirmProduct, setDeleteConfirmProduct] = useState(null)
   const [isDeleting, setIsDeleting] = useState(false)
   const [toastMessage, setToastMessage] = useState(null)
@@ -153,8 +174,8 @@ export default function AdminProductsPage() {
     const trimmed = newTypeName.trim()
     if (!trimmed) return
 
-    if (!allCategories.includes(trimmed)) {
-      setCustomCategories((prev) => [...prev, trimmed])
+    if (!categoriesList.includes(trimmed)) {
+      setCategoriesList((prev) => [...prev, trimmed])
       setActiveCategory(trimmed)
       showToast(`Created new product type "${trimmed}"!`)
     } else {
@@ -164,6 +185,74 @@ export default function AdminProductsPage() {
 
     setNewTypeName('')
     setIsAddTypeModalOpen(false)
+  }
+
+  // Open Edit Category Modal
+  const handleOpenEditCategory = (cat) => {
+    setEditingCategory(cat)
+    setEditCategoryName(cat)
+  }
+
+  // Save Renamed Category Type
+  const handleSaveEditCategory = async (e) => {
+    e.preventDefault()
+    const trimmed = editCategoryName.trim()
+    if (!trimmed || !editingCategory) return
+
+    if (trimmed === editingCategory) {
+      setEditingCategory(null)
+      return
+    }
+
+    // 1. Update in categories list
+    setCategoriesList((prev) =>
+      prev.map((c) => (c === editingCategory ? trimmed : c))
+    )
+
+    // 2. Update activeCategory if it was the edited one
+    if (activeCategory === editingCategory) {
+      setActiveCategory(trimmed)
+    }
+
+    // 3. Update all products belonging to this category in local state
+    renameCategory(editingCategory, trimmed)
+
+    // 4. Update all products in Supabase
+    try {
+      if (supabase && typeof supabase.from === 'function') {
+        await supabase.from('products').update({ category: trimmed }).eq('category', editingCategory)
+      }
+    } catch (err) {
+      console.info('Supabase category rename notice:', err?.message || err)
+    }
+
+    showToast(`Updated category to "${trimmed}"!`)
+    setEditingCategory(null)
+  }
+
+  // Delete Category (Cascade Delete all associated products instantly)
+  const handleDeleteCategory = async (categoryToDelete) => {
+    // 1. Remove category from category list
+    setCategoriesList((prev) => prev.filter((c) => c !== categoryToDelete))
+
+    // 2. If activeCategory was this category, switch back to 'All Products'
+    if (activeCategory === categoryToDelete) {
+      setActiveCategory('All Products')
+    }
+
+    // 3. Cascade delete all products belonging to this category from local state
+    deleteCategoryCascade(categoryToDelete)
+
+    // 4. Cascade delete all products from Supabase instantly
+    try {
+      if (supabase && typeof supabase.from === 'function') {
+        await supabase.from('products').delete().eq('category', categoryToDelete)
+      }
+    } catch (err) {
+      console.info('Supabase category cascade delete notice:', err?.message || err)
+    }
+
+    showToast(`Deleted category "${categoryToDelete}" and all associated products.`)
   }
 
   // Delete Product from State & Supabase
@@ -247,18 +336,52 @@ export default function AdminProductsPage() {
             {allCategories.map((cat) => {
               const isSelected = activeCategory === cat
               return (
-                <button
+                <div
                   key={cat}
-                  type="button"
                   onClick={() => setActiveCategory(cat)}
-                  className={`px-5 py-2 rounded-full text-xs sm:text-sm font-semibold transition-all duration-150 cursor-pointer whitespace-nowrap ${
+                  className={`inline-flex items-center gap-1.5 px-4 py-2 rounded-full text-xs sm:text-sm font-semibold transition-all duration-150 cursor-pointer whitespace-nowrap select-none group ${
                     isSelected
                       ? 'bg-[#1965eb] text-white font-bold shadow-lg shadow-blue-600/30'
                       : 'bg-[#0d1527] hover:bg-[#14203a] text-slate-300 hover:text-white border border-slate-800/80'
                   }`}
                 >
-                  {cat}
-                </button>
+                  <span>{cat}</span>
+
+                  {cat !== 'All Products' && (
+                    <div className="flex items-center gap-0.5 ml-1 pl-1 border-l border-slate-700/60 opacity-80 group-hover:opacity-100 transition-opacity">
+                      <button
+                        type="button"
+                        onClick={(e) => {
+                          e.stopPropagation()
+                          handleOpenEditCategory(cat)
+                        }}
+                        className={`p-1 rounded hover:scale-110 transition-transform ${
+                          isSelected
+                            ? 'text-white/80 hover:text-white hover:bg-white/20'
+                            : 'text-slate-400 hover:text-blue-400 hover:bg-blue-500/20'
+                        }`}
+                        title={`Edit category ${cat}`}
+                      >
+                        <Edit2 className="w-3 h-3 stroke-[2.2]" />
+                      </button>
+                      <button
+                        type="button"
+                        onClick={(e) => {
+                          e.stopPropagation()
+                          handleDeleteCategory(cat)
+                        }}
+                        className={`p-1 rounded hover:scale-110 transition-transform ${
+                          isSelected
+                            ? 'text-white/80 hover:text-rose-200 hover:bg-rose-500/30'
+                            : 'text-slate-400 hover:text-rose-400 hover:bg-rose-500/20'
+                        }`}
+                        title={`Delete category ${cat}`}
+                      >
+                        <Trash2 className="w-3 h-3 stroke-[2.2]" />
+                      </button>
+                    </div>
+                  )}
+                </div>
               )
             })}
           </div>
@@ -493,6 +616,77 @@ export default function AdminProductsPage() {
                   className="px-6 py-2.5 rounded-xl bg-[#1965eb] hover:bg-blue-600 text-white text-xs font-bold uppercase tracking-wider shadow-md shadow-blue-600/30 cursor-pointer"
                 >
                   Create Product Type
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>,
+        document.body
+      )}
+
+      {/* ========================================================================= */}
+      {/* 4b. EDIT CATEGORY TYPE MODAL                                              */}
+      {/* ========================================================================= */}
+      {editingCategory && typeof document !== 'undefined' && createPortal(
+        <div
+          className="fixed inset-0 z-[100000] flex items-center justify-center p-4 md:p-8 bg-black/75 backdrop-blur-md animate-in fade-in"
+          onClick={() => setEditingCategory(null)}
+        >
+          <div
+            className="w-full max-w-md bg-[#0B0F17] border border-slate-800/80 rounded-3xl p-6 sm:p-7 shadow-2xl text-white relative animate-in zoom-in-95"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="flex items-center justify-between pb-4 border-b border-slate-800 mb-5">
+              <div className="flex items-center gap-2.5">
+                <div className="w-8 h-8 rounded-lg bg-blue-500/10 border border-blue-500/30 flex items-center justify-center text-blue-400">
+                  <Edit2 className="w-4 h-4" />
+                </div>
+                <h3 className="text-base font-bold text-white tracking-tight">
+                  Edit Category Type
+                </h3>
+              </div>
+              <button
+                type="button"
+                onClick={() => setEditingCategory(null)}
+                className="p-1.5 text-slate-400 hover:text-white rounded-lg cursor-pointer"
+                title="Close"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            <form onSubmit={handleSaveEditCategory} className="space-y-4">
+              <div>
+                <label className="block text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1">
+                  Category Name *
+                </label>
+                <input
+                  type="text"
+                  required
+                  autoFocus
+                  value={editCategoryName}
+                  onChange={(e) => setEditCategoryName(e.target.value)}
+                  placeholder="e.g. Chest Guards, Batting Gloves"
+                  className="w-full bg-[#080d19] border border-slate-800 text-white rounded-xl px-3.5 py-2.5 text-xs sm:text-sm focus:border-blue-500 focus:outline-none"
+                />
+                <p className="text-[11px] text-slate-400 mt-2 font-normal leading-relaxed">
+                  Renaming this category will automatically update the category and all associated products in your catalog.
+                </p>
+              </div>
+
+              <div className="pt-3 flex items-center justify-end gap-3 border-t border-slate-800 mt-5">
+                <button
+                  type="button"
+                  onClick={() => setEditingCategory(null)}
+                  className="px-4 py-2.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-slate-400 hover:text-white text-xs font-bold uppercase cursor-pointer"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  className="px-6 py-2.5 rounded-xl bg-[#1965eb] hover:bg-blue-600 text-white text-xs font-bold uppercase tracking-wider shadow-md shadow-blue-600/30 cursor-pointer"
+                >
+                  Update Category
                 </button>
               </div>
             </form>
