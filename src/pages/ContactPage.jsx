@@ -1,33 +1,44 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { Send, Headphones, Users, CheckCircle2, ChevronDown } from 'lucide-react'
 import CountryPhoneInput from '../components/CountryPhoneInput'
-
-const faqItems = [
-  {
-    question: 'How do I select the right stance (LH/RH)?',
-    answer:
-      'Our protection is ergonomically designed for either Right-Handed (RH) or Left-Handed (LH) stances. RH protection guards the front of the left thigh and the back of the right thigh. Ensure you select your batting stance during checkout.'
-  },
-  {
-    question: 'Can I customize my squad number (e.g., DK 21)?',
-    answer:
-      'Yes! You can specify your custom squad initials and player number during checkout or via direct WhatsApp confirmation for custom printing.'
-  },
-  {
-    question: 'What are the standard shipping times?',
-    answer:
-      'Standard domestic delivery within Pakistan takes 2-4 business days. International bulk academy shipments usually take 5-7 business days.'
-  },
-  {
-    question: 'What is your exchange policy for sizing issues?',
-    answer:
-      'We offer a hassle-free 7-day exchange window if your thigh guard size or fit needs adjustment, provided the item is unused.'
-  }
-]
+import { getStoredFaqs } from '../data/faqsData'
+import { supabase } from '../../lib/supabaseClient'
 
 export default function ContactPage() {
   const [openFaq, setOpenFaq] = useState(0)
+  const [faqList, setFaqList] = useState(() => getStoredFaqs())
   const [countryCode, setCountryCode] = useState('+92')
+
+  useEffect(() => {
+    // 1. Sync on custom event
+    const handleUpdate = (e) => {
+      if (Array.isArray(e.detail) && e.detail.length > 0) {
+        setFaqList(e.detail)
+      }
+    }
+    window.addEventListener('armourcraft:faqs-updated', handleUpdate)
+
+    // 2. Fetch from Supabase
+    async function fetchFromSupabase() {
+      try {
+        if (supabase && typeof supabase.from === 'function') {
+          const { data, error } = await supabase
+            .from('faqs')
+            .select('*')
+            .order('id', { ascending: true })
+
+          if (!error && Array.isArray(data) && data.length > 0) {
+            setFaqList(data)
+          }
+        }
+      } catch (err) {
+        console.info('ContactPage FAQ fetch notice:', err?.message || err)
+      }
+    }
+    fetchFromSupabase()
+
+    return () => window.removeEventListener('armourcraft:faqs-updated', handleUpdate)
+  }, [])
   const [formData, setFormData] = useState({
     fullName: '',
     email: '',
@@ -330,7 +341,7 @@ export default function ContactPage() {
 
           {/* Accordion Cards List */}
           <div className="space-y-4">
-            {faqItems.map((item, idx) => {
+            {faqList.map((item, idx) => {
               const isOpen = openFaq === idx
               return (
                 <div

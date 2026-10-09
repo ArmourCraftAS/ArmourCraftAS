@@ -3,6 +3,7 @@ import TopBarHeader from '../dashboard/TopBarHeader'
 import CanvasPreview from '../dashboard/CanvasPreview'
 import AdminProductsPage from './AdminProductsPage'
 import AdminBlogsPage from './AdminBlogsPage'
+import AdminFaqsPage from './AdminFaqsPage'
 import { CheckCircle2, X, AlertCircle } from 'lucide-react'
 
 export default function AdminDashboardPage({ onNavigate }) {
@@ -102,6 +103,8 @@ export default function AdminDashboardPage({ onNavigate }) {
           <AdminProductsPage onNavigate={onNavigate} />
         ) : (activeTab === 'Blog' || activeTab === 'blog' || activePage === 'Blog / Insights') ? (
           <AdminBlogsPage onNavigate={onNavigate} />
+        ) : (activeTab === 'FAQs' || activeTab === 'faqs') ? (
+          <AdminFaqsPage onNavigate={onNavigate} />
         ) : (
           <CanvasPreview
             activePage={activePage}

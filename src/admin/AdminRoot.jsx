@@ -8,6 +8,7 @@ import AdminResetPasswordPage from './pages/AdminResetPasswordPage'
 import AdminDashboardPage from './pages/AdminDashboardPage'
 import AdminProductsPage from './pages/AdminProductsPage'
 import AdminBlogsPage from './pages/AdminBlogsPage'
+import AdminFaqsPage from './pages/AdminFaqsPage'
 import AdminOrdersPage from './pages/AdminOrdersPage'
 
 function AdminRouter({ currentPath, onNavigate }) {
@@ -68,6 +69,8 @@ function AdminRouter({ currentPath, onNavigate }) {
         <AdminProductsPage onNavigate={onNavigate} />
       ) : normalizedPath === '/admin/blogs' || normalizedPath === '/admin/blog' ? (
         <AdminBlogsPage onNavigate={onNavigate} />
+      ) : normalizedPath === '/admin/faqs' || normalizedPath === '/admin/faq' ? (
+        <AdminFaqsPage onNavigate={onNavigate} />
       ) : normalizedPath === '/admin/orders' ? (
         <AdminOrdersPage onNavigate={onNavigate} />
       ) : (

@@ -98,8 +98,8 @@ export default function TopBarHeader({
 
   const handleTabClick = (tab) => {
     if (setActiveTab) setActiveTab(tab.id)
-    if (tab.id === 'product') {
-      // Direct dedicated Product Management View
+    if (tab.id === 'product' || tab.id === 'FAQs' || tab.id === 'faqs') {
+      // Direct dedicated Product & FAQs Management Views
       return
     }
     if (tab.pageId && onSelectPage) {

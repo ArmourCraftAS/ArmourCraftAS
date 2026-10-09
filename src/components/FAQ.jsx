@@ -1,37 +1,43 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { Plus, Minus } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
+import { getStoredFaqs } from '../data/faqsData'
+import { supabase } from '../../lib/supabaseClient'
 
 export default function FAQ() {
-  // Item 2 (index 1) is expanded by default to match the reference design
-  const [openIndex, setOpenIndex] = useState(1)
+  const [openIndex, setOpenIndex] = useState(0)
+  const [faqItems, setFaqItems] = useState(() => getStoredFaqs())
 
-  const faqItems = [
-    {
-      id: 1,
-      question: 'What is the highest ball speed these guards can handle?',
-      answer:
-        'Our guards are rigorously lab-tested and match-certified against hard season leather cricket balls delivered at speeds in excess of 160+ km/h (99+ mph), offering maximum impact dispersion and shock absorption.'
-    },
-    {
-      id: 2,
-      question: 'Can I use the outer guard without the inner guard?',
-      answer:
-        'Yes, all our guards are modular. You can wear the Carbon Flex outer guard independently for practice or combine it with the Aero Inner for full match protection.'
-    },
-    {
-      id: 3,
-      question: 'How do I choose between Right-Handed and Left-Handed?',
-      answer:
-        'Right-handed batsmen wear the primary outer guard on their left (front) thigh facing the bowler, while left-handed batsmen wear it on their right thigh. Select your batting stance during checkout to get the anatomically contoured fit.'
-    },
-    {
-      id: 4,
-      question: 'What is your warranty policy for strap breakage?',
-      answer:
-        'We offer a 1-year comprehensive replacement guarantee on all straps, elastic bands, and velcro closures. If your straps experience any fraying or breakage under match conditions, we replace them free of charge.'
+  useEffect(() => {
+    // 1. Sync on custom event
+    const handleUpdate = (e) => {
+      if (Array.isArray(e.detail) && e.detail.length > 0) {
+        setFaqItems(e.detail)
+      }
     }
-  ]
+    window.addEventListener('armourcraft:faqs-updated', handleUpdate)
+
+    // 2. Fetch from Supabase
+    async function fetchFromSupabase() {
+      try {
+        if (supabase && typeof supabase.from === 'function') {
+          const { data, error } = await supabase
+            .from('faqs')
+            .select('*')
+            .order('id', { ascending: true })
+
+          if (!error && Array.isArray(data) && data.length > 0) {
+            setFaqItems(data)
+          }
+        }
+      } catch (err) {
+        console.info('Storefront FAQ fetch notice:', err?.message || err)
+      }
+    }
+    fetchFromSupabase()
+
+    return () => window.removeEventListener('armourcraft:faqs-updated', handleUpdate)
+  }, [])
 
   const toggleItem = (index) => {
     setOpenIndex(openIndex === index ? null : index)
