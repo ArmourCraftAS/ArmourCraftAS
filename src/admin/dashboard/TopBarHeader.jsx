@@ -120,7 +120,10 @@ export default function TopBarHeader({
       <div className="flex items-center gap-3">
         <button
           type="button"
-          onClick={() => onSelectPage && onSelectPage('Home')}
+          onClick={() => {
+            if (setActiveTab) setActiveTab('Home')
+            if (onSelectPage) onSelectPage('Home')
+          }}
           className="flex items-center gap-2.5 group cursor-pointer text-left"
           title="ARMOURCRAFT AS - Admin Visual Studio"
         >

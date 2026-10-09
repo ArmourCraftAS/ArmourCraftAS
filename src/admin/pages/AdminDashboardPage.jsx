@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import TopBarHeader from '../dashboard/TopBarHeader'
 import CanvasPreview from '../dashboard/CanvasPreview'
 import AdminProductsPage from './AdminProductsPage'
+import AdminBlogsPage from './AdminBlogsPage'
 import { CheckCircle2, X, AlertCircle } from 'lucide-react'
 
 export default function AdminDashboardPage({ onNavigate }) {
@@ -99,6 +100,8 @@ export default function AdminDashboardPage({ onNavigate }) {
       <main className="w-full flex-1 h-[calc(100vh-4rem)] overflow-y-auto overflow-x-hidden relative z-0 scroll-smooth custom-scrollbar">
         {activeTab === 'product' ? (
           <AdminProductsPage onNavigate={onNavigate} />
+        ) : (activeTab === 'Blog' || activeTab === 'blog' || activePage === 'Blog / Insights') ? (
+          <AdminBlogsPage onNavigate={onNavigate} />
         ) : (
           <CanvasPreview
             activePage={activePage}
