@@ -325,7 +325,7 @@ export default function AddProductModal({
             {/* ===================================================================== */}
             {/* RIGHT PANEL: MEDIA PREVIEW & UPLOAD                                   */}
             {/* ===================================================================== */}
-            <div className="lg:col-span-5 flex flex-col justify-between space-y-4">
+            <div className="lg:col-span-5 flex flex-col space-y-4">
               
               {/* Header */}
               <div>
@@ -338,91 +338,62 @@ export default function AddProductModal({
               </div>
 
               {/* Interactive Image Upload / Preview Box */}
-              <div className="space-y-3">
-                <div
-                  onDragOver={(e) => {
-                    e.preventDefault()
-                    setIsDragging(true)
-                  }}
-                  onDragLeave={() => setIsDragging(false)}
-                  onDrop={handleDrop}
-                  onClick={() => fileInputRef.current?.click()}
-                  className={`w-full aspect-square sm:h-64 rounded-2xl bg-[#070b14] border transition-all duration-200 overflow-hidden flex flex-col justify-between relative cursor-pointer group ${
-                    isDragging
-                      ? 'border-blue-500 bg-blue-950/20 shadow-xl shadow-blue-500/20'
-                      : 'border-slate-800/90 hover:border-slate-700'
-                  }`}
-                >
-                  {/* Center Content: Image or Upload Cloud Icon */}
-                  <div className="flex-1 w-full flex flex-col items-center justify-center p-4">
-                    {image ? (
-                      <img
-                        src={image}
-                        alt={imageName || 'Product Visual'}
-                        className="w-full h-full object-contain filter drop-shadow-[0_4px_16px_rgba(0,0,0,0.8)] select-none"
-                      />
-                    ) : (
-                      <div className="flex flex-col items-center justify-center text-center">
-                        <div className="relative mb-2">
-                          <CloudUpload className="w-16 h-16 text-[#8ba2cb]/80 group-hover:text-blue-400 transition-colors stroke-[1.2]" />
-                        </div>
-                        <span className="text-sm font-semibold text-slate-300">
-                          Upload
-                        </span>
-                      </div>
-                    )}
-                  </div>
-
-                  {/* Bottom Image Name Bar */}
-                  <div
-                    className="w-full bg-[#050811]/90 border-t border-slate-800/80 px-4 py-2 flex items-center justify-between"
-                    onClick={(e) => e.stopPropagation()}
-                  >
-                    <input
-                      type="text"
-                      value={imageName}
-                      onChange={(e) => setImageName(e.target.value)}
-                      placeholder="image name"
-                      className="w-full bg-transparent text-xs text-slate-300 placeholder-slate-600 outline-none truncate"
+              <div
+                onDragOver={(e) => {
+                  e.preventDefault()
+                  setIsDragging(true)
+                }}
+                onDragLeave={() => setIsDragging(false)}
+                onDrop={handleDrop}
+                onClick={() => fileInputRef.current?.click()}
+                className={`w-full aspect-square sm:h-64 rounded-2xl bg-[#070b14] border transition-all duration-200 overflow-hidden flex flex-col justify-between relative cursor-pointer group ${
+                  isDragging
+                    ? 'border-blue-500 bg-blue-950/20 shadow-xl shadow-blue-500/20'
+                    : 'border-slate-800/90 hover:border-slate-700'
+                }`}
+              >
+                {/* Center Content: Image or Upload Cloud Icon */}
+                <div className="flex-1 w-full flex flex-col items-center justify-center p-4">
+                  {image ? (
+                    <img
+                      src={image}
+                      alt={imageName || 'Product Visual'}
+                      className="w-full h-full object-contain filter drop-shadow-[0_4px_16px_rgba(0,0,0,0.8)] select-none"
                     />
-                    {image && (
-                      <button
-                        type="button"
-                        onClick={handleRemoveImage}
-                        className="text-slate-500 hover:text-rose-400 p-1 rounded transition-colors"
-                        title="Clear"
-                      >
-                        <X className="w-3.5 h-3.5" />
-                      </button>
-                    )}
-                  </div>
+                  ) : (
+                    <div className="flex flex-col items-center justify-center text-center">
+                      <div className="relative mb-2">
+                        <CloudUpload className="w-16 h-16 text-[#8ba2cb]/80 group-hover:text-blue-400 transition-colors stroke-[1.2]" />
+                      </div>
+                      <span className="text-sm font-semibold text-slate-300">
+                        Upload
+                      </span>
+                    </div>
+                  )}
                 </div>
 
-                {/* Quick Image Presets Selector */}
-                <div className="flex items-center gap-1.5 flex-wrap pt-0.5">
-                  <span className="text-[10px] text-slate-500 uppercase tracking-wider font-semibold mr-1">
-                    PRESETS:
-                  </span>
-                  {[
-                    { name: 'Thigh Guard', path: '/images/product_thigh_guard.png' },
-                    { name: 'Leg Guard', path: '/images/product_leg_guard.png' },
-                    { name: 'Inner Pad', path: '/images/advantage_carbon.png' },
-                    { name: 'Chest Plate', path: '/images/aegis_chest_protector.jpg' },
-                    { name: 'Batting Gloves', path: '/images/shadow_batting_gloves.jpg' },
-                    { name: 'Aero Helmet', path: '/images/nextgen_batsman_helmet.jpg' }
-                  ].map((preset) => (
+                {/* Bottom Image Name Bar */}
+                <div
+                  className="w-full bg-[#050811]/90 border-t border-slate-800/80 px-4 py-2 flex items-center justify-between"
+                  onClick={(e) => e.stopPropagation()}
+                >
+                  <input
+                    type="text"
+                    value={imageName}
+                    onChange={(e) => setImageName(e.target.value)}
+                    placeholder="image name"
+                    className="w-full bg-transparent text-xs text-slate-300 placeholder-slate-600 outline-none truncate"
+                  />
+                  {image && (
                     <button
-                      key={preset.name}
                       type="button"
-                      onClick={() => {
-                        setImage(preset.path)
-                        setImageName(preset.name.toLowerCase().replace(/\s+/g, '_') + '.png')
-                      }}
-                      className="px-2 py-0.5 rounded bg-[#070b14] hover:bg-slate-800 border border-slate-800 text-[10px] text-slate-400 hover:text-white cursor-pointer transition-colors"
+                      onClick={handleRemoveImage}
+                      className="text-slate-500 hover:text-rose-400 p-1 rounded transition-colors"
+                      title="Clear"
                     >
-                      {preset.name}
+                      <X className="w-3.5 h-3.5" />
                     </button>
-                  ))}
+                  )}
                 </div>
               </div>
 
