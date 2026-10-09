@@ -303,20 +303,20 @@ export default function AddProductModal({
 
               </div>
 
-              {/* Action Buttons (Bottom Left): Discard Changes & Save & Update Live */}
+              {/* Action Buttons (Bottom Left): Discard Changes / Cancel & Save & Update Live / Add Products */}
               <div className="flex items-center justify-end gap-3 pt-6 mt-2">
                 <button
                   type="button"
                   onClick={onClose}
                   className="px-5 py-2.5 rounded-xl bg-[#0c1424] hover:bg-[#131f38] border border-slate-700/70 text-slate-300 hover:text-white text-xs sm:text-sm font-semibold transition-colors cursor-pointer"
                 >
-                  Discard Changes
+                  {isEditMode ? 'Discard Changes' : 'Cancel'}
                 </button>
                 <button
                   type="submit"
                   className="px-6 py-2.5 rounded-xl bg-[#1d68ed] hover:bg-blue-600 active:scale-[0.98] text-white text-xs sm:text-sm font-bold shadow-lg shadow-blue-600/30 transition-all cursor-pointer"
                 >
-                  Save & Update Live
+                  {isEditMode ? 'Save & Update Live' : 'Add Products'}
                 </button>
               </div>
 
@@ -399,14 +399,14 @@ export default function AddProductModal({
 
               {/* Media Action Buttons */}
               <div className="space-y-2.5 pt-1">
-                {/* + Replace Product Image button */}
+                {/* + Replace / + Add image button */}
                 <button
                   type="button"
                   onClick={() => fileInputRef.current?.click()}
                   className="w-full py-2.5 rounded-xl bg-[#0c1424] hover:bg-[#131f38] border border-slate-700/70 text-white font-bold text-xs sm:text-sm flex items-center justify-center gap-2 cursor-pointer transition-all active:scale-[0.99]"
                 >
                   <Plus className="w-4 h-4 stroke-[2.5]" />
-                  <span>Replace Product Image</span>
+                  <span>{isEditMode ? 'Replace Product Image' : 'Add image'}</span>
                 </button>
 
                 {/* Remove Product Image red outline button */}
