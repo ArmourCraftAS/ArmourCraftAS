@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from 'react'
+import React, { useState, useEffect } from 'react'
 import { createPortal } from 'react-dom'
 import {
   Plus,
@@ -7,10 +7,8 @@ import {
   X,
   ArrowRight,
   AlertTriangle,
-  ShieldAlert,
   CheckCircle2,
-  BookOpen,
-  Image as ImageIcon
+  BookOpen
 } from 'lucide-react'
 import { initialBlogs } from '../../data/blogsData'
 import { supabase } from '../../../lib/supabaseClient'
@@ -203,7 +201,7 @@ export default function AdminBlogsPage({ onNavigate }) {
 
     setIsDeleting(false)
     setDeleteConfirmBlog(null)
-    showToast(`Deleted blog "${targetTitle}".`)
+    showToast(`Blog post "${targetTitle}" deleted successfully.`)
   }
 
   return (
@@ -543,44 +541,41 @@ export default function AdminBlogsPage({ onNavigate }) {
       )}
 
       {/* ========================================================================= */}
-      {/* 5. DELETE BLOG CONFIRMATION MODAL                                         */}
+      {/* 5. DELETE BLOG POST CONFIRMATION POPUP MODAL (image_5ceca0.png)           */}
       {/* ========================================================================= */}
       {deleteConfirmBlog && typeof document !== 'undefined' && createPortal(
         <div
           className="fixed inset-0 z-[100000] flex items-center justify-center p-4 bg-black/80 backdrop-blur-md animate-in fade-in"
-          onClick={() => setDeleteConfirmBlog(null)}
+          onClick={() => !isDeleting && setDeleteConfirmBlog(null)}
         >
           <div
-            className="w-full max-w-md bg-[#0B0F17] border border-slate-800/80 rounded-3xl p-6 sm:p-7 shadow-2xl text-white relative animate-in zoom-in-95"
+            className="w-full max-w-[460px] bg-[#0c1322] border border-slate-800/90 rounded-3xl p-6 sm:p-7 shadow-2xl text-white relative animate-in zoom-in-95"
             onClick={(e) => e.stopPropagation()}
           >
-            <div className="flex items-center gap-3.5 mb-5">
-              <div className="w-10 h-10 rounded-full bg-rose-500/10 border border-rose-500/20 flex items-center justify-center text-rose-500 shrink-0">
-                <AlertTriangle className="w-5 h-5 text-rose-500 stroke-[2.2]" />
+            {/* Top Header Icon: Red warning triangle circle icon placed at top center */}
+            <div className="flex justify-center mb-5">
+              <div className="w-14 h-14 rounded-full bg-[#241114] border border-red-500/20 flex items-center justify-center shadow-lg shadow-red-950/40">
+                <AlertTriangle className="w-6 h-6 text-[#ef4444] stroke-[2.2] fill-[#ef4444]/20" />
               </div>
-              <h3 className="text-lg sm:text-xl font-bold text-white tracking-tight">
-                Delete Blog Post
-              </h3>
             </div>
 
-            <p className="text-sm text-slate-300 font-normal leading-relaxed mb-5">
-              Are you sure you want to delete the blog post{' '}
-              <span className="font-bold text-white">“{deleteConfirmBlog.title}”</span>?
+            {/* Modal Title: Bold centered header Delete Blog Post? */}
+            <h3 className="text-xl sm:text-2xl font-bold text-white text-center tracking-tight mb-3">
+              Delete Blog Post?
+            </h3>
+
+            {/* Dynamic Blog Title Text */}
+            <p className="text-sm text-slate-400 text-center leading-relaxed px-2 mb-6">
+              Are you sure you want to delete <span className="font-bold text-white">"{deleteConfirmBlog.title}"</span>? This action cannot be undone and will permanently remove it from the live site.
             </p>
 
-            <div className="bg-[#221015] border border-rose-900/60 rounded-xl p-4 mb-6 flex items-start gap-3.5">
-              <ShieldAlert className="w-5 h-5 text-rose-400 shrink-0 mt-0.5" />
-              <p className="text-xs text-rose-300 leading-relaxed font-normal">
-                This action is permanent and cannot be undone. The post will be immediately removed from the live website and insights archive.
-              </p>
-            </div>
-
-            <div className="flex items-center justify-end gap-3">
+            {/* Modal Action Workflows: Cancel & Delete Post */}
+            <div className="border-t border-slate-800/80 pt-5 flex items-center justify-end gap-3">
               <button
                 type="button"
                 onClick={() => setDeleteConfirmBlog(null)}
                 disabled={isDeleting}
-                className="px-5 py-2.5 rounded-xl bg-[#131d31] hover:bg-[#1a2842] border border-slate-700/60 text-slate-300 hover:text-white text-xs sm:text-sm font-semibold transition-colors cursor-pointer disabled:opacity-50"
+                className="px-6 py-2.5 rounded-xl bg-[#111726] hover:bg-[#182238] border border-slate-700/60 text-slate-300 hover:text-white text-sm font-semibold transition-colors cursor-pointer disabled:opacity-50"
               >
                 Cancel
               </button>
@@ -588,10 +583,9 @@ export default function AdminBlogsPage({ onNavigate }) {
                 type="button"
                 onClick={handleConfirmDelete}
                 disabled={isDeleting}
-                className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-[#f04438] hover:bg-rose-600 text-white text-xs sm:text-sm font-bold shadow-lg shadow-rose-600/30 transition-all cursor-pointer disabled:opacity-50"
+                className="px-6 py-2.5 rounded-xl bg-[#e6392a] hover:bg-red-600 text-white text-sm font-bold shadow-lg shadow-red-600/30 transition-all cursor-pointer active:scale-[0.98] disabled:opacity-50"
               >
-                <Trash2 className="w-4 h-4 stroke-[2.2]" />
-                <span>{isDeleting ? 'Deleting...' : 'Delete Blog'}</span>
+                {isDeleting ? 'Deleting...' : 'Delete Post'}
               </button>
             </div>
           </div>
