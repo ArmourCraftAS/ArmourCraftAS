@@ -106,3 +106,53 @@ img.avatar-circle {
   animation: pulseGlow 3s ease-in-out infinite;
 }
 
+/* Card interactive glow & hover scaling */
+.card-glow {
+  position: relative;
+  overflow: hidden;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.card-glow:hover {
+  border-color: rgba(59, 130, 246, 0.5) !important;
+  box-shadow: 0 16px 36px -10px rgba(0, 0, 0, 0.8), 0 0 25px rgba(23, 98, 240, 0.25) !important;
+}
+
+/* Button click ripple & micro-bounce interaction */
+.btn-ripple {
+  position: relative;
+  overflow: hidden;
+  transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.btn-ripple:hover {
+  transform: translateY(-2px) scale(1.015);
+}
+.btn-ripple:active {
+  transform: translateY(0px) scale(0.975);
+}
+.btn-ripple::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 5px;
+  height: 5px;
+  background: rgba(255, 255, 255, 0.35);
+  opacity: 0;
+  border-radius: 100%;
+  transform: scale(1, 1) translate(-50%, -50%);
+  transform-origin: 50% 50%;
+}
+.btn-ripple:focus:not(:active)::after {
+  animation: ripple 0.6s ease-out;
+}
+@keyframes ripple {
+  0% {
+    transform: scale(0, 0) translate(-50%, -50%);
+    opacity: 0.5;
+  }
+  100% {
+    transform: scale(45, 45) translate(-50%, -50%);
+    opacity: 0;
+  }
+}
+

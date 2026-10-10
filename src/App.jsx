@@ -21,6 +21,8 @@ import CartToast from './components/CartToast'
 import { useCart } from './context/CartContext'
 import AdminRoot from './admin/AdminRoot'
 import { syncPublishedCmsFromSupabase } from './admin/cmsStore'
+import { AnimatePresence } from 'framer-motion'
+import { PageTransition } from './components/StorefrontMotion'
 
 export default function App() {
   const {
@@ -166,48 +168,52 @@ export default function App() {
       />
 
       {/* 2. Main Body: Switch between Home, Shop, What We Are, Blog, and Contact */}
-      <main className="flex-1">
-        {isShopRoute ? (
-          <ShopPage onAddToCart={handleOpenQuickAdd} />
-        ) : isWhatWeAreRoute ? (
-          <WhatWeArePage onNavigate={navigate} />
-        ) : isBlogDetailRoute ? (
-          <BlogDetailPage slug={blogSlug} onNavigate={navigate} />
-        ) : isBlogRoute ? (
-          <BlogPage onNavigate={navigate} />
-        ) : isContactRoute ? (
-          <ContactPage onNavigate={navigate} />
-        ) : (
-          <>
-            {/* Hero Section */}
-            <Hero onNavigate={navigate} />
+      <AnimatePresence mode="wait">
+        <PageTransition routeKey={normalizedPath} className="flex-1 flex flex-col">
+          <main className="flex-1">
+            {isShopRoute ? (
+              <ShopPage onAddToCart={handleOpenQuickAdd} />
+            ) : isWhatWeAreRoute ? (
+              <WhatWeArePage onNavigate={navigate} />
+            ) : isBlogDetailRoute ? (
+              <BlogDetailPage slug={blogSlug} onNavigate={navigate} />
+            ) : isBlogRoute ? (
+              <BlogPage onNavigate={navigate} />
+            ) : isContactRoute ? (
+              <ContactPage onNavigate={navigate} />
+            ) : (
+              <>
+                {/* Hero Section */}
+                <Hero onNavigate={navigate} />
 
-            {/* PRO MATCH ESSENTIALS Section */}
-            <ProMatchEssentials
-              onAddToCart={handleOpenQuickAdd}
-              onNavigate={navigate}
-            />
+                {/* PRO MATCH ESSENTIALS Section */}
+                <ProMatchEssentials
+                  onAddToCart={handleOpenQuickAdd}
+                  onNavigate={navigate}
+                />
 
-            {/* THE ARMOURCRAFT ADVANTAGE Section */}
-            <ArmourAdvantage />
+                {/* THE ARMOURCRAFT ADVANTAGE Section */}
+                <ArmourAdvantage />
 
-            {/* CUSTOM TEAM GEAR & JERSEY MATCHING Banner */}
-            <CustomGearBanner />
+                {/* CUSTOM TEAM GEAR & JERSEY MATCHING Banner */}
+                <CustomGearBanner />
 
-            {/* SmartThighs vs. The Others Comparison Table Section */}
-            <ComparisonTable />
+                {/* SmartThighs vs. The Others Comparison Table Section */}
+                <ComparisonTable />
 
-            {/* BROWSE THE SMART COLLECTION Section */}
-            <SmartCollection onAddToCart={handleOpenQuickAdd} />
+                {/* BROWSE THE SMART COLLECTION Section */}
+                <SmartCollection onAddToCart={handleOpenQuickAdd} />
 
-            {/* TRUSTED BY 10,000+ BATSMEN Testimonials Section */}
-            <Testimonials />
+                {/* TRUSTED BY 10,000+ BATSMEN Testimonials Section */}
+                <Testimonials />
 
-            {/* Frequently Asked Questions (FAQ) Section */}
-            <FAQ />
-          </>
-        )}
-      </main>
+                {/* Frequently Asked Questions (FAQ) Section */}
+                <FAQ />
+              </>
+            )}
+          </main>
+        </PageTransition>
+      </AnimatePresence>
 
       {/* 3. Global Persistent Footer */}
       <Footer onNavigate={navigate} currentPath={currentPath} />

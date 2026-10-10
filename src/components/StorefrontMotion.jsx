@@ -292,3 +292,82 @@ export function InteractiveButton({
     </motion.button>
   )
 }
+
+/**
+ * 7. GLOBAL STOREFRONT PAGE TRANSITION WRAPPER
+ */
+export function PageTransition({ children, routeKey, className = '' }) {
+  const enableMotion = useStorefrontMotion()
+
+  if (!enableMotion) {
+    return <div className={className}>{children}</div>
+  }
+
+  return (
+    <motion.div
+      key={routeKey}
+      initial={{ opacity: 0, y: 16 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0, y: -16 }}
+      transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
+      className={className}
+    >
+      {children}
+    </motion.div>
+  )
+}
+
+/**
+ * 8. SEQUENTIAL WORD-BY-WORD TEXT REVEAL
+ */
+export function TextReveal({
+  text,
+  delay = 0,
+  stagger = 0.045,
+  className = '',
+  wordClassName = 'inline-block'
+}) {
+  const enableMotion = useStorefrontMotion()
+
+  if (!enableMotion || !text || typeof text !== 'string') {
+    return <span className={className}>{text}</span>
+  }
+
+  const words = text.split(' ')
+
+  return (
+    <motion.span
+      className={`inline-block ${className}`}
+      initial="hidden"
+      whileInView="visible"
+      viewport={{ once: true }}
+      variants={{
+        hidden: {},
+        visible: {
+          transition: {
+            delayChildren: delay,
+            staggerChildren: stagger
+          }
+        }
+      }}
+    >
+      {words.map((word, i) => (
+        <motion.span
+          key={i}
+          className={`${wordClassName} mr-[0.26em] last:mr-0 inline-block`}
+          variants={{
+            hidden: { opacity: 0, y: 18, filter: 'blur(4px)' },
+            visible: {
+              opacity: 1,
+              y: 0,
+              filter: 'blur(0px)',
+              transition: { duration: 0.45, ease: [0.21, 0.47, 0.32, 0.98] }
+            }
+          }}
+        >
+          {word}
+        </motion.span>
+      ))}
+    </motion.span>
+  )
+}
