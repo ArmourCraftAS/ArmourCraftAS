@@ -87,21 +87,20 @@ export default function AdminLayout({ children, currentPath, onNavigate }) {
         {/* Top: Branding Logo & Header */}
         <div>
           <div className="h-20 px-6 flex items-center justify-between border-b border-slate-800/80">
-            <div className="flex items-center gap-3">
-              <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-[#1762f0] to-cyan-400 p-0.5 flex items-center justify-center shadow-md shadow-blue-600/30">
-                <div className="w-full h-full bg-[#070b14] rounded-[10px] flex items-center justify-center">
-                  <Shield className="w-4 h-4 text-blue-400 stroke-[2.5]" />
-                </div>
-              </div>
-              <div>
-                <h2 className="text-sm font-black uppercase tracking-wider text-white">
-                  ARMOURCRAFT
-                </h2>
-                <span className="text-[10px] font-bold text-blue-400 uppercase tracking-widest block">
-                  Admin Console
-                </span>
-              </div>
-            </div>
+            <button
+              type="button"
+              onClick={() => onNavigate('/admin/dashboard')}
+              className="flex items-center group cursor-pointer text-left focus:outline-none py-1"
+              title="ARMOURCRAFT AS - Admin Console"
+            >
+              <img
+                src="/images/logo_clean.png"
+                alt="ARMOURCRAFT AS"
+                className="h-8 sm:h-9 w-auto object-contain select-none transition-transform duration-200 group-hover:scale-[1.02]"
+                style={{ mixBlendMode: 'screen' }}
+                loading="eager"
+              />
+            </button>
 
             <button
               type="button"

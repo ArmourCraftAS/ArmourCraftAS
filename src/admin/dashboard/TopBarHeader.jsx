@@ -137,45 +137,28 @@ export default function TopBarHeader({
   return (
     <header className="h-16 w-full bg-[#090e1a] border-b border-slate-800/80 px-4 sm:px-6 flex items-center justify-between z-[9999] select-none sticky top-0 backdrop-blur-md">
       {/* ========================================================================= */}
-      {/* 1. LEFT: ARMOURCRAFT AS METALLIC 3D LOGO                                 */}
+      {/* 1. LEFT: ARMOURCRAFT AS METALLIC 3D LOGO (MATCHING image_e863dc.png)       */}
       {/* ========================================================================= */}
-      <div className="flex items-center gap-3">
+      <div className="flex items-center shrink-0">
         <button
           type="button"
           onClick={() => {
             if (setActiveTab) setActiveTab(null)
             if (onSelectPage) onSelectPage('Home')
           }}
-          className="flex items-center gap-2.5 group cursor-pointer text-left"
+          className="flex items-center group cursor-pointer text-left focus:outline-none transition-transform duration-200 hover:scale-[1.01] py-1"
           title="ARMOURCRAFT AS - Admin Visual Studio"
         >
-          {/* Metallic 3D emblem */}
-          <div className="relative w-8 h-8 rounded-lg bg-gradient-to-tr from-slate-700 via-slate-900 to-blue-600 p-[1.5px] shadow-lg shadow-blue-900/20 group-hover:scale-105 transition-transform">
-            <div className="w-full h-full bg-[#080d19] rounded-[7px] flex items-center justify-center overflow-hidden">
-              <img
-                src="/images/logo_clean.png"
-                alt="ARMOURCRAFT Emblem"
-                className="w-5 h-5 object-contain drop-shadow-[0_2px_4px_rgba(37,99,235,0.6)]"
-                onError={(e) => {
-                  e.currentTarget.style.display = 'none'
-                  if (e.currentTarget.nextSibling) {
-                    e.currentTarget.nextSibling.style.display = 'block'
-                  }
-                }}
-              />
-              <Shield className="w-4 h-4 text-blue-400 hidden" />
-            </div>
-          </div>
-
-          {/* Metallic typography */}
-          <div className="flex items-baseline gap-1.5">
-            <span className="text-sm font-black tracking-wider uppercase bg-gradient-to-r from-white via-slate-200 to-slate-400 bg-clip-text text-transparent drop-shadow-sm font-sans">
-              ARMOURCRAFT
-            </span>
-            <span className="text-xs font-black tracking-widest text-[#2563eb] font-sans">
-              AS
-            </span>
-          </div>
+          <img
+            src="/images/logo_clean.png"
+            alt="ARMOURCRAFT AS"
+            className="h-8 sm:h-9 md:h-10 w-auto object-contain select-none"
+            style={{ mixBlendMode: 'screen' }}
+            loading="eager"
+            onError={(e) => {
+              e.currentTarget.src = '/images/logo_original.png'
+            }}
+          />
         </button>
       </div>
 
