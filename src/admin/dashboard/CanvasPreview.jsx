@@ -55,7 +55,9 @@ export default function CanvasPreview({
     const fieldName = parts[parts.length - 1]
     const val = targetData ? targetData[fieldName] : ''
     const isVideo = targetData?.mediaType === 'video'
-    const mediaSrc = isVideo ? (targetData?.videoSrc || val || '/images/batsman_hero.jpg') : (val || targetData?.imageSrc || '/images/batsman_hero.jpg')
+    const defaultVideo = '/videos/batsman_hero.mp4'
+    const activeVideo = targetData?.videoSrc || (isVideo ? defaultVideo : '')
+    const mediaSrc = isVideo ? activeVideo : (val || targetData?.imageSrc || '/images/batsman_hero.jpg')
 
     onSelectElement({
       id: path,
@@ -66,11 +68,13 @@ export default function CanvasPreview({
       originalValue: mediaSrc,
       mediaProps: {
         mediaType: targetData?.mediaType || (isVideo ? 'video' : 'image'),
-        src: targetData?.imageSrc || val || mediaSrc,
-        imageSrc: targetData?.imageSrc || val || mediaSrc,
-        videoSrc: targetData?.videoSrc || '',
-        poster: targetData?.videoPoster || val || '',
-        videoPoster: targetData?.videoPoster || val || '',
+        src: targetData?.imageSrc || val || '/images/batsman_hero.jpg',
+        imageSrc: targetData?.imageSrc || val || '/images/batsman_hero.jpg',
+        videoSrc: activeVideo,
+        videoAssetId: targetData?.videoAssetId || '',
+        fileName: targetData?.videoFileName || '',
+        poster: targetData?.videoPoster || targetData?.imageSrc || val || '/images/batsman_hero.jpg',
+        videoPoster: targetData?.videoPoster || targetData?.imageSrc || val || '/images/batsman_hero.jpg',
         opacity: targetData?.imageOpacity !== undefined ? targetData.imageOpacity : (targetData?.opacity || 100),
         autoplay: targetData?.videoAutoplay !== false,
         loop: targetData?.videoLoop !== false,

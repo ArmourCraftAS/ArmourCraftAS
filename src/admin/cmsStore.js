@@ -1,6 +1,7 @@
 // Comprehensive Visual CMS Store for ARMOURCRAFT AS
 import React, { createContext, useContext, useState, useEffect } from 'react'
 import { supabase } from '../../lib/supabaseClient'
+import { rehydrateVideoAsset } from './mediaAssetStore'
 
 export const DEFAULT_CMS_DATA = {
   home: {
@@ -27,7 +28,7 @@ export const DEFAULT_CMS_DATA = {
       imageOpacity: 90,
       overlayTint: 40,
       blurAmount: 0,
-      videoSrc: '',
+      videoSrc: '/videos/batsman_hero.mp4',
       videoPoster: '/images/batsman_hero.jpg',
       videoAutoplay: true,
       videoLoop: true,
@@ -170,20 +171,51 @@ function mergeWithDefaults(parsed) {
   }
 }
 
+// In-memory caches to guarantee UI responsiveness even if localStorage is restricted
+let inMemoryDraftCache = null
+let inMemoryPublishedCache = null
+
+/**
+ * Sanitize deep CMS data before writing to localStorage to prevent QuotaExceededError
+ * Strips huge raw data:video/base64 strings if present, preserving asset IDs and URLs
+ */
+function sanitizeForLocalStorage(obj, depth = 0) {
+  if (!obj || typeof obj !== 'object' || depth > 8) return obj
+  if (Array.isArray(obj)) {
+    return obj.map((item) => sanitizeForLocalStorage(item, depth + 1))
+  }
+  const copy = {}
+  for (const [key, val] of Object.entries(obj)) {
+    if (typeof val === 'string' && val.startsWith('data:video/') && val.length > 50000) {
+      // Large video data URL stripped from localStorage; will be preserved in memory & IndexedDB
+      copy[key] = ''
+    } else if (typeof val === 'object' && val !== null) {
+      copy[key] = sanitizeForLocalStorage(val, depth + 1)
+    } else {
+      copy[key] = val
+    }
+  }
+  return copy
+}
+
 /**
  * 1. GET PUBLISHED CMS DATA (LIVE USER STOREFRONT)
  * Strictly returns live published data. Never contains uncommitted draft edits.
  */
 export function getPublishedCmsData() {
   if (typeof window === 'undefined') return DEFAULT_CMS_DATA
+  if (inMemoryPublishedCache) return inMemoryPublishedCache
   try {
     const raw = localStorage.getItem(PUBLISHED_STORAGE_KEY)
     if (raw) {
-      return mergeWithDefaults(JSON.parse(raw))
+      const parsed = mergeWithDefaults(JSON.parse(raw))
+      inMemoryPublishedCache = parsed
+      return parsed
     }
   } catch (e) {
     console.warn('Error reading published CMS data:', e)
   }
+  inMemoryPublishedCache = DEFAULT_CMS_DATA
   return DEFAULT_CMS_DATA
 }
 
@@ -194,18 +226,23 @@ export function getPublishedCmsData() {
  */
 export function getDraftCmsData() {
   if (typeof window === 'undefined') return DEFAULT_CMS_DATA
+  if (inMemoryDraftCache) return inMemoryDraftCache
   try {
     const raw = localStorage.getItem(DRAFT_STORAGE_KEY)
     if (raw) {
-      return mergeWithDefaults(JSON.parse(raw))
+      const parsed = mergeWithDefaults(JSON.parse(raw))
+      inMemoryDraftCache = parsed
+      return parsed
     }
     // Initialize draft from published data if none exists
     const published = getPublishedCmsData()
     saveDraftCmsData(published)
+    inMemoryDraftCache = published
     return published
   } catch (e) {
     console.warn('Error reading draft CMS data:', e)
   }
+  inMemoryDraftCache = DEFAULT_CMS_DATA
   return DEFAULT_CMS_DATA
 }
 
@@ -221,11 +258,19 @@ export function getCmsData() {
  */
 export function saveDraftCmsData(data) {
   if (typeof window === 'undefined') return
+  inMemoryDraftCache = data
   try {
-    localStorage.setItem(DRAFT_STORAGE_KEY, JSON.stringify(data))
+    const safeData = sanitizeForLocalStorage(data)
+    localStorage.setItem(DRAFT_STORAGE_KEY, JSON.stringify(safeData))
+  } catch (e) {
+    console.warn('LocalStorage draft write warning:', e)
+  }
+
+  // ALWAYS dispatch update event to keep Canvas Preview & reactive hooks strictly in sync
+  try {
     window.dispatchEvent(new CustomEvent('armourcraft_cms_draft_updated', { detail: data }))
   } catch (e) {
-    console.error('Error saving working draft CMS data:', e)
+    console.warn('Event dispatch warning:', e)
   }
 }
 
@@ -235,7 +280,7 @@ export function saveDraftCmsData(data) {
  */
 export function updateCmsField(path, value) {
   if (typeof window === 'undefined') return DEFAULT_CMS_DATA
-  const current = getDraftCmsData()
+  const current = JSON.parse(JSON.stringify(getDraftCmsData()))
   if (!path) return current
   const keys = path.split('.')
   let target = current
@@ -252,6 +297,33 @@ export function updateCmsField(path, value) {
 }
 
 /**
+ * 4B. ATOMIC BATCH FIELD UPDATE
+ * Updates multiple draft fields in a single atomic pass, eliminating redundant re-renders and writes
+ */
+export function updateCmsFields(fieldMap) {
+  if (typeof window === 'undefined') return DEFAULT_CMS_DATA
+  const current = JSON.parse(JSON.stringify(getDraftCmsData()))
+  if (!fieldMap || typeof fieldMap !== 'object') return current
+
+  Object.entries(fieldMap).forEach(([path, value]) => {
+    if (!path) return
+    const keys = path.split('.')
+    let target = current
+    for (let i = 0; i < keys.length - 1; i++) {
+      const k = keys[i]
+      if (!target[k] || typeof target[k] !== 'object') {
+        target[k] = {}
+      }
+      target = target[k]
+    }
+    target[keys[keys.length - 1]] = value
+  })
+
+  saveDraftCmsData(current)
+  return current
+}
+
+/**
  * 5. TOP HEADER PUBLISH BUTTON WORKFLOW
  * Commits the working draft to the live published state and syncs to Supabase.
  */
@@ -259,19 +331,27 @@ export async function publishCmsData(data) {
   const toPublish = data || getDraftCmsData()
   if (typeof window === 'undefined') return true
 
+  inMemoryPublishedCache = toPublish
+  inMemoryDraftCache = toPublish
+
   try {
     // 1. Commit to live published localStorage
-    localStorage.setItem(PUBLISHED_STORAGE_KEY, JSON.stringify(toPublish))
-    // Also align draft store with published
-    localStorage.setItem(DRAFT_STORAGE_KEY, JSON.stringify(toPublish))
+    try {
+      const safeData = sanitizeForLocalStorage(toPublish)
+      localStorage.setItem(PUBLISHED_STORAGE_KEY, JSON.stringify(safeData))
+      localStorage.setItem(DRAFT_STORAGE_KEY, JSON.stringify(safeData))
+    } catch (lsErr) {
+      console.warn('Publish localStorage warning:', lsErr)
+    }
 
     // 2. Commit to Supabase cms_content table
     if (supabase && typeof supabase.from === 'function') {
       try {
+        const payloadToSync = sanitizeForLocalStorage(toPublish)
         await supabase.from('cms_content').upsert([
           {
             key: 'landing_cms_data',
-            data: toPublish,
+            data: payloadToSync,
             updated_at: new Date().toISOString()
           }
         ], { onConflict: 'key' })
@@ -303,6 +383,8 @@ export function discardDraftCmsData() {
  * 7. RESET ALL CMS DATA TO SYSTEM DEFAULTS
  */
 export function resetCmsData() {
+  inMemoryDraftCache = DEFAULT_CMS_DATA
+  inMemoryPublishedCache = DEFAULT_CMS_DATA
   if (typeof window !== 'undefined') {
     try {
       localStorage.removeItem(DRAFT_STORAGE_KEY)
@@ -329,7 +411,10 @@ export async function syncPublishedCmsFromSupabase() {
 
     if (!error && data?.data) {
       const merged = mergeWithDefaults(data.data)
-      localStorage.setItem(PUBLISHED_STORAGE_KEY, JSON.stringify(merged))
+      inMemoryPublishedCache = merged
+      try {
+        localStorage.setItem(PUBLISHED_STORAGE_KEY, JSON.stringify(sanitizeForLocalStorage(merged)))
+      } catch (e) {}
       window.dispatchEvent(new CustomEvent('armourcraft_cms_published', { detail: merged }))
       return merged
     }
@@ -342,6 +427,7 @@ export async function syncPublishedCmsFromSupabase() {
 /**
  * 9. REACTIVE useCmsContent HOOK
  * Automatically switches between Draft (inside Preview Canvas / Admin) and Live Published (Storefront).
+ * Rehydrates video asset references if blob URLs expired.
  */
 export function useCmsContent(path, defaultValue) {
   const context = useContext(CmsContext)
@@ -366,6 +452,17 @@ export function useCmsContent(path, defaultValue) {
     const sourceData = isDraftMode ? getDraftCmsData() : getPublishedCmsData()
     return resolveValue(sourceData)
   })
+
+  // Re-hydrate video asset if applicable
+  useEffect(() => {
+    if (value && typeof value === 'object' && value.videoAssetId && (!value.videoSrc || value.videoSrc.startsWith('blob:'))) {
+      rehydrateVideoAsset(value.videoAssetId, value.videoSrc).then((freshUrl) => {
+        if (freshUrl && freshUrl !== value.videoSrc) {
+          setValue((prev) => (prev && typeof prev === 'object' ? { ...prev, videoSrc: freshUrl } : prev))
+        }
+      })
+    }
+  }, [value])
 
   useEffect(() => {
     const handleUpdate = () => {

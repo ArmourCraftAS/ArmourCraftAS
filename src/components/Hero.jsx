@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useRef, useEffect } from 'react'
 import { ArrowRight, ShieldCheck, Sparkles, Activity } from 'lucide-react'
 import Armour3DModal from './Armour3DModal'
 import CustomQuoteModal from './CustomQuoteModal'
@@ -9,9 +9,32 @@ export default function Hero({ onNavigate, onOpenCustomModal }) {
   const [is3DModalOpen, setIs3DModalOpen] = useState(false)
   const [isCustomizationModalOpen, setIsCustomizationModalOpen] = useState(false)
   const [activeSlide, setActiveSlide] = useState(0)
+  const videoRef = useRef(null)
 
   // Context-aware CMS Hero Content (Draft in Admin/Canvas Preview, Published on Live Storefront)
   const cmsHero = useCmsContent('home.hero', null)
+
+  const isVideo = cmsHero?.mediaType === 'video'
+  const activeVideoSrc = cmsHero?.videoSrc || (isVideo ? '/videos/batsman_hero.mp4' : '')
+  const isMuted = cmsHero?.videoMute !== false
+  const isAutoplay = cmsHero?.videoAutoplay !== false
+
+  // Ensure HTML5 video autoplay and muted properties are natively enforced in DOM
+  useEffect(() => {
+    if (isVideo && videoRef.current) {
+      const v = videoRef.current
+      v.defaultMuted = isMuted
+      v.muted = isMuted
+      if (isAutoplay) {
+        const p = v.play()
+        if (p !== undefined) {
+          p.catch(() => {
+            // Autoplay policy fallback handled gracefully
+          })
+        }
+      }
+    }
+  }, [isVideo, activeVideoSrc, isMuted, isAutoplay])
 
   const heroSlides = [
     {
@@ -45,15 +68,19 @@ export default function Hero({ onNavigate, onOpenCustomModal }) {
         className="absolute inset-0 z-0"
       >
         <div className="relative w-full h-full">
-          {cmsHero?.mediaType === 'video' && cmsHero?.videoSrc ? (
+          {isVideo ? (
             <video
-              src={cmsHero.videoSrc}
-              poster={cmsHero.videoPoster || cmsHero.imageSrc}
-              autoPlay={cmsHero.videoAutoplay !== false}
-              loop={cmsHero.videoLoop !== false}
-              muted={cmsHero.videoMute !== false}
-              controls={cmsHero.videoControls === true}
+              ref={videoRef}
+              key={activeVideoSrc || 'hero-video'}
+              src={activeVideoSrc}
+              poster={cmsHero?.videoPoster || cmsHero?.imageSrc || currentSlide.image}
+              autoPlay={isAutoplay}
+              loop={cmsHero?.videoLoop !== false}
+              muted={isMuted}
+              controls={cmsHero?.videoControls === true}
+              playsInline
               className="w-full h-full object-cover"
+              style={{ opacity: (cmsHero?.imageOpacity || 90) / 100 }}
               data-cms-path="home.hero.imageSrc"
               data-cms-label="Hero Background Video"
               data-cms-type="media"

@@ -38,6 +38,21 @@ import {
   Package,
   Clock
 } from 'lucide-react'
+import { saveMediaAsset } from '../mediaAssetStore'
+
+// Available video presets in project
+const PRESET_VIDEOS = [
+  {
+    name: 'Batsman Action Hero',
+    src: '/videos/batsman_hero.mp4',
+    poster: '/images/batsman_hero.jpg'
+  },
+  {
+    name: 'Ballistics Impact Lab',
+    src: '/videos/hero_action.mp4',
+    poster: '/images/blog_ballistic_test.jpg'
+  }
+]
 
 // Available gallery image presets in project
 const PRESET_IMAGES = [
@@ -141,29 +156,42 @@ export default function ElementInspectorSidebar({
   }
 
   // Handle local video file upload (.mp4, .webm, .mov, etc.)
-  const handleVideoFileProcess = (file) => {
+  const handleVideoFileProcess = async (file) => {
     if (!file) return
     setVideoStatus('uploading')
     setVideoFileName(file.name)
-    const reader = new FileReader()
-    reader.onload = () => {
-      const dataUrl = reader.result
+    try {
+      // 1. Immediately persist to IndexedDB media store and get live Object URL
+      const asset = await saveMediaAsset(file)
       onUpdateElement({
         ...selectedElement,
-        value: dataUrl,
+        value: asset.objectUrl,
         mediaProps: {
           ...mediaProps,
-          videoSrc: dataUrl,
           mediaType: 'video',
+          videoSrc: asset.objectUrl,
+          videoAssetId: asset.id,
+          fileName: file.name,
+          fileSize: file.size,
+          fileType: file.type
+        }
+      })
+      setVideoStatus('success')
+    } catch (err) {
+      console.warn('Video asset storage fallback to standard Object URL:', err)
+      const objUrl = URL.createObjectURL(file)
+      onUpdateElement({
+        ...selectedElement,
+        value: objUrl,
+        mediaProps: {
+          ...mediaProps,
+          mediaType: 'video',
+          videoSrc: objUrl,
           fileName: file.name
         }
       })
       setVideoStatus('success')
     }
-    reader.onerror = () => {
-      setVideoStatus('error')
-    }
-    reader.readAsDataURL(file)
   }
 
   const handleVideoUpload = (e) => {
@@ -517,12 +545,18 @@ export default function ElementInspectorSidebar({
               <div className="grid grid-cols-2 p-1 rounded-xl bg-[#0e1628] border border-slate-700/80">
                 <button
                   type="button"
-                  onClick={() =>
+                  onClick={() => {
+                    const nextImg = mediaProps.src || mediaProps.imageSrc || value || '/images/batsman_hero.jpg'
                     onUpdateElement({
                       ...selectedElement,
-                      mediaProps: { ...mediaProps, mediaType: 'image' }
+                      value: nextImg,
+                      mediaProps: {
+                        ...mediaProps,
+                        mediaType: 'image',
+                        src: nextImg
+                      }
                     })
-                  }
+                  }}
                   className={`py-2 rounded-lg font-bold text-xs uppercase tracking-wider flex items-center justify-center gap-1.5 transition-colors cursor-pointer ${
                     mediaProps.mediaType !== 'video'
                       ? 'bg-blue-600 text-white shadow'
@@ -534,12 +568,18 @@ export default function ElementInspectorSidebar({
                 </button>
                 <button
                   type="button"
-                  onClick={() =>
+                  onClick={() => {
+                    const nextVid = mediaProps.videoSrc || '/videos/batsman_hero.mp4'
                     onUpdateElement({
                       ...selectedElement,
-                      mediaProps: { ...mediaProps, mediaType: 'video' }
+                      value: nextVid,
+                      mediaProps: {
+                        ...mediaProps,
+                        mediaType: 'video',
+                        videoSrc: nextVid
+                      }
                     })
-                  }
+                  }}
                   className={`py-2 rounded-lg font-bold text-xs uppercase tracking-wider flex items-center justify-center gap-1.5 transition-colors cursor-pointer ${
                     mediaProps.mediaType === 'video'
                       ? 'bg-blue-600 text-white shadow'
@@ -703,7 +743,54 @@ export default function ElementInspectorSidebar({
                   )}
                 </div>
 
-                {/* B. Direct Video Link Input */}
+                {/* B. Quick Video Presets */}
+                <div className="space-y-2">
+                  <label className="text-xs font-bold text-slate-300 uppercase tracking-wider block">
+                    Quick Video Presets
+                  </label>
+                  <div className="grid grid-cols-2 gap-2">
+                    {PRESET_VIDEOS.map((vid) => (
+                      <button
+                        key={vid.src}
+                        type="button"
+                        onClick={() =>
+                          onUpdateElement({
+                            ...selectedElement,
+                            value: vid.src,
+                            mediaProps: {
+                              ...mediaProps,
+                              mediaType: 'video',
+                              videoSrc: vid.src,
+                              poster: vid.poster || mediaProps.poster
+                            }
+                          })
+                        }
+                        className={`group relative aspect-video rounded-lg overflow-hidden border transition-all cursor-pointer ${
+                          mediaProps.videoSrc === vid.src
+                            ? 'border-blue-500 ring-2 ring-blue-500/50'
+                            : 'border-slate-800 hover:border-slate-600'
+                        }`}
+                        title={vid.name}
+                      >
+                        <img
+                          src={vid.poster}
+                          alt={vid.name}
+                          className="w-full h-full object-cover group-hover:scale-105 transition-transform"
+                        />
+                        <div className="absolute inset-0 bg-black/40 flex items-center justify-center">
+                          <div className="w-6 h-6 rounded-full bg-blue-600/90 flex items-center justify-center shadow">
+                            <Video className="w-3 h-3 text-white" />
+                          </div>
+                        </div>
+                        <span className="absolute inset-x-0 bottom-0 bg-black/85 text-[8px] text-white px-1 py-0.5 truncate text-center block">
+                          {vid.name}
+                        </span>
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                {/* C. Direct Video Link Input */}
                 <div className="space-y-2">
                   <label className="text-xs font-bold text-slate-300 uppercase tracking-wider block">
                     Or Paste Video URL
@@ -715,15 +802,15 @@ export default function ElementInspectorSidebar({
                       onUpdateElement({
                         ...selectedElement,
                         value: e.target.value,
-                        mediaProps: { ...mediaProps, videoSrc: e.target.value }
+                        mediaProps: { ...mediaProps, mediaType: 'video', videoSrc: e.target.value }
                       })
                     }
-                    placeholder="https://.../video.mp4"
+                    placeholder="/videos/... or https://.../video.mp4"
                     className="w-full px-3 py-2 rounded-xl bg-[#0e1628] border border-slate-700 text-white text-xs font-mono focus:outline-none focus:border-blue-500"
                   />
                 </div>
 
-                {/* C. Video Live Preview Player */}
+                {/* D. Video Live Preview Player */}
                 {mediaProps.videoSrc && (
                   <div className="space-y-1.5">
                     <label className="text-[11px] font-bold text-slate-400 uppercase tracking-wider block">
@@ -731,6 +818,7 @@ export default function ElementInspectorSidebar({
                     </label>
                     <div className="w-full aspect-video rounded-xl bg-black border border-slate-800 overflow-hidden relative shadow-inner">
                       <video
+                        key={mediaProps.videoSrc}
                         src={mediaProps.videoSrc}
                         poster={mediaProps.poster}
                         controls

@@ -10,7 +10,7 @@ import { initialAdminProducts } from '../data/initialProducts'
 import { initialBlogs } from '../../data/blogsData'
 import { initialFaqs } from '../../data/faqsData'
 import { supabase } from '../../../lib/supabaseClient'
-import { getDraftCmsData, saveDraftCmsData, getCmsData, updateCmsField, resetCmsData, publishCmsData } from '../cmsStore'
+import { getDraftCmsData, saveDraftCmsData, getCmsData, updateCmsField, updateCmsFields, resetCmsData, publishCmsData } from '../cmsStore'
 
 export default function AdminDashboardPage({ onNavigate }) {
   // 1. Landing Page Selector State strictly configured for CanvasPreview:
@@ -95,6 +95,8 @@ export default function AdminDashboardPage({ onNavigate }) {
       if (cms.home.hero.mediaType) mediaProps.mediaType = cms.home.hero.mediaType
       if (cms.home.hero.imageSrc) mediaProps.src = cms.home.hero.imageSrc
       if (cms.home.hero.videoSrc !== undefined) mediaProps.videoSrc = cms.home.hero.videoSrc
+      if (cms.home.hero.videoAssetId !== undefined) mediaProps.videoAssetId = cms.home.hero.videoAssetId
+      if (cms.home.hero.videoFileName !== undefined) mediaProps.fileName = cms.home.hero.videoFileName
       if (cms.home.hero.videoPoster !== undefined) mediaProps.poster = cms.home.hero.videoPoster
       if (cms.home.hero.videoAutoplay !== undefined) mediaProps.autoplay = cms.home.hero.videoAutoplay
       if (cms.home.hero.videoLoop !== undefined) mediaProps.loop = cms.home.hero.videoLoop
@@ -259,20 +261,30 @@ export default function AdminDashboardPage({ onNavigate }) {
           }
         }
       } else if (updatedElem.type === 'media') {
-        updateCmsField(updatedElem.path, updatedElem.value)
+        const fieldsToUpdate = {}
+        const isVideo = updatedElem.mediaProps?.mediaType === 'video'
+        
+        if (!isVideo && updatedElem.value) {
+          fieldsToUpdate[updatedElem.path] = updatedElem.value
+        }
+        
         if (updatedElem.mediaProps) {
-          updateCmsField(updatedElem.path + 'Props', updatedElem.mediaProps)
+          fieldsToUpdate[updatedElem.path + 'Props'] = updatedElem.mediaProps
           if (updatedElem.path.includes('.hero.')) {
-            if (updatedElem.mediaProps.mediaType) updateCmsField('home.hero.mediaType', updatedElem.mediaProps.mediaType)
-            if (updatedElem.mediaProps.videoSrc !== undefined) updateCmsField('home.hero.videoSrc', updatedElem.mediaProps.videoSrc)
-            if (updatedElem.mediaProps.poster !== undefined) updateCmsField('home.hero.videoPoster', updatedElem.mediaProps.poster)
-            if (updatedElem.mediaProps.autoplay !== undefined) updateCmsField('home.hero.videoAutoplay', updatedElem.mediaProps.autoplay)
-            if (updatedElem.mediaProps.loop !== undefined) updateCmsField('home.hero.videoLoop', updatedElem.mediaProps.loop)
-            if (updatedElem.mediaProps.muted !== undefined) updateCmsField('home.hero.videoMute', updatedElem.mediaProps.muted)
-            if (updatedElem.mediaProps.controls !== undefined) updateCmsField('home.hero.videoControls', updatedElem.mediaProps.controls)
-            if (updatedElem.mediaProps.opacity !== undefined) updateCmsField('home.hero.imageOpacity', updatedElem.mediaProps.opacity)
+            if (updatedElem.mediaProps.mediaType) fieldsToUpdate['home.hero.mediaType'] = updatedElem.mediaProps.mediaType
+            if (updatedElem.mediaProps.videoSrc !== undefined) fieldsToUpdate['home.hero.videoSrc'] = updatedElem.mediaProps.videoSrc
+            if (updatedElem.mediaProps.videoAssetId !== undefined) fieldsToUpdate['home.hero.videoAssetId'] = updatedElem.mediaProps.videoAssetId
+            if (updatedElem.mediaProps.fileName !== undefined) fieldsToUpdate['home.hero.videoFileName'] = updatedElem.mediaProps.fileName
+            if (updatedElem.mediaProps.poster !== undefined) fieldsToUpdate['home.hero.videoPoster'] = updatedElem.mediaProps.poster
+            if (updatedElem.mediaProps.autoplay !== undefined) fieldsToUpdate['home.hero.videoAutoplay'] = updatedElem.mediaProps.autoplay
+            if (updatedElem.mediaProps.loop !== undefined) fieldsToUpdate['home.hero.videoLoop'] = updatedElem.mediaProps.loop
+            if (updatedElem.mediaProps.muted !== undefined) fieldsToUpdate['home.hero.videoMute'] = updatedElem.mediaProps.muted
+            if (updatedElem.mediaProps.controls !== undefined) fieldsToUpdate['home.hero.videoControls'] = updatedElem.mediaProps.controls
+            if (updatedElem.mediaProps.opacity !== undefined) fieldsToUpdate['home.hero.imageOpacity'] = updatedElem.mediaProps.opacity
+            if (updatedElem.mediaProps.src && !isVideo) fieldsToUpdate['home.hero.imageSrc'] = updatedElem.mediaProps.src
           }
         }
+        updateCmsFields(fieldsToUpdate)
       } else if (updatedElem.type === 'icon') {
         updateCmsField(updatedElem.path, updatedElem.value)
         if (updatedElem.iconProps) {
