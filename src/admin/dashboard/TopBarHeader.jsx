@@ -54,11 +54,11 @@ export default function TopBarHeader({
     'Footer'
   ]
 
-  // Secondary tabs matching screenshot image_a785dc.jpg
+  // Admin management tabs (exclusively for CMS dashboards, separate from landing page preview)
   const quickTabs = [
-    { id: 'product', label: 'product', pageId: 'Shop Armours' },
-    { id: 'Blog', label: 'Blog', pageId: 'Blog / Insights' },
-    { id: 'FAQs', label: 'FAQs', pageId: 'Home', anchor: 'faq' }
+    { id: 'product', label: 'product' },
+    { id: 'Blog', label: 'Blog' },
+    { id: 'FAQs', label: 'FAQs' }
   ]
 
   const notifications = [
@@ -101,14 +101,9 @@ export default function TopBarHeader({
   }
 
   const handleTabClick = (tab) => {
+    // Exclusively switches the main panel to the Admin Management Dashboard (product, Blog, FAQs)
+    // Completely isolated from the dropdown landing page preview selector
     if (setActiveTab) setActiveTab(tab.id)
-    if (tab.id === 'product' || tab.id === 'FAQs' || tab.id === 'faqs') {
-      // Direct dedicated Product & FAQs Management Views
-      return
-    }
-    if (tab.pageId && onSelectPage) {
-      onSelectPage(tab.pageId)
-    }
   }
 
   const handleLogoutClick = () => {
@@ -148,7 +143,7 @@ export default function TopBarHeader({
         <button
           type="button"
           onClick={() => {
-            if (setActiveTab) setActiveTab('Home')
+            if (setActiveTab) setActiveTab(null)
             if (onSelectPage) onSelectPage('Home')
           }}
           className="flex items-center gap-2.5 group cursor-pointer text-left"

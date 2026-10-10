@@ -7,10 +7,11 @@ import AdminFaqsPage from './AdminFaqsPage'
 import { CheckCircle2, X, AlertCircle } from 'lucide-react'
 
 export default function AdminDashboardPage({ onNavigate }) {
-  // 1. Landing Page Selector State strictly configured:
+  // 1. Landing Page Selector State strictly configured for CanvasPreview:
   // 'Home' | 'Shop Armours' | 'What We Are' | 'Blog / Insights' | 'Contact Us' | 'Header' | 'Footer'
   const [activePage, setActivePage] = useState('Home')
-  const [activeTab, setActiveTab] = useState('Home')
+  // 2. Admin Management Dashboard Tabs (exclusively: 'product' | 'Blog' | 'FAQs' | null for preview)
+  const [activeTab, setActiveTab] = useState(null)
 
   // 2. Page Navigation History Stack for Undo/Redo
   const [history, setHistory] = useState(['Home'])
@@ -102,7 +103,7 @@ export default function AdminDashboardPage({ onNavigate }) {
       <main className="w-full flex-1 h-[calc(100vh-4rem)] overflow-y-auto overflow-x-hidden relative z-0 scroll-smooth custom-scrollbar">
         {activeTab === 'product' ? (
           <AdminProductsPage onNavigate={onNavigate} />
-        ) : (activeTab === 'Blog' || activeTab === 'blog' || activePage === 'Blog / Insights') ? (
+        ) : (activeTab === 'Blog' || activeTab === 'blog') ? (
           <AdminBlogsPage onNavigate={onNavigate} />
         ) : (activeTab === 'FAQs' || activeTab === 'faqs') ? (
           <AdminFaqsPage onNavigate={onNavigate} />
