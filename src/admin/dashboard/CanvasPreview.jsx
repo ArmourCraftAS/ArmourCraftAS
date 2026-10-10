@@ -97,7 +97,7 @@ export default function CanvasPreview({
             <main className="flex-1 w-full">
               <ShopPage onAddToCart={noop} />
             </main>
-            <Footer onNavigate={noop} />
+            <Footer onNavigate={noop} currentPath="/shop" />
           </div>
         ) : activePage === 'What We Are' ? (
           /* ----------------------------------------------------------------------- */
@@ -113,7 +113,7 @@ export default function CanvasPreview({
             <main className="flex-1 w-full">
               <WhatWeArePage onNavigate={noop} />
             </main>
-            <Footer onNavigate={noop} />
+            <Footer onNavigate={noop} currentPath="/what-we-are" />
           </div>
         ) : activePage === 'Blog / Insights' ? (
           /* ----------------------------------------------------------------------- */
@@ -129,7 +129,7 @@ export default function CanvasPreview({
             <main className="flex-1 w-full">
               <BlogPage onNavigate={noop} />
             </main>
-            <Footer onNavigate={noop} />
+            <Footer onNavigate={noop} currentPath="/blog" />
           </div>
         ) : activePage === 'Contact Us' ? (
           /* ----------------------------------------------------------------------- */
@@ -145,7 +145,7 @@ export default function CanvasPreview({
             <main className="flex-1 w-full">
               <ContactPage onNavigate={noop} />
             </main>
-            <Footer onNavigate={noop} />
+            <Footer onNavigate={noop} currentPath="/contact" />
           </div>
         ) : activePage === 'Header' ? (
           /* ----------------------------------------------------------------------- */
@@ -164,7 +164,7 @@ export default function CanvasPreview({
           /* 6. ISOLATED FOOTER COMPONENT PREVIEW                                    */
           /* ----------------------------------------------------------------------- */
           <div className="w-full min-h-screen bg-[#060a12] flex flex-col">
-            <Footer onNavigate={noop} />
+            <Footer onNavigate={noop} currentPath="/" />
           </div>
         ) : (
           /* ----------------------------------------------------------------------- */
@@ -202,7 +202,7 @@ export default function CanvasPreview({
               <FAQ />
             </main>
 
-            <Footer onNavigate={noop} />
+            <Footer onNavigate={noop} currentPath="/" />
           </div>
         )}
       </div>

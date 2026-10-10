@@ -1,7 +1,16 @@
 import React from 'react'
 import { Mail, MapPin, MessageCircle } from 'lucide-react'
 
-export default function Footer({ onNavigate }) {
+export default function Footer({ onNavigate, currentPath, isAdminContext }) {
+  // Resolve active pathname safely across both CSR and SSR
+  const resolvedPath = currentPath || (typeof window !== 'undefined' ? window.location.pathname : '')
+
+  // Conditionally render Admin Portal link strictly in Admin Workspace context
+  const showAdminLink = Boolean(
+    isAdminContext ||
+    (typeof resolvedPath === 'string' && resolvedPath.startsWith('/admin'))
+  )
+
   const quickNavLinks = [
     { name: 'Shop Thigh Guards', href: '/shop', path: '/shop' },
     { name: 'What We Are', href: '/what-we-are', path: '/what-we-are' },
@@ -222,21 +231,23 @@ export default function Footer({ onNavigate }) {
           <p className="text-xs text-slate-500">
             © 2026 ArmourCraft Protection. All Rights Reserved. | <span className="text-slate-400">Crafted in Sialkot.</span>
           </p>
-          <div className="flex items-center gap-4 text-xs text-slate-600">
-            <a
-              href="/admin"
-              onClick={(e) => {
-                if (onNavigate) {
-                  e.preventDefault()
-                  onNavigate('/admin')
-                }
-              }}
-              className="hover:text-blue-400 transition-colors cursor-pointer flex items-center gap-1.5"
-            >
-              <span className="w-1.5 h-1.5 rounded-full bg-slate-700" />
-              <span>Admin Portal</span>
-            </a>
-          </div>
+          {showAdminLink && (
+            <div className="flex items-center gap-4 text-xs text-slate-600">
+              <a
+                href="/admin"
+                onClick={(e) => {
+                  if (onNavigate) {
+                    e.preventDefault()
+                    onNavigate('/admin')
+                  }
+                }}
+                className="hover:text-blue-400 transition-colors cursor-pointer flex items-center gap-1.5"
+              >
+                <span className="w-1.5 h-1.5 rounded-full bg-slate-700" />
+                <span>Admin Portal</span>
+              </a>
+            </div>
+          )}
         </div>
       </div>
     </footer>

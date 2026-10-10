@@ -204,7 +204,7 @@ export default function App() {
       </main>
 
       {/* 3. Global Persistent Footer */}
-      <Footer onNavigate={navigate} />
+      <Footer onNavigate={navigate} currentPath={currentPath} />
 
       {/* 4. Product Quick Add / Customization Modal Popup */}
       <ProductQuickAddModal

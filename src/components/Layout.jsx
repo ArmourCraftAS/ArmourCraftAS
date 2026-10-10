@@ -19,7 +19,7 @@ export default function Layout({ children, cartCount = 0, currentPath = '/', onN
       </main>
 
       {/* Persistent Global Footer */}
-      <Footer onNavigate={onNavigate} />
+      <Footer onNavigate={onNavigate} currentPath={currentPath} />
     </div>
   )
 }
