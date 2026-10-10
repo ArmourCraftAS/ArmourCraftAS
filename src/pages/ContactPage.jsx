@@ -4,6 +4,7 @@ import CountryPhoneInput from '../components/CountryPhoneInput'
 import { getStoredFaqs } from '../data/faqsData'
 import { supabase } from '../../lib/supabaseClient'
 import { useCmsContent } from '../admin/cmsStore'
+import { FadeIn, StaggerContainer, StaggerItem } from '../components/StorefrontMotion'
 
 export default function ContactPage() {
   const heading = useCmsContent('contact.heading', "WE'RE HERE TO KEEP YOU PROTECTED.")
@@ -91,7 +92,7 @@ export default function ContactPage() {
         {/* ========================================================================= */}
         {/* 1. HEADER SECTION (CENTERED TEXT)                                         */}
         {/* ========================================================================= */}
-        <div className="text-center max-w-3xl mx-auto">
+        <FadeIn direction="up" className="text-center max-w-3xl mx-auto">
           <h1
             data-cms-path="contact.heading"
             data-cms-label="Contact Page Main Heading"
@@ -106,7 +107,7 @@ export default function ContactPage() {
           >
             {subheading}
           </p>
-        </div>
+        </FadeIn>
 
         {/* ========================================================================= */}
         {/* 2. MAIN 2-COLUMN LAYOUT                                                   */}
@@ -114,7 +115,7 @@ export default function ContactPage() {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-10 items-start">
           
           {/* Left Side: Interactive Contact Form Card */}
-          <div className="lg:col-span-7 bg-[#0b1324] border border-slate-800/80 rounded-2xl sm:rounded-3xl p-6 sm:p-8 lg:p-10 shadow-2xl backdrop-blur-md relative overflow-hidden">
+          <FadeIn direction="right" className="lg:col-span-7 bg-[#0b1324] border border-slate-800/80 rounded-2xl sm:rounded-3xl p-6 sm:p-8 lg:p-10 shadow-2xl backdrop-blur-md relative overflow-hidden card-elevate">
             {/* Subtle atmospheric ambient glow */}
             <div className="absolute top-0 right-1/4 w-72 h-72 bg-blue-600/5 blur-3xl pointer-events-none rounded-full" />
 
@@ -258,7 +259,7 @@ export default function ContactPage() {
                   <button
                     type="submit"
                     disabled={isSubmitting}
-                    className="w-full py-4 rounded-xl bg-[#1462ea] hover:bg-[#1a6df6] active:bg-blue-700 disabled:opacity-70 text-white font-bold text-xs sm:text-sm tracking-wider uppercase transition-all shadow-lg shadow-blue-600/30 hover:shadow-blue-500/50 cursor-pointer flex items-center justify-center gap-2 group"
+                    className="w-full py-4 rounded-xl bg-[#1462ea] hover:bg-[#1a6df6] active:bg-blue-700 disabled:opacity-70 text-white font-bold text-xs sm:text-sm tracking-wider uppercase btn-elevate cursor-pointer flex items-center justify-center gap-2 group shadow-lg shadow-blue-600/30"
                   >
                     <span>{isSubmitting ? 'SENDING...' : 'SEND MESSAGE'}</span>
                     <Send className="w-4 h-4 shrink-0 stroke-[2.5] group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
@@ -267,13 +268,13 @@ export default function ContactPage() {
 
               </form>
             )}
-          </div>
+          </FadeIn>
 
           {/* Right Side: Support Direct Info Cards */}
-          <div className="lg:col-span-5 space-y-6">
+          <FadeIn direction="left" delay={0.1} className="lg:col-span-5 space-y-6">
             
             {/* Card 1 - Direct WhatsApp Support */}
-            <div className="bg-[#0b1324] border border-slate-800/80 hover:border-slate-700/90 rounded-2xl p-6 sm:p-7 shadow-xl transition-all">
+            <div className="bg-[#0b1324] border border-slate-800/80 hover:border-slate-700/90 rounded-2xl p-6 sm:p-7 shadow-xl card-elevate">
               {/* Icon badge at top left */}
               <div className="w-10 h-10 rounded-xl bg-blue-600/10 border border-blue-500/20 flex items-center justify-center text-blue-400 mb-4 shadow-sm shadow-blue-500/10">
                 <Headphones className="w-5 h-5 stroke-[2.2]" />
@@ -302,7 +303,7 @@ export default function ContactPage() {
             </div>
 
             {/* Card 2 - Custom Squad & Club Orders */}
-            <div className="bg-[#0b1324] border border-slate-800/80 hover:border-slate-700/90 rounded-2xl p-6 sm:p-7 shadow-xl transition-all">
+            <div className="bg-[#0b1324] border border-slate-800/80 hover:border-slate-700/90 rounded-2xl p-6 sm:p-7 shadow-xl card-elevate">
               {/* Icon badge at top left */}
               <div className="w-10 h-10 rounded-xl bg-blue-600/10 border border-blue-500/20 flex items-center justify-center text-blue-400 mb-4 shadow-sm shadow-blue-500/10">
                 <Users className="w-5 h-5 stroke-[2.2]" />
@@ -328,7 +329,7 @@ export default function ContactPage() {
               </a>
             </div>
 
-          </div>
+          </FadeIn>
 
         </div>
 
@@ -338,23 +339,23 @@ export default function ContactPage() {
         <section aria-label="Frequently Asked Questions" className="max-w-4xl mx-auto pt-6 sm:pt-10">
           
           {/* Centered Heading */}
-          <div className="text-center mb-8 sm:mb-10">
+          <FadeIn direction="up" className="text-center mb-8 sm:mb-10">
             <h2 className="text-2xl sm:text-3xl lg:text-4xl font-black text-white uppercase tracking-tight">
               FREQUENTLY ASKED{' '}
               <span className="text-[#1762f0] italic drop-shadow-[0_0_20px_rgba(23,98,240,0.5)]">
                 QUESTIONS
               </span>
             </h2>
-          </div>
+          </FadeIn>
 
           {/* Accordion Cards List */}
-          <div className="space-y-4">
+          <StaggerContainer staggerDelay={0.06} className="space-y-4">
             {faqList.map((item, idx) => {
               const isOpen = openFaq === idx
               return (
-                <div
+                <StaggerItem
                   key={idx}
-                  className="bg-[#0b1324] border border-slate-800/80 hover:border-slate-700/90 rounded-2xl p-5 sm:p-6 shadow-xl transition-all"
+                  className="bg-[#0b1324] border border-slate-800/80 hover:border-slate-700/90 rounded-2xl p-5 sm:p-6 shadow-xl card-elevate"
                 >
                   {/* Accordion Header / Question */}
                   <button
@@ -378,10 +379,10 @@ export default function ContactPage() {
                       {item.answer}
                     </div>
                   )}
-                </div>
+                </StaggerItem>
               )
             })}
-          </div>
+          </StaggerContainer>
 
         </section>
 

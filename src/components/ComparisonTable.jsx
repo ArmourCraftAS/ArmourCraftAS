@@ -1,5 +1,6 @@
 import React from 'react'
 import { useCmsContent } from '../admin/cmsStore'
+import { FadeIn } from './StorefrontMotion'
 
 export default function ComparisonTable() {
   const heading = useCmsContent('home.comparison.heading', 'SmartThighs vs. The Others')
@@ -40,16 +41,19 @@ export default function ComparisonTable() {
       <div className="max-w-5xl mx-auto relative z-10">
         
         {/* Section Heading */}
-        <h2
-          data-cms-path="home.comparison.heading"
-          data-cms-label="Comparison Table Heading"
-          className="text-3xl sm:text-4xl md:text-5xl font-black text-white text-center tracking-tight mb-12 sm:mb-16"
-        >
-          {heading}
-        </h2>
+        <FadeIn direction="up" distance={20}>
+          <h2
+            data-cms-path="home.comparison.heading"
+            data-cms-label="Comparison Table Heading"
+            className="text-3xl sm:text-4xl md:text-5xl font-black text-white text-center tracking-tight mb-12 sm:mb-16"
+          >
+            {heading}
+          </h2>
+        </FadeIn>
 
         {/* Comparison Table Container */}
-        <div className="rounded-2xl sm:rounded-3xl bg-[#091122]/95 border border-slate-800/90 shadow-2xl overflow-hidden backdrop-blur-md">
+        <FadeIn direction="up" distance={25} delay={0.15}>
+          <div className="rounded-2xl sm:rounded-3xl bg-[#091122]/95 border border-slate-800/90 shadow-2xl overflow-hidden backdrop-blur-md card-elevate">
           
           {/* Table Header */}
           <div className="grid grid-cols-12 items-center text-xs sm:text-sm font-bold tracking-wider uppercase border-b border-slate-800/80">
@@ -102,6 +106,7 @@ export default function ComparisonTable() {
           </div>
 
         </div>
+        </FadeIn>
 
       </div>
     </section>

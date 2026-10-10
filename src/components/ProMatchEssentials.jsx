@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import { Hammer, Zap, ShieldCheck, Lock, ShoppingCart, ExternalLink } from 'lucide-react'
 import { useCmsContent } from '../admin/cmsStore'
+import { FadeIn, StaggerContainer, StaggerItem } from './StorefrontMotion'
 
 export default function ProMatchEssentials({ onAddToCart, onNavigate }) {
   const [addedItem, setAddedItem] = useState(null)
@@ -66,74 +67,79 @@ export default function ProMatchEssentials({ onAddToCart, onNavigate }) {
       
       {/* 1. Feature Highlights Bar (Top 4-Column Bar) */}
       <div className="w-full bg-[#0a152d] border-y border-blue-900/30 py-6 px-4 sm:px-6 lg:px-8 shadow-inner">
-        <div className="max-w-7xl mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-8">
+        <StaggerContainer
+          staggerDelay={0.08}
+          className="max-w-7xl mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-8"
+        >
           {featureHighlights.map((feature, idx) => (
-            <div key={idx} className="flex items-center gap-3.5 group">
-              {/* Rounded Square Icon Badge */}
-              <div className="w-11 h-11 rounded-xl bg-[#0f2554] border border-blue-500/25 flex items-center justify-center shrink-0 shadow-sm shadow-blue-500/20 group-hover:scale-105 group-hover:border-blue-400/50 transition-all duration-200">
-                {feature.icon}
+            <StaggerItem key={idx}>
+              <div className="flex items-center gap-3.5 group">
+                {/* Rounded Square Icon Badge */}
+                <div className="w-11 h-11 rounded-xl bg-[#0f2554] border border-blue-500/25 flex items-center justify-center shrink-0 shadow-sm shadow-blue-500/20 group-hover:scale-110 group-hover:border-blue-400/50 transition-all duration-300">
+                  {feature.icon}
+                </div>
+                <div>
+                  <h4 className="text-white font-bold text-sm tracking-wide group-hover:text-blue-300 transition-colors">
+                    {feature.title}
+                  </h4>
+                  <p className="text-slate-400 text-xs leading-relaxed mt-0.5">
+                    {feature.desc}
+                  </p>
+                </div>
               </div>
-              <div>
-                <h4 className="text-white font-bold text-sm tracking-wide group-hover:text-blue-300 transition-colors">
-                  {feature.title}
-                </h4>
-                <p className="text-slate-400 text-xs leading-relaxed mt-0.5">
-                  {feature.desc}
-                </p>
-              </div>
-            </div>
+            </StaggerItem>
           ))}
-        </div>
+        </StaggerContainer>
       </div>
 
       {/* 2. Main Section Content Area */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-20">
         
         {/* Section Header */}
-        <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-12">
-          <div>
-            <h2
-              data-cms-path="home.essentials.heading"
-              data-cms-label="Pro Match Essentials Heading"
-              className="text-3xl sm:text-4xl md:text-5xl font-black text-white tracking-tight uppercase"
-            >
-              {heading}
-            </h2>
-            <p
-              data-cms-path="home.essentials.subheading"
-              data-cms-label="Pro Match Essentials Subtitle"
-              className="text-slate-400 text-sm sm:text-base mt-2"
-            >
-              {subheading}
-            </p>
-          </div>
+        <FadeIn direction="up" distance={20}>
+          <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-12">
+            <div>
+              <h2
+                data-cms-path="home.essentials.heading"
+                data-cms-label="Pro Match Essentials Heading"
+                className="text-3xl sm:text-4xl md:text-5xl font-black text-white tracking-tight uppercase"
+              >
+                {heading}
+              </h2>
+              <p
+                data-cms-path="home.essentials.subheading"
+                data-cms-label="Pro Match Essentials Subtitle"
+                className="text-slate-400 text-sm sm:text-base mt-2"
+              >
+                {subheading}
+              </p>
+            </div>
 
-          <a
-            href="/shop"
-            onClick={(e) => {
-              if (onNavigate) {
-                e.preventDefault()
-                onNavigate('/shop')
-              }
-            }}
-            className="inline-flex items-center gap-1.5 text-xs sm:text-sm font-bold text-[#1d68ed] hover:text-blue-400 tracking-wider uppercase transition-colors group self-start sm:self-auto border-b-2 border-transparent hover:border-blue-500 pb-0.5 cursor-pointer"
-          >
-            <span>VIEW ALL PRODUCTS</span>
-            <ExternalLink className="w-3.5 h-3.5 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
-          </a>
-        </div>
+            <a
+              href="/shop"
+              onClick={(e) => {
+                if (onNavigate) {
+                  e.preventDefault()
+                  onNavigate('/shop')
+                }
+              }}
+              className="inline-flex items-center gap-1.5 text-xs sm:text-sm font-bold text-[#1d68ed] hover:text-blue-400 tracking-wider uppercase transition-colors group self-start sm:self-auto border-b-2 border-transparent hover:border-blue-500 pb-0.5 cursor-pointer"
+            >
+              <span>VIEW ALL PRODUCTS</span>
+              <ExternalLink className="w-3.5 h-3.5 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+            </a>
+          </div>
+        </FadeIn>
 
         {/* 3. Product Cards Grid (3 Cards in a row) */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8">
-          {products.map((product) => {
-            const isAdded = addedItem === product.id
-            return (
+        <StaggerContainer staggerDelay={0.12} className="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8">
+          {products.map((product) => (
+            <StaggerItem key={product.id}>
               <div
-                key={product.id}
                 data-dynamic-type="product"
                 data-dynamic-id={product.id}
                 data-dynamic-title={product.title}
-                className="bg-[#0b1222] border border-slate-800/90 rounded-2xl p-5 flex flex-col justify-between hover:border-blue-500/40 hover:shadow-2xl hover:shadow-blue-950/40 transition-all duration-300 group"
+                className="bg-[#0b1222] border border-slate-800/90 rounded-2xl p-5 flex flex-col justify-between card-elevate group h-full"
               >
                 {/* Product Image Frame */}
                 <div className="relative w-full aspect-square bg-[#050811] rounded-xl border border-slate-800/60 overflow-hidden flex items-center justify-center p-4 mb-5">
@@ -161,7 +167,7 @@ export default function ProMatchEssentials({ onAddToCart, onNavigate }) {
                 <button
                   type="button"
                   onClick={() => handleAddToCart(product)}
-                  className="w-full py-3.5 px-5 rounded-xl font-bold text-xs uppercase tracking-wider flex items-center justify-between transition-all duration-200 shadow-md bg-[#1762f0] hover:bg-[#1354d4] text-white shadow-blue-600/30 hover:shadow-blue-500/50 hover:scale-[1.01] active:scale-[0.98] cursor-pointer"
+                  className="w-full py-3.5 px-5 rounded-xl font-bold text-xs uppercase tracking-wider flex items-center justify-between transition-all duration-200 shadow-md bg-[#1762f0] hover:bg-[#1354d4] text-white shadow-blue-600/30 hover:shadow-blue-500/50 btn-elevate cursor-pointer mt-auto"
                 >
                   <span className="font-extrabold tracking-widest">
                     ADD TO CART
@@ -169,11 +175,12 @@ export default function ProMatchEssentials({ onAddToCart, onNavigate }) {
                   <ShoppingCart className="w-4 h-4 stroke-[2.5]" />
                 </button>
               </div>
-            )
-          })}
-        </div>
+            </StaggerItem>
+          ))}
+        </StaggerContainer>
 
       </div>
     </section>
   )
 }
+

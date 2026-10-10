@@ -4,6 +4,7 @@ import CustomSquadBanner from '../components/CustomSquadBanner'
 import { initialAdminProducts } from '../admin/data/initialProducts'
 import { supabase } from '../../lib/supabaseClient'
 import { useCmsContent } from '../admin/cmsStore'
+import { FadeIn, StaggerContainer, StaggerItem } from '../components/StorefrontMotion'
 
 export default function ShopPage({ onAddToCart }) {
   const heading = useCmsContent('shop.heading', 'ALL PROTECTION GEAR')
@@ -124,7 +125,7 @@ export default function ShopPage({ onAddToCart }) {
       <div className="max-w-7xl mx-auto">
         
         {/* Page Title & Subtitle */}
-        <div className="text-center mb-10 sm:mb-12">
+        <FadeIn direction="up" className="text-center mb-10 sm:mb-12">
           <h1
             data-cms-path="shop.heading"
             data-cms-label="Shop Page Heading"
@@ -139,10 +140,10 @@ export default function ShopPage({ onAddToCart }) {
           >
             {subheading}
           </p>
-        </div>
+        </FadeIn>
 
         {/* Category Filter Tabs */}
-        <div className="flex flex-wrap items-center justify-center gap-2.5 sm:gap-3 mb-10">
+        <FadeIn delay={0.1} direction="up" className="flex flex-wrap items-center justify-center gap-2.5 sm:gap-3 mb-10">
           {categories.map((cat) => {
             const isActive = activeCategory === cat
             return (
@@ -152,18 +153,18 @@ export default function ShopPage({ onAddToCart }) {
                 onClick={() => setActiveCategory(cat)}
                 className={`px-5 sm:px-6 py-2.5 rounded-full text-xs sm:text-sm font-bold tracking-wide transition-all duration-200 cursor-pointer ${
                   isActive
-                    ? 'bg-[#1762f0] text-white shadow-lg shadow-blue-600/35 scale-[1.02]'
-                    : 'bg-[#0d1627] hover:bg-[#121f36] text-slate-300 hover:text-white border border-slate-800'
+                    ? 'bg-[#1762f0] text-white shadow-lg shadow-blue-600/35 scale-[1.03]'
+                    : 'bg-[#0d1627] hover:bg-[#121f36] text-slate-300 hover:text-white border border-slate-800 hover:scale-[1.02]'
                 }`}
               >
                 {cat}
               </button>
             )
           })}
-        </div>
+        </FadeIn>
 
         {/* Secondary Filter & Search Bar */}
-        <div className="flex flex-col md:flex-row items-stretch md:items-center justify-between gap-4 mb-10 pb-6 border-b border-slate-800/80">
+        <FadeIn delay={0.15} direction="up" className="flex flex-col md:flex-row items-stretch md:items-center justify-between gap-4 mb-10 pb-6 border-b border-slate-800/80">
           
           {/* Stance Selector */}
           <div className="flex flex-wrap items-center gap-2 sm:gap-3">
@@ -201,21 +202,21 @@ export default function ShopPage({ onAddToCart }) {
             <Search className="w-4 h-4 text-slate-400 absolute right-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
           </div>
 
-        </div>
+        </FadeIn>
 
         {/* Product Grid (3 Columns) */}
         {filteredProducts.length > 0 ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
+          <StaggerContainer staggerDelay={0.08} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
             {filteredProducts.map((product) => {
               const isAdded = addedItem === product.id
 
               return (
-                <div
+                <StaggerItem
                   key={product.id}
                   data-dynamic-type="product"
                   data-dynamic-id={product.id}
                   data-dynamic-title={product.title}
-                  className="bg-[#0b1222] border border-slate-800/80 rounded-2xl p-5 sm:p-6 flex flex-col justify-between hover:border-blue-500/40 hover:shadow-2xl transition-all duration-300 group"
+                  className="bg-[#0b1222] border border-slate-800/80 rounded-2xl p-5 sm:p-6 flex flex-col justify-between card-elevate group"
                 >
                   {/* Product Image Frame */}
                   <div className="w-full aspect-[4/3] rounded-xl bg-[#060a14] border border-slate-800/60 overflow-hidden flex items-center justify-center p-4 mb-5">
@@ -251,17 +252,17 @@ export default function ShopPage({ onAddToCart }) {
                       <button
                         type="button"
                         onClick={() => handleAdd(product)}
-                        className="py-2.5 px-4 rounded-xl font-bold text-xs uppercase tracking-wider transition-all duration-200 flex items-center gap-1.5 cursor-pointer shadow-md bg-[#1762f0] hover:bg-[#1354d4] text-white shadow-blue-600/30 hover:scale-[1.02] active:scale-[0.98]"
+                        className="py-2.5 px-4 rounded-xl font-bold text-xs uppercase tracking-wider btn-elevate flex items-center gap-1.5 cursor-pointer shadow-md bg-[#1762f0] hover:bg-[#1354d4] text-white shadow-blue-600/30"
                       >
                         <span>ADD TO CART</span>
                         <ShoppingCart className="w-3.5 h-3.5 stroke-[2.5]" />
                       </button>
                     </div>
                   </div>
-                </div>
+                </StaggerItem>
               )
             })}
-          </div>
+          </StaggerContainer>
         ) : (
           /* Empty State */
           <div className="text-center py-20 bg-[#091122]/40 rounded-2xl border border-slate-800/60">

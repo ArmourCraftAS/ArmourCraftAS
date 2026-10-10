@@ -4,6 +4,7 @@ import { initialBlogs, getSortedBlogs, getStoredBlogs } from '../data/blogsData'
 import WhatsAppCalloutBanner from '../components/WhatsAppCalloutBanner'
 import { supabase } from '../../lib/supabaseClient'
 import { useCmsContent } from '../admin/cmsStore'
+import { FadeIn, StaggerContainer, StaggerItem } from '../components/StorefrontMotion'
 
 export default function BlogPage({ onNavigate }) {
   const latestInsightsHeading = useCmsContent('blog.latestInsightsHeading', 'LATEST INSIGHTS')
@@ -76,78 +77,80 @@ export default function BlogPage({ onNavigate }) {
         {/* 1. FEATURED / MOST RECENT BLOG BANNER (TOP SECTION)                       */}
         {/* ========================================================================= */}
         {featuredBlog && (
-          <section
-            aria-label="Featured Story"
-            data-dynamic-type="blog"
-            data-dynamic-id={featuredBlog.id}
-            data-dynamic-title={featuredBlog.title}
-            className="relative w-full rounded-2xl sm:rounded-3xl bg-[#0c1527] border border-slate-800/80 p-5 sm:p-7 lg:p-9 shadow-2xl backdrop-blur-md overflow-hidden transition-all duration-300"
-          >
-            {/* Subtle atmospheric ambient glow */}
-            <div className="absolute top-0 right-1/4 w-96 h-96 bg-blue-600/5 blur-3xl pointer-events-none rounded-full" />
-            <div className="absolute bottom-0 left-10 w-72 h-72 bg-blue-500/5 blur-3xl pointer-events-none rounded-full" />
+          <FadeIn direction="up">
+            <section
+              aria-label="Featured Story"
+              data-dynamic-type="blog"
+              data-dynamic-id={featuredBlog.id}
+              data-dynamic-title={featuredBlog.title}
+              className="relative w-full rounded-2xl sm:rounded-3xl bg-[#0c1527] border border-slate-800/80 p-5 sm:p-7 lg:p-9 shadow-2xl backdrop-blur-md overflow-hidden card-elevate"
+            >
+              {/* Subtle atmospheric ambient glow */}
+              <div className="absolute top-0 right-1/4 w-96 h-96 bg-blue-600/5 blur-3xl pointer-events-none rounded-full" />
+              <div className="absolute bottom-0 left-10 w-72 h-72 bg-blue-500/5 blur-3xl pointer-events-none rounded-full" />
 
-            <div className="relative z-10 grid grid-cols-1 lg:grid-cols-12 gap-6 sm:gap-8 lg:gap-10 items-stretch">
-              
-              {/* Left Side: High-Resolution Featured Image */}
-              <div className="lg:col-span-6 flex items-center justify-center">
-                <div
-                  onClick={() => handleOpenBlog(featuredBlog)}
-                  className="w-full h-full min-h-[280px] sm:min-h-[360px] lg:min-h-[420px] rounded-xl sm:rounded-2xl overflow-hidden bg-[#070b14] border border-slate-800/80 shadow-2xl group cursor-pointer relative"
-                >
-                  <img
-                    src={featuredBlog.image}
-                    alt={featuredBlog.title}
-                    className="w-full h-full object-cover select-none group-hover:scale-105 transition-transform duration-500 ease-out"
-                    loading="eager"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent opacity-60 group-hover:opacity-30 transition-opacity" />
-                </div>
-              </div>
-
-              {/* Right Side: Title, Excerpt, and Electric Blue Button */}
-              <div className="lg:col-span-6 flex flex-col justify-center py-2 sm:py-4">
+              <div className="relative z-10 grid grid-cols-1 lg:grid-cols-12 gap-6 sm:gap-8 lg:gap-10 items-stretch">
                 
-                {/* Category Pill / Date */}
-                <div className="flex items-center gap-3 mb-4">
-                  <span className="px-3 py-1 rounded-full text-[11px] font-bold tracking-wider uppercase bg-blue-500/10 text-blue-400 border border-blue-500/20">
-                    {featuredBlog.category}
-                  </span>
-                  <span className="text-xs text-slate-400 flex items-center gap-1.5">
-                    <Clock className="w-3.5 h-3.5" />
-                    {featuredBlog.readTime}
-                  </span>
+                {/* Left Side: High-Resolution Featured Image */}
+                <div className="lg:col-span-6 flex items-center justify-center">
+                  <div
+                    onClick={() => handleOpenBlog(featuredBlog)}
+                    className="w-full h-full min-h-[280px] sm:min-h-[360px] lg:min-h-[420px] rounded-xl sm:rounded-2xl overflow-hidden bg-[#070b14] border border-slate-800/80 shadow-2xl group cursor-pointer relative"
+                  >
+                    <img
+                      src={featuredBlog.image}
+                      alt={featuredBlog.title}
+                      className="w-full h-full object-cover select-none group-hover:scale-105 transition-transform duration-500 ease-out"
+                      loading="eager"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent opacity-60 group-hover:opacity-30 transition-opacity" />
+                  </div>
                 </div>
 
-                {/* Main Heading */}
-                <h1
-                  onClick={() => handleOpenBlog(featuredBlog)}
-                  className="text-2xl sm:text-3xl lg:text-[38px] font-black text-white leading-[1.18] tracking-tight mb-5 hover:text-blue-400 transition-colors cursor-pointer"
-                >
-                  {featuredBlog.title}
-                </h1>
+                {/* Right Side: Title, Excerpt, and Electric Blue Button */}
+                <div className="lg:col-span-6 flex flex-col justify-center py-2 sm:py-4">
+                  
+                  {/* Category Pill / Date */}
+                  <div className="flex items-center gap-3 mb-4">
+                    <span className="px-3 py-1 rounded-full text-[11px] font-bold tracking-wider uppercase bg-blue-500/10 text-blue-400 border border-blue-500/20">
+                      {featuredBlog.category}
+                    </span>
+                    <span className="text-xs text-slate-400 flex items-center gap-1.5">
+                      <Clock className="w-3.5 h-3.5" />
+                      {featuredBlog.readTime}
+                    </span>
+                  </div>
 
-                {/* Excerpt */}
-                <p className="text-slate-400 text-sm sm:text-base leading-relaxed mb-8 font-normal max-w-xl">
-                  {featuredBlog.excerpt}
-                </p>
-
-                {/* Electric Blue Action Button */}
-                <div>
-                  <button
-                    type="button"
+                  {/* Main Heading */}
+                  <h1
                     onClick={() => handleOpenBlog(featuredBlog)}
-                    className="inline-flex items-center gap-2.5 px-6 py-3.5 rounded-lg bg-[#1462ea] hover:bg-[#1a6df6] active:bg-blue-700 text-white font-bold text-xs sm:text-sm tracking-wider uppercase transition-all shadow-lg shadow-blue-600/30 hover:shadow-blue-500/50 cursor-pointer"
+                    className="text-2xl sm:text-3xl lg:text-[38px] font-black text-white leading-[1.18] tracking-tight mb-5 hover:text-blue-400 transition-colors cursor-pointer"
                   >
-                    <span>READ FULL GUIDE</span>
-                    <ArrowRight className="w-4 h-4 stroke-[2.5]" />
-                  </button>
+                    {featuredBlog.title}
+                  </h1>
+
+                  {/* Excerpt */}
+                  <p className="text-slate-400 text-sm sm:text-base leading-relaxed mb-8 font-normal max-w-xl">
+                    {featuredBlog.excerpt}
+                  </p>
+
+                  {/* Electric Blue Action Button */}
+                  <div>
+                    <button
+                      type="button"
+                      onClick={() => handleOpenBlog(featuredBlog)}
+                      className="inline-flex items-center gap-2.5 px-6 py-3.5 rounded-lg bg-[#1462ea] hover:bg-[#1a6df6] active:bg-blue-700 text-white font-bold text-xs sm:text-sm tracking-wider uppercase btn-elevate cursor-pointer shadow-lg shadow-blue-600/30"
+                    >
+                      <span>READ FULL GUIDE</span>
+                      <ArrowRight className="w-4 h-4 stroke-[2.5]" />
+                    </button>
+                  </div>
+
                 </div>
 
               </div>
-
-            </div>
-          </section>
+            </section>
+          </FadeIn>
         )}
 
         {/* ========================================================================= */}
@@ -156,7 +159,7 @@ export default function BlogPage({ onNavigate }) {
         <section aria-label="Latest Insights" className="w-full">
           
           {/* Header Row: Title on Left, Horizontal Line, and VIEW ALL > on Right */}
-          <div className="flex items-center justify-between mb-8 sm:mb-10">
+          <FadeIn direction="up" className="flex items-center justify-between mb-8 sm:mb-10">
             <h2
               data-cms-path="blog.latestInsightsHeading"
               data-cms-label="Latest Insights Heading"
@@ -177,18 +180,18 @@ export default function BlogPage({ onNavigate }) {
               <span>{viewAll ? 'SHOW LESS' : 'VIEW ALL'}</span>
               <ChevronRight className={`w-4 h-4 text-slate-400 group-hover:text-white transition-transform ${viewAll ? 'rotate-90' : ''}`} />
             </button>
-          </div>
+          </FadeIn>
 
           {/* 3-Column Grid Layout */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8 items-stretch">
+          <StaggerContainer staggerDelay={0.08} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8 items-stretch">
             {displayedGridBlogs.map((blog) => (
-              <article
+              <StaggerItem
                 key={blog.id}
                 data-dynamic-type="blog"
                 data-dynamic-id={blog.id}
                 data-dynamic-title={blog.title}
                 onClick={() => handleOpenBlog(blog)}
-                className="bg-[#0c1527] border border-slate-800/80 hover:border-slate-700 rounded-2xl overflow-hidden shadow-xl flex flex-col group cursor-pointer transition-all duration-300 hover:-translate-y-1 hover:shadow-blue-900/10"
+                className="bg-[#0c1527] border border-slate-800/80 hover:border-slate-700 rounded-2xl overflow-hidden shadow-xl flex flex-col group cursor-pointer card-elevate"
               >
                 {/* Card Image Container */}
                 <div className="w-full aspect-[16/10] sm:aspect-[4/3] overflow-hidden bg-[#070b14] relative">
@@ -228,9 +231,9 @@ export default function BlogPage({ onNavigate }) {
                     </span>
                   </div>
                 </div>
-              </article>
+              </StaggerItem>
             ))}
-          </div>
+          </StaggerContainer>
 
         </section>
 

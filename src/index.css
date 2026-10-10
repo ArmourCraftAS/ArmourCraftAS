@@ -48,3 +48,61 @@ img.avatar-circle {
   object-position: center !important;
   display: block;
 }
+
+/* Premium Storefront Micro-interactions & Glow Effects */
+.nav-link-glow {
+  position: relative;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.nav-link-glow:hover {
+  text-shadow: 0 0 14px rgba(59, 130, 246, 0.75);
+}
+
+.card-elevate {
+  transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.35s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.35s ease;
+}
+.card-elevate:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.9), 0 0 24px -4px rgba(37, 99, 235, 0.35);
+  border-color: rgba(59, 130, 246, 0.45);
+}
+
+.btn-elevate {
+  transition: transform 0.22s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.btn-elevate:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 28px -6px rgba(23, 98, 240, 0.5);
+}
+.btn-elevate:active {
+  transform: translateY(0px) scale(0.98);
+}
+
+@keyframes floatAmbient {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-8px);
+  }
+}
+
+.animate-float-ambient {
+  animation: floatAmbient 6s ease-in-out infinite;
+}
+
+@keyframes pulseGlow {
+  0%, 100% {
+    opacity: 0.8;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.08);
+  }
+}
+
+.animate-pulse-glow {
+  animation: pulseGlow 3s ease-in-out infinite;
+}
+

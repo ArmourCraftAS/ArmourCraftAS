@@ -4,6 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { getStoredFaqs } from '../data/faqsData'
 import { supabase } from '../../lib/supabaseClient'
 import { useCmsContent } from '../admin/cmsStore'
+import { FadeIn, StaggerContainer, StaggerItem } from './StorefrontMotion'
 
 export default function FAQ() {
   const [openIndex, setOpenIndex] = useState(0)
@@ -52,27 +53,29 @@ export default function FAQ() {
 
       <div className="max-w-4xl mx-auto relative z-10">
         {/* Section Heading */}
-        <h2
-          data-cms-path="home.faq.heading"
-          data-cms-label="FAQ Section Heading"
-          className="text-3xl sm:text-4xl md:text-5xl font-black text-white text-center tracking-tight mb-12 sm:mb-14"
-        >
-          {heading}
-        </h2>
+        <FadeIn direction="up" distance={20}>
+          <h2
+            data-cms-path="home.faq.heading"
+            data-cms-label="FAQ Section Heading"
+            className="text-3xl sm:text-4xl md:text-5xl font-black text-white text-center tracking-tight mb-12 sm:mb-14"
+          >
+            {heading}
+          </h2>
+        </FadeIn>
 
-        {/* Accordion Layout */}
-        <div className="space-y-4 sm:space-y-4.5">
+        {/* Accordion Layout with Staggered Scroll Reveal */}
+        <StaggerContainer staggerDelay={0.06} className="space-y-4 sm:space-y-4.5">
           {faqItems.map((item, index) => {
             const isOpen = openIndex === index
 
             return (
-              <div
-                key={item.id}
-                data-dynamic-type="faq"
-                data-dynamic-id={item.id}
-                data-dynamic-title={item.question}
-                className="bg-[#091734] border border-blue-900/40 rounded-xl sm:rounded-2xl transition-colors duration-200 overflow-hidden hover:border-blue-700/50"
-              >
+              <StaggerItem key={item.id}>
+                <div
+                  data-dynamic-type="faq"
+                  data-dynamic-id={item.id}
+                  data-dynamic-title={item.question}
+                  className="bg-[#091734] border border-blue-900/40 rounded-xl sm:rounded-2xl transition-all duration-200 overflow-hidden hover:border-blue-700/50 card-elevate"
+                >
                 {/* Accordion Header Button */}
                 <button
                   type="button"
@@ -117,9 +120,10 @@ export default function FAQ() {
                   )}
                 </AnimatePresence>
               </div>
+              </StaggerItem>
             )
           })}
-        </div>
+        </StaggerContainer>
       </div>
     </section>
   )

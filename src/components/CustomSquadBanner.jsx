@@ -1,14 +1,15 @@
 import React, { useState } from 'react'
 import { ArrowRight } from 'lucide-react'
 import CustomQuoteModal from './CustomQuoteModal'
+import { FadeIn, StaggerContainer, StaggerItem } from './StorefrontMotion'
 
 export default function CustomSquadBanner() {
   const [isModalOpen, setIsModalOpen] = useState(false)
 
   return (
-    <section className="w-full mt-16 sm:mt-20 lg:mt-24">
+    <FadeIn direction="up" className="w-full mt-16 sm:mt-20 lg:mt-24">
       {/* Main Full-Width Rounded Dark Card Container */}
-      <div className="relative w-full rounded-2xl sm:rounded-3xl bg-[#0b1325]/90 border border-slate-800/80 p-8 sm:p-10 lg:p-14 shadow-2xl backdrop-blur-md overflow-hidden">
+      <div className="relative w-full rounded-2xl sm:rounded-3xl bg-[#0b1325]/90 border border-slate-800/80 p-8 sm:p-10 lg:p-14 shadow-2xl backdrop-blur-md overflow-hidden card-elevate">
         
         {/* Subtle ambient corner glow */}
         <div className="absolute top-0 right-0 w-80 h-80 bg-blue-600/5 blur-3xl pointer-events-none rounded-full" />
@@ -36,7 +37,7 @@ export default function CustomSquadBanner() {
               <button
                 type="button"
                 onClick={() => setIsModalOpen(true)}
-                className="inline-flex items-center justify-center gap-2.5 bg-[#1762f0] hover:bg-[#1354d4] text-white px-7 sm:px-8 py-3.5 sm:py-4 rounded-xl font-bold text-xs sm:text-sm uppercase tracking-wider transition-all duration-200 shadow-lg shadow-blue-600/35 hover:shadow-blue-500/50 hover:scale-[1.02] active:scale-[0.98] cursor-pointer group"
+                className="inline-flex items-center justify-center gap-2.5 bg-[#1762f0] hover:bg-[#1354d4] text-white px-7 sm:px-8 py-3.5 sm:py-4 rounded-xl font-bold text-xs sm:text-sm uppercase tracking-wider btn-elevate cursor-pointer group shadow-lg shadow-blue-600/35"
               >
                 <span>GET CUSTOM SQUAD QUOTE</span>
                 <ArrowRight className="w-4 h-4 transition-transform duration-200 group-hover:translate-x-1" />
@@ -49,7 +50,7 @@ export default function CustomSquadBanner() {
           <div className="lg:col-span-5 flex items-center justify-center lg:justify-end gap-4 sm:gap-6">
             
             {/* Card 1: Personalized Numbers */}
-            <div className="bg-[#060a14] border border-slate-800/90 rounded-2xl p-3 pb-4 flex flex-col items-center w-36 sm:w-44 shadow-2xl transition-all duration-300 hover:border-blue-500/40 hover:scale-[1.02] group">
+            <div className="bg-[#060a14] border border-slate-800/90 rounded-2xl p-3 pb-4 flex flex-col items-center w-36 sm:w-44 shadow-2xl card-elevate group">
               <div className="w-full aspect-[3/4] rounded-xl overflow-hidden bg-[#e2e8f0] flex items-center justify-center">
                 <img
                   src="/images/custom_guard_number_07.jpg"
@@ -64,7 +65,7 @@ export default function CustomSquadBanner() {
             </div>
 
             {/* Card 2: Team Logos */}
-            <div className="bg-[#060a14] border border-slate-800/90 rounded-2xl p-3 pb-4 flex flex-col items-center w-36 sm:w-44 shadow-2xl transition-all duration-300 hover:border-blue-500/40 hover:scale-[1.02] group">
+            <div className="bg-[#060a14] border border-slate-800/90 rounded-2xl p-3 pb-4 flex flex-col items-center w-36 sm:w-44 shadow-2xl card-elevate group">
               <div className="w-full aspect-[3/4] rounded-xl overflow-hidden bg-[#e2e8f0] flex items-center justify-center">
                 <img
                   src="/images/custom_guard_team_logo.jpg"
@@ -88,6 +89,6 @@ export default function CustomSquadBanner() {
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
       />
-    </section>
+    </FadeIn>
   )
 }

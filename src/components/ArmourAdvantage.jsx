@@ -2,6 +2,7 @@ import React from 'react'
 import { Layers } from 'lucide-react'
 import { useCmsContent } from '../admin/cmsStore'
 import CmsMedia, { isVideoAsset } from './CmsMedia'
+import { FadeIn, FloatingElement } from './StorefrontMotion'
 
 export default function ArmourAdvantage() {
   const tag = useCmsContent('home.advantage.tag', 'THE ARMOURCRAFT ADVANTAGE')
@@ -35,70 +36,75 @@ export default function ArmourAdvantage() {
           {/* LEFT SIDE: Overlapping Image Cards */}
           <div className="lg:col-span-6 relative flex justify-center lg:justify-start">
             
-            {/* Outer Container with exact height to comfortably accommodate overlapping cards */}
-            <div className="relative w-full max-w-[480px] h-[460px] sm:h-[510px]">
-              
-              {/* Subtle Blue Accent Corner Line (bottom left background) */}
-              <div className="absolute -bottom-4 -left-4 sm:-bottom-6 sm:-left-6 w-32 sm:w-40 h-32 sm:h-40 border-l-2 border-b-2 border-blue-500/25 rounded-bl-2xl pointer-events-none" />
-
-              {/* 1. Background Card (Carbon-fiber/Foam Macro Texture) */}
-              <div className="absolute top-0 left-0 w-[58%] sm:w-[60%] h-[74%] sm:h-[76%] rounded-2xl sm:rounded-3xl overflow-hidden border border-slate-700/70 shadow-2xl bg-[#090f1d]">
-                <CmsMedia
-                  src={activeImg1}
-                  videoSrc={activeVideo1}
-                  videoAssetId={image1Props?.videoAssetId}
-                  mediaType={isVideo1 ? 'video' : 'image'}
-                  alt="High-density Carbon-Fiber Composite Texture"
-                  poster={image1Props?.poster || activeImg1}
-                  autoPlay={image1Props?.autoplay !== false}
-                  loop={image1Props?.loop !== false}
-                  muted={image1Props?.muted !== false}
-                  controls={image1Props?.controls !== undefined ? image1Props?.controls : true}
-                  data-cms-path="home.advantage.image1"
-                  data-cms-label="Carbon Texture Image"
-                  cmsPath="home.advantage.image1"
-                  cmsLabel="Carbon Texture Image"
-                  className="w-full h-full object-cover select-none"
-                  loading="lazy"
-                />
-                {/* Subtle sheen overlay */}
-                <div className="absolute inset-0 bg-gradient-to-tr from-black/40 via-transparent to-white/[0.04] pointer-events-none" />
+            <FadeIn direction="right" distance={30} delay={0.1}>
+              {/* Outer Container with exact height to comfortably accommodate overlapping cards */}
+              <div className="relative w-full max-w-[480px] h-[460px] sm:h-[510px]">
                 
-                {/* Material Tag Badge */}
-                <div className="absolute top-3.5 left-3.5 bg-black/60 backdrop-blur-md border border-white/10 px-2.5 py-1 rounded-full text-[10px] font-semibold text-slate-300 tracking-wider uppercase flex items-center gap-1.5 z-10 pointer-events-none">
-                  <Layers className="w-3 h-3 text-blue-400" />
-                  <span>Carbon-Foam Matrix</span>
+                {/* Subtle Blue Accent Corner Line (bottom left background) */}
+                <div className="absolute -bottom-4 -left-4 sm:-bottom-6 sm:-left-6 w-32 sm:w-40 h-32 sm:h-40 border-l-2 border-b-2 border-blue-500/25 rounded-bl-2xl pointer-events-none" />
+
+                {/* 1. Background Card (Carbon-fiber/Foam Macro Texture) */}
+                <div className="absolute top-0 left-0 w-[58%] sm:w-[60%] h-[74%] sm:h-[76%] rounded-2xl sm:rounded-3xl overflow-hidden border border-slate-700/70 shadow-2xl bg-[#090f1d]">
+                  <CmsMedia
+                    src={activeImg1}
+                    videoSrc={activeVideo1}
+                    videoAssetId={image1Props?.videoAssetId}
+                    mediaType={isVideo1 ? 'video' : 'image'}
+                    alt="High-density Carbon-Fiber Composite Texture"
+                    poster={image1Props?.poster || activeImg1}
+                    autoPlay={image1Props?.autoplay !== false}
+                    loop={image1Props?.loop !== false}
+                    muted={image1Props?.muted !== false}
+                    controls={image1Props?.controls !== undefined ? image1Props?.controls : true}
+                    data-cms-path="home.advantage.image1"
+                    data-cms-label="Carbon Texture Image"
+                    cmsPath="home.advantage.image1"
+                    cmsLabel="Carbon Texture Image"
+                    className="w-full h-full object-cover select-none"
+                    loading="lazy"
+                  />
+                  {/* Subtle sheen overlay */}
+                  <div className="absolute inset-0 bg-gradient-to-tr from-black/40 via-transparent to-white/[0.04] pointer-events-none" />
+                  
+                  {/* Material Tag Badge */}
+                  <div className="absolute top-3.5 left-3.5 bg-black/60 backdrop-blur-md border border-white/10 px-2.5 py-1 rounded-full text-[10px] font-semibold text-slate-300 tracking-wider uppercase flex items-center gap-1.5 z-10 pointer-events-none">
+                    <Layers className="w-3 h-3 text-blue-400" />
+                    <span>Carbon-Foam Matrix</span>
+                  </div>
                 </div>
-              </div>
 
-              {/* 2. Foreground Floating Card (Dynamic Product Media Display) */}
-              <div className="absolute bottom-0 right-0 sm:right-4 w-[65%] sm:w-[66%] h-[74%] sm:h-[76%] rounded-2xl sm:rounded-3xl overflow-hidden border border-slate-700/80 shadow-[0_25px_60px_-15px_rgba(0,0,0,0.9)] bg-[#0a1120]">
-                <CmsMedia
-                  src={activeImg2}
-                  videoSrc={activeVideo2}
-                  videoAssetId={image2Props?.videoAssetId}
-                  mediaType={isVideo2 ? 'video' : 'image'}
-                  alt="ArmourCraft Ergonomic Blue Thigh Guard"
-                  poster={image2Props?.poster || activeImg2}
-                  autoPlay={image2Props?.autoplay !== false}
-                  loop={image2Props?.loop !== false}
-                  muted={image2Props?.muted !== false}
-                  controls={image2Props?.controls !== undefined ? image2Props?.controls : true}
-                  data-cms-path="home.advantage.image2"
-                  data-cms-label="Thigh Guard Image"
-                  cmsPath="home.advantage.image2"
-                  cmsLabel="Thigh Guard Image"
-                  className="w-full h-full object-cover select-none"
-                  loading="lazy"
-                />
-              </div>
+                {/* 2. Foreground Floating Card (Dynamic Product Media Display) */}
+                <FloatingElement distance={6} duration={5} className="absolute bottom-0 right-0 sm:right-4 w-[65%] sm:w-[66%] h-[74%] sm:h-[76%]">
+                  <div className="w-full h-full rounded-2xl sm:rounded-3xl overflow-hidden border border-slate-700/80 shadow-[0_25px_60px_-15px_rgba(0,0,0,0.9)] bg-[#0a1120]">
+                    <CmsMedia
+                      src={activeImg2}
+                      videoSrc={activeVideo2}
+                      videoAssetId={image2Props?.videoAssetId}
+                      mediaType={isVideo2 ? 'video' : 'image'}
+                      alt="ArmourCraft Ergonomic Blue Thigh Guard"
+                      poster={image2Props?.poster || activeImg2}
+                      autoPlay={image2Props?.autoplay !== false}
+                      loop={image2Props?.loop !== false}
+                      muted={image2Props?.muted !== false}
+                      controls={image2Props?.controls !== undefined ? image2Props?.controls : true}
+                      data-cms-path="home.advantage.image2"
+                      data-cms-label="Thigh Guard Image"
+                      cmsPath="home.advantage.image2"
+                      cmsLabel="Thigh Guard Image"
+                      className="w-full h-full object-cover select-none"
+                      loading="lazy"
+                    />
+                  </div>
+                </FloatingElement>
 
-            </div>
+              </div>
+            </FadeIn>
           </div>
 
           {/* RIGHT SIDE: Content Card */}
           <div className="lg:col-span-6">
-            <div className="relative rounded-3xl p-8 sm:p-12 md:p-14 bg-gradient-to-br from-[#0c1426] via-[#090f1e] to-[#060a14] border border-slate-800/90 shadow-2xl shadow-blue-950/20 overflow-hidden">
+            <FadeIn direction="left" distance={30} delay={0.2}>
+              <div className="relative rounded-3xl p-8 sm:p-12 md:p-14 bg-gradient-to-br from-[#0c1426] via-[#090f1e] to-[#060a14] border border-slate-800/90 shadow-2xl shadow-blue-950/20 overflow-hidden">
               
               {/* Corner soft light reflection */}
               <div className="absolute top-0 right-0 w-64 h-64 bg-blue-500/5 blur-3xl pointer-events-none rounded-full" />
@@ -149,6 +155,7 @@ export default function ArmourAdvantage() {
               </p>
 
             </div>
+            </FadeIn>
           </div>
 
         </div>

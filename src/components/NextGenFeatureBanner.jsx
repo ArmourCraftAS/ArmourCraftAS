@@ -1,12 +1,13 @@
 import React from 'react'
 import { Check } from 'lucide-react'
+import { FadeIn } from './StorefrontMotion'
 
 export default function NextGenFeatureBanner() {
   return (
     <section className="w-full bg-[#060a12] py-12 sm:py-16 lg:py-20 px-4 sm:px-6 lg:px-8 border-t border-slate-900/80">
       <div className="max-w-7xl mx-auto">
         {/* Dark, Sleek Rounded Card Container */}
-        <div className="relative w-full rounded-2xl sm:rounded-3xl bg-[#0b1325]/90 border border-slate-800/80 p-8 sm:p-10 lg:p-14 shadow-2xl backdrop-blur-md overflow-hidden">
+        <FadeIn direction="up" className="relative w-full rounded-2xl sm:rounded-3xl bg-[#0b1325]/90 border border-slate-800/80 p-8 sm:p-10 lg:p-14 shadow-2xl backdrop-blur-md overflow-hidden card-elevate">
           
           {/* Subtle atmospheric ambient glow */}
           <div className="absolute top-0 right-1/3 w-80 h-80 bg-blue-600/5 blur-3xl pointer-events-none rounded-full" />
@@ -69,7 +70,7 @@ export default function NextGenFeatureBanner() {
 
           </div>
 
-        </div>
+        </FadeIn>
       </div>
     </section>
   )

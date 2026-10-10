@@ -3,6 +3,7 @@ import { Shield, Zap, Gem } from 'lucide-react'
 import NextGenFeatureBanner from '../components/NextGenFeatureBanner'
 import { useCmsContent } from '../admin/cmsStore'
 import CmsMedia, { isVideoAsset } from '../components/CmsMedia'
+import { FadeIn, StaggerContainer, StaggerItem, FloatingElement } from '../components/StorefrontMotion'
 
 export default function WhatWeArePage({ onNavigate }) {
   const tag = useCmsContent('whatWeAre.tag', 'WHAT WE ARE')
@@ -23,7 +24,7 @@ export default function WhatWeArePage({ onNavigate }) {
         {/* ========================================================================= */}
         {/* 1. HERO HEADER SECTION                                                    */}
         {/* ========================================================================= */}
-        <div className="text-center max-w-4xl mx-auto mb-16 sm:mb-20 lg:mb-24">
+        <FadeIn direction="up" className="text-center max-w-4xl mx-auto mb-16 sm:mb-20 lg:mb-24">
           
           {/* Top Pill Badge */}
           <div
@@ -55,7 +56,7 @@ export default function WhatWeArePage({ onNavigate }) {
             {subheading}
           </p>
 
-        </div>
+        </FadeIn>
 
         {/* ========================================================================= */}
         {/* 2. CONTENT & IMAGE COLLAGE GRID SECTION                                   */}
@@ -63,11 +64,11 @@ export default function WhatWeArePage({ onNavigate }) {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-center mb-20 lg:mb-28">
           
           {/* Left Side: 3-Image Collage Grid */}
-          <div className="lg:col-span-7">
+          <FadeIn direction="right" className="lg:col-span-7">
             <div className="grid grid-cols-2 gap-4 sm:gap-6 items-stretch">
               
               {/* Tall Vertical Image (Textured Carbon/Foam Craftsmanship) */}
-              <div className="relative rounded-2xl overflow-hidden bg-[#090f1e] border border-slate-800/80 shadow-2xl group transition-all duration-300 hover:border-blue-500/40">
+              <div className="relative rounded-2xl overflow-hidden bg-[#090f1e] border border-slate-800/80 shadow-2xl group card-elevate">
                 <CmsMedia
                   src={activeImg}
                   videoSrc={activeVideo}
@@ -97,7 +98,7 @@ export default function WhatWeArePage({ onNavigate }) {
               <div className="flex flex-col gap-4 sm:gap-6 justify-between">
                 
                 {/* Top Stacked Image (Woven Carbon Fiber Grid Texture) */}
-                <div className="relative aspect-square rounded-2xl overflow-hidden bg-[#090f1e] border border-slate-800/80 shadow-2xl group transition-all duration-300 hover:border-blue-500/40">
+                <div className="relative aspect-square rounded-2xl overflow-hidden bg-[#090f1e] border border-slate-800/80 shadow-2xl group card-elevate">
                   <img
                     src="/images/what_we_are_carbon_grid.jpg"
                     alt="Woven carbon fiber composite grid texture"
@@ -111,7 +112,7 @@ export default function WhatWeArePage({ onNavigate }) {
                 </div>
 
                 {/* Bottom Stacked Image (Precision Lab Crafting/Testing Setup) */}
-                <div className="relative aspect-square rounded-2xl overflow-hidden bg-[#090f1e] border border-slate-800/80 shadow-2xl group transition-all duration-300 hover:border-blue-500/40">
+                <div className="relative aspect-square rounded-2xl overflow-hidden bg-[#090f1e] border border-slate-800/80 shadow-2xl group card-elevate">
                   <img
                     src="/images/what_we_are_lab_testing.jpg"
                     alt="Precision impact testing and engineering lab setup"
@@ -128,10 +129,10 @@ export default function WhatWeArePage({ onNavigate }) {
               </div>
 
             </div>
-          </div>
+          </FadeIn>
 
           {/* Right Side: Text Column */}
-          <div className="lg:col-span-5 flex flex-col justify-center">
+          <FadeIn direction="left" delay={0.15} className="lg:col-span-5 flex flex-col justify-center">
             
             {/* Section Heading */}
             <h2 className="text-3xl sm:text-4xl lg:text-[42px] font-black uppercase text-white tracking-tight leading-[1.1] mb-3">
@@ -152,7 +153,7 @@ export default function WhatWeArePage({ onNavigate }) {
               At ArmourCraft, we started with a blank slate. By integrating high-density EVA foam layering and carbon-fiber reinforcement, we engineered ergonomic, zero-shift protection that moves with the athlete, not against them. Our gear is built to withstand the fastest deliveries on earth without weighing down the player who has to face them.
             </p>
 
-          </div>
+          </FadeIn>
 
         </div>
 
@@ -162,7 +163,7 @@ export default function WhatWeArePage({ onNavigate }) {
         <div className="pt-16 sm:pt-20 border-t border-slate-800/80">
           
           {/* Section Header */}
-          <div className="text-center mb-12 sm:mb-16">
+          <FadeIn direction="up" className="text-center mb-12 sm:mb-16">
             {/* Pill Badge */}
             <div className="inline-flex items-center justify-center px-4 py-1.5 rounded-full bg-[#1762f0] text-white shadow-md shadow-blue-600/30 mb-4">
               <span className="text-[11px] font-black uppercase tracking-wider">
@@ -174,13 +175,13 @@ export default function WhatWeArePage({ onNavigate }) {
             <h2 className="text-3xl sm:text-4xl md:text-5xl font-black text-white uppercase tracking-tight text-center">
               BUILT FOR THE REAL GAME
             </h2>
-          </div>
+          </FadeIn>
 
           {/* 3-Column Feature Cards Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8 mb-6 sm:mb-8">
+          <StaggerContainer staggerDelay={0.1} className="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8 mb-6 sm:mb-8">
             
             {/* Card 1: Hard Leather Impact Protection */}
-            <div className="bg-[#0b1325] border border-slate-800/90 rounded-2xl sm:rounded-3xl p-7 sm:p-8 flex flex-col justify-between shadow-2xl transition-all duration-300 hover:border-blue-500/40 hover:scale-[1.01] group">
+            <StaggerItem className="bg-[#0b1325] border border-slate-800/90 rounded-2xl sm:rounded-3xl p-7 sm:p-8 flex flex-col justify-between shadow-2xl card-elevate group">
               <div>
                 <div className="w-12 h-12 rounded-xl bg-[#091530] border border-blue-500/30 flex items-center justify-center text-[#1762f0] mb-6 shadow-inner group-hover:scale-105 transition-transform">
                   <Shield className="w-5 h-5 fill-[#1762f0]/20 text-[#1762f0]" />
@@ -195,10 +196,10 @@ export default function WhatWeArePage({ onNavigate }) {
               <span className="text-[10px] sm:text-[11px] font-black text-[#1762f0] uppercase tracking-widest mt-auto">
                 PRO-GRADE SAFETY
               </span>
-            </div>
+            </StaggerItem>
 
             {/* Card 2: Zero-Shift Running Fit */}
-            <div className="bg-[#0b1325] border border-slate-800/90 rounded-2xl sm:rounded-3xl p-7 sm:p-8 flex flex-col justify-between shadow-2xl transition-all duration-300 hover:border-blue-500/40 hover:scale-[1.01] group">
+            <StaggerItem className="bg-[#0b1325] border border-slate-800/90 rounded-2xl sm:rounded-3xl p-7 sm:p-8 flex flex-col justify-between shadow-2xl card-elevate group">
               <div>
                 <div className="w-12 h-12 rounded-xl bg-[#091530] border border-blue-500/30 flex items-center justify-center text-[#1762f0] mb-6 shadow-inner group-hover:scale-105 transition-transform">
                   <Zap className="w-5 h-5 fill-[#1762f0]/20 text-[#1762f0]" />
@@ -213,10 +214,10 @@ export default function WhatWeArePage({ onNavigate }) {
               <span className="text-[10px] sm:text-[11px] font-black text-[#1762f0] uppercase tracking-widest mt-auto">
                 PERFORMANCE FIT
               </span>
-            </div>
+            </StaggerItem>
 
             {/* Card 3: Sialkot Master Craftsmanship */}
-            <div className="bg-[#0b1325] border border-slate-800/90 rounded-2xl sm:rounded-3xl p-7 sm:p-8 flex flex-col justify-between shadow-2xl transition-all duration-300 hover:border-blue-500/40 hover:scale-[1.01] group">
+            <StaggerItem className="bg-[#0b1325] border border-slate-800/90 rounded-2xl sm:rounded-3xl p-7 sm:p-8 flex flex-col justify-between shadow-2xl card-elevate group">
               <div>
                 <div className="w-12 h-12 rounded-xl bg-[#091530] border border-blue-500/30 flex items-center justify-center text-[#1762f0] mb-6 shadow-inner group-hover:scale-105 transition-transform">
                   <Gem className="w-5 h-5 fill-[#1762f0]/20 text-[#1762f0]" />
@@ -231,12 +232,12 @@ export default function WhatWeArePage({ onNavigate }) {
               <span className="text-[10px] sm:text-[11px] font-black text-[#1762f0] uppercase tracking-widest mt-auto">
                 HERITAGE BUILT
               </span>
-            </div>
+            </StaggerItem>
 
-          </div>
+          </StaggerContainer>
 
           {/* Bottom Stats Bar */}
-          <div className="w-full bg-[#0b1325] border border-slate-800/90 rounded-2xl sm:rounded-3xl p-6 sm:p-8 shadow-2xl">
+          <FadeIn direction="up" delay={0.2} className="w-full bg-[#0b1325] border border-slate-800/90 rounded-2xl sm:rounded-3xl p-6 sm:p-8 shadow-2xl">
             <div className="grid grid-cols-2 md:grid-cols-4 gap-6 sm:gap-8 items-center text-center">
               
               {/* Stat 1 */}
@@ -284,7 +285,7 @@ export default function WhatWeArePage({ onNavigate }) {
               </div>
 
             </div>
-          </div>
+          </FadeIn>
 
         </div>
 

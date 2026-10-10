@@ -3,6 +3,7 @@ import { ArrowRight } from 'lucide-react'
 import CustomQuoteModal from './CustomQuoteModal'
 import { useCmsContent } from '../admin/cmsStore'
 import CmsMedia, { isVideoAsset } from './CmsMedia'
+import { FadeIn } from './StorefrontMotion'
 
 export default function CustomGearBanner() {
   const [isQuoteModalOpen, setIsQuoteModalOpen] = useState(false)
@@ -52,40 +53,42 @@ export default function CustomGearBanner() {
 
       {/* Main Container Content */}
       <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-20 lg:py-24">
-        <div className="max-w-xl lg:max-w-2xl">
-          
-          {/* Main Heading */}
-          <h2
-            data-cms-path="home.customSquad.heading"
-            data-cms-label="Custom Gear Banner Heading"
-            className="text-3xl sm:text-4xl md:text-5xl lg:text-[46px] font-black uppercase tracking-tight leading-[1.1] mb-5"
-          >
-            {heading}
-          </h2>
-
-          {/* Description */}
-          <p
-            data-cms-path="home.customSquad.subheading"
-            data-cms-label="Custom Gear Banner Description"
-            className="text-slate-300 text-sm sm:text-base leading-relaxed max-w-lg mb-8 text-slate-300/90 font-normal"
-          >
-            {subheading}
-          </p>
-
-          {/* Primary Call to Action Button */}
-          <div>
-            <button
-              onClick={() => setIsQuoteModalOpen(true)}
-              data-cms-path="home.customSquad.ctaText"
-              data-cms-label="Custom Gear Banner CTA"
-              className="inline-flex items-center justify-center bg-white hover:bg-slate-200 text-black font-black text-xs sm:text-sm uppercase tracking-widest px-8 py-4 rounded-none sm:rounded-md transition-all duration-200 shadow-xl shadow-white/10 hover:shadow-white/20 active:scale-[0.98] group cursor-pointer"
+        <FadeIn direction="up" distance={25}>
+          <div className="max-w-xl lg:max-w-2xl">
+            
+            {/* Main Heading */}
+            <h2
+              data-cms-path="home.customSquad.heading"
+              data-cms-label="Custom Gear Banner Heading"
+              className="text-3xl sm:text-4xl md:text-5xl lg:text-[46px] font-black uppercase tracking-tight leading-[1.1] mb-5"
             >
-              <span>{ctaText}</span>
-              <ArrowRight className="w-4 h-4 ml-2 transition-transform duration-200 group-hover:translate-x-1 text-black" />
-            </button>
-          </div>
+              {heading}
+            </h2>
 
-        </div>
+            {/* Description */}
+            <p
+              data-cms-path="home.customSquad.subheading"
+              data-cms-label="Custom Gear Banner Description"
+              className="text-slate-300 text-sm sm:text-base leading-relaxed max-w-lg mb-8 text-slate-300/90 font-normal"
+            >
+              {subheading}
+            </p>
+
+            {/* Primary Call to Action Button */}
+            <div>
+              <button
+                onClick={() => setIsQuoteModalOpen(true)}
+                data-cms-path="home.customSquad.ctaText"
+                data-cms-label="Custom Gear Banner CTA"
+                className="inline-flex items-center justify-center bg-white hover:bg-slate-200 text-black font-black text-xs sm:text-sm uppercase tracking-widest px-8 py-4 rounded-none sm:rounded-md transition-all duration-200 shadow-xl shadow-white/10 hover:shadow-white/20 active:scale-[0.98] btn-elevate group cursor-pointer"
+              >
+                <span>{ctaText}</span>
+                <ArrowRight className="w-4 h-4 ml-2 transition-transform duration-200 group-hover:translate-x-1 text-black" />
+              </button>
+            </div>
+
+          </div>
+        </FadeIn>
       </div>
 
       {/* Interactive Custom Team Quote Modal Popup */}
