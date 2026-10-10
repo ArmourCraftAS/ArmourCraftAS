@@ -79,6 +79,7 @@ export default function Hero({ onNavigate, onOpenCustomModal }) {
               muted={isMuted}
               controls={cmsHero?.videoControls === true}
               playsInline
+              preload="auto"
               className="w-full h-full object-cover"
               style={{ opacity: (cmsHero?.imageOpacity || 90) / 100 }}
               data-cms-path="home.hero.imageSrc"

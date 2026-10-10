@@ -48,37 +48,9 @@ function openDB() {
 }
 
 /**
- * Save a File or Blob to IndexedDB and register an active Object URL
- * @param {File|Blob} file 
- * @param {string} [customId] 
- * @returns {Promise<{ id: string, objectUrl: string, name: string, size: number, type: string }>}
+ * Helper to persist asset to IndexedDB in background
  */
-export async function saveMediaAsset(file, customId = null) {
-  if (!file) throw new Error('No file provided')
-
-  const id = customId || `asset_${Date.now()}_${Math.random().toString(36).substr(2, 6)}`
-  const name = file.name || 'uploaded_video.mp4'
-  const size = file.size || 0
-  const type = file.type || 'video/mp4'
-
-  // 1. Create immediate live Object URL
-  let objectUrl = ''
-  if (typeof window !== 'undefined' && window.URL && typeof window.URL.createObjectURL === 'function') {
-    objectUrl = window.URL.createObjectURL(file)
-  }
-
-  // 2. Cache in memory
-  memoryAssetMap.set(id, {
-    id,
-    blob: file,
-    objectUrl,
-    name,
-    size,
-    type,
-    updatedAt: Date.now()
-  })
-
-  // 3. Persist to IndexedDB
+async function persistToIndexedDB(id, file, name, size, type) {
   try {
     const db = await openDB()
     if (db) {
@@ -101,6 +73,45 @@ export async function saveMediaAsset(file, customId = null) {
   } catch (dbErr) {
     console.warn('Could not persist media asset to IndexedDB:', dbErr)
   }
+}
+
+/**
+ * 0-Latency Synchronous Object URL & Memory Asset Creation
+ * Returns immediately with a live Object URL for 0ms visual canvas rendering.
+ * Background storage syncing completes asynchronously without blocking the UI.
+ * @param {File|Blob} file 
+ * @param {string} [customId] 
+ * @returns {{ id: string, objectUrl: string, name: string, size: number, type: string }}
+ */
+export function createInstantMediaAsset(file, customId = null) {
+  if (!file) throw new Error('No file provided')
+
+  const id = customId || `asset_${Date.now()}_${Math.random().toString(36).substr(2, 6)}`
+  const name = file.name || 'uploaded_video.mp4'
+  const size = file.size || 0
+  const type = file.type || 'video/mp4'
+
+  // 1. Create immediate live Object URL synchronously (0ms)
+  let objectUrl = ''
+  if (typeof window !== 'undefined' && window.URL && typeof window.URL.createObjectURL === 'function') {
+    objectUrl = window.URL.createObjectURL(file)
+  }
+
+  // 2. Cache in memory immediately
+  memoryAssetMap.set(id, {
+    id,
+    blob: file,
+    objectUrl,
+    name,
+    size,
+    type,
+    updatedAt: Date.now()
+  })
+
+  // 3. Initiate non-blocking background persistence to IndexedDB
+  persistToIndexedDB(id, file, name, size, type).catch((e) => {
+    console.warn('Background IndexedDB sync notice:', e)
+  })
 
   return {
     id,
@@ -109,6 +120,18 @@ export async function saveMediaAsset(file, customId = null) {
     size,
     type
   }
+}
+
+/**
+ * Save a File or Blob to IndexedDB and register an active Object URL
+ * @param {File|Blob} file 
+ * @param {string} [customId] 
+ * @returns {Promise<{ id: string, objectUrl: string, name: string, size: number, type: string }>}
+ */
+export async function saveMediaAsset(file, customId = null) {
+  const asset = createInstantMediaAsset(file, customId)
+  await persistToIndexedDB(asset.id, file, asset.name, asset.size, asset.type)
+  return asset
 }
 
 /**

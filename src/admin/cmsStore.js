@@ -259,18 +259,20 @@ export function getCmsData() {
 export function saveDraftCmsData(data) {
   if (typeof window === 'undefined') return
   inMemoryDraftCache = data
+
+  // 1. Dispatch update event FIRST to trigger immediate React UI reconciliation in 0ms
+  try {
+    window.dispatchEvent(new CustomEvent('armourcraft_cms_draft_updated', { detail: data }))
+  } catch (e) {
+    console.warn('Event dispatch warning:', e)
+  }
+
+  // 2. Persist to localStorage safely in background
   try {
     const safeData = sanitizeForLocalStorage(data)
     localStorage.setItem(DRAFT_STORAGE_KEY, JSON.stringify(safeData))
   } catch (e) {
     console.warn('LocalStorage draft write warning:', e)
-  }
-
-  // ALWAYS dispatch update event to keep Canvas Preview & reactive hooks strictly in sync
-  try {
-    window.dispatchEvent(new CustomEvent('armourcraft_cms_draft_updated', { detail: data }))
-  } catch (e) {
-    console.warn('Event dispatch warning:', e)
   }
 }
 

@@ -38,7 +38,7 @@ import {
   Package,
   Clock
 } from 'lucide-react'
-import { saveMediaAsset } from '../mediaAssetStore'
+import { createInstantMediaAsset, saveMediaAsset } from '../mediaAssetStore'
 
 // Available video presets in project
 const PRESET_VIDEOS = [
@@ -155,14 +155,15 @@ export default function ElementInspectorSidebar({
     reader.readAsDataURL(file)
   }
 
-  // Handle local video file upload (.mp4, .webm, .mov, etc.)
-  const handleVideoFileProcess = async (file) => {
+  // Handle local video file upload with 0ms instant Object URL binding
+  const handleVideoFileProcess = (file) => {
     if (!file) return
-    setVideoStatus('uploading')
     setVideoFileName(file.name)
+    setVideoStatus('uploading')
+
     try {
-      // 1. Immediately persist to IndexedDB media store and get live Object URL
-      const asset = await saveMediaAsset(file)
+      // 1. INSTANT zero-delay Object URL generation & state binding (0ms)
+      const asset = createInstantMediaAsset(file)
       onUpdateElement({
         ...selectedElement,
         value: asset.objectUrl,
@@ -178,7 +179,7 @@ export default function ElementInspectorSidebar({
       })
       setVideoStatus('success')
     } catch (err) {
-      console.warn('Video asset storage fallback to standard Object URL:', err)
+      console.warn('Instant video asset creation fallback:', err)
       const objUrl = URL.createObjectURL(file)
       onUpdateElement({
         ...selectedElement,
@@ -792,9 +793,16 @@ export default function ElementInspectorSidebar({
 
                 {/* C. Direct Video Link Input */}
                 <div className="space-y-2">
-                  <label className="text-xs font-bold text-slate-300 uppercase tracking-wider block">
-                    Or Paste Video URL
-                  </label>
+                  <div className="flex items-center justify-between">
+                    <label className="text-xs font-bold text-slate-300 uppercase tracking-wider block">
+                      Video Link / Asset Reference
+                    </label>
+                    {mediaProps.videoSrc && (
+                      <span className="text-[10px] font-mono text-emerald-400 bg-emerald-950/60 px-2 py-0.5 rounded-md border border-emerald-500/30 font-bold">
+                        {mediaProps.videoSrc.startsWith('blob:') ? 'Live Object URL' : 'Direct Link'}
+                      </span>
+                    )}
+                  </div>
                   <input
                     type="text"
                     value={mediaProps.videoSrc || ''}
@@ -813,9 +821,16 @@ export default function ElementInspectorSidebar({
                 {/* D. Video Live Preview Player */}
                 {mediaProps.videoSrc && (
                   <div className="space-y-1.5">
-                    <label className="text-[11px] font-bold text-slate-400 uppercase tracking-wider block">
-                      Active Video Preview
-                    </label>
+                    <div className="flex items-center justify-between">
+                      <label className="text-[11px] font-bold text-slate-400 uppercase tracking-wider block">
+                        Active Video Preview
+                      </label>
+                      {mediaProps.fileName && (
+                        <span className="text-[10px] font-mono text-slate-400 truncate max-w-[180px]">
+                          {mediaProps.fileName}
+                        </span>
+                      )}
+                    </div>
                     <div className="w-full aspect-video rounded-xl bg-black border border-slate-800 overflow-hidden relative shadow-inner">
                       <video
                         key={mediaProps.videoSrc}
@@ -824,6 +839,7 @@ export default function ElementInspectorSidebar({
                         controls
                         muted
                         playsInline
+                        preload="auto"
                         className="w-full h-full object-contain"
                       />
                     </div>
