@@ -139,24 +139,24 @@ export default function TopBarHeader({
       {/* ========================================================================= */}
       {/* 1. LEFT: ARMOURCRAFT AS METALLIC 3D LOGO (MATCHING image_e863dc.png)       */}
       {/* ========================================================================= */}
-      <div className="flex items-center shrink-0">
+      <div className="flex items-center shrink-0 bg-transparent">
         <button
           type="button"
           onClick={() => {
             if (setActiveTab) setActiveTab(null)
             if (onSelectPage) onSelectPage('Home')
           }}
-          className="flex items-center group cursor-pointer text-left focus:outline-none transition-transform duration-200 hover:scale-[1.01] py-1"
+          className="flex items-center group cursor-pointer text-left focus:outline-none transition-transform duration-200 hover:scale-[1.01] py-1 bg-transparent"
           title="ARMOURCRAFT AS - Admin Visual Studio"
         >
           <img
-            src="/images/logo_clean.png"
+            src="/images/admin_logo.png"
             alt="ARMOURCRAFT AS"
-            className="h-8 sm:h-9 md:h-10 w-auto object-contain select-none"
+            className="h-8 sm:h-9 md:h-10 w-auto object-contain select-none bg-transparent"
             style={{ mixBlendMode: 'screen' }}
             loading="eager"
             onError={(e) => {
-              e.currentTarget.src = '/images/logo_original.png'
+              e.currentTarget.src = '/images/logo_clean.png'
             }}
           />
         </button>

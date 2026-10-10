@@ -90,13 +90,13 @@ export default function AdminLayout({ children, currentPath, onNavigate }) {
             <button
               type="button"
               onClick={() => onNavigate('/admin/dashboard')}
-              className="flex items-center group cursor-pointer text-left focus:outline-none py-1"
+              className="flex items-center group cursor-pointer text-left focus:outline-none py-1 bg-transparent"
               title="ARMOURCRAFT AS - Admin Console"
             >
               <img
-                src="/images/logo_clean.png"
+                src="/images/admin_logo.png"
                 alt="ARMOURCRAFT AS"
-                className="h-8 sm:h-9 w-auto object-contain select-none transition-transform duration-200 group-hover:scale-[1.02]"
+                className="h-8 sm:h-9 w-auto object-contain select-none bg-transparent transition-transform duration-200 group-hover:scale-[1.02]"
                 style={{ mixBlendMode: 'screen' }}
                 loading="eager"
               />
