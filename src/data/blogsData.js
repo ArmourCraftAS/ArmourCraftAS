@@ -238,6 +238,38 @@ export function getSortedBlogs(blogs = initialBlogs) {
   })
 }
 
+export const BLOGS_STORAGE_KEY = 'armourcraft_admin_blogs_v1'
+
+/**
+ * Returns blogs stored in localStorage or fallback initialBlogs
+ */
+export function getStoredBlogs() {
+  if (typeof window === 'undefined') return initialBlogs
+  try {
+    const saved = window.localStorage.getItem(BLOGS_STORAGE_KEY)
+    if (saved) {
+      const parsed = JSON.parse(saved)
+      if (Array.isArray(parsed) && parsed.length > 0) return parsed
+    }
+  } catch (err) {
+    console.warn('Error reading blogs from localStorage:', err)
+  }
+  return initialBlogs
+}
+
+/**
+ * Persists blogs to localStorage and dispatches custom event for live sync
+ */
+export function saveStoredBlogs(blogs) {
+  if (typeof window === 'undefined') return
+  try {
+    window.localStorage.setItem(BLOGS_STORAGE_KEY, JSON.stringify(blogs))
+    window.dispatchEvent(new CustomEvent('armourcraft:blogs-updated', { detail: blogs }))
+  } catch (err) {
+    console.warn('Error saving blogs to localStorage:', err)
+  }
+}
+
 /**
  * Find a blog by its slug or id
  */
@@ -245,3 +277,4 @@ export function getBlogBySlug(slug, blogs = initialBlogs) {
   if (!slug) return null
   return blogs.find((b) => b.slug === slug || b.id === slug) || null
 }
+

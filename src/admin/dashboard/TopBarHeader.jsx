@@ -325,19 +325,29 @@ export default function TopBarHeader({
           <Redo2 className="w-4 h-4" />
         </button>
 
-        {/* Preview Button */}
+        {/* Context-Aware Dynamic Preview Button */}
         <button
           type="button"
           onClick={onTogglePreview}
           className={`px-3.5 py-1.5 rounded-lg text-xs font-semibold border transition-all duration-150 flex items-center gap-1.5 cursor-pointer ${
             isPreviewMode
-              ? 'bg-blue-600/20 border-blue-500 text-blue-300 shadow-sm'
+              ? 'bg-blue-600/30 border-blue-400 text-blue-200 shadow-md shadow-blue-500/20 font-bold'
               : 'border-slate-700/80 hover:border-slate-600 text-slate-300 hover:text-white bg-[#0e1526]/50'
           }`}
-          title="Toggle Full Preview Mode"
+          title={
+            isPreviewMode
+              ? 'Exit Preview Mode (Return to CMS Editor)'
+              : activeTab === 'product'
+              ? 'Preview Live Shop Page with Draft Products'
+              : (activeTab === 'Blog' || activeTab === 'blog')
+              ? 'Preview Live Blog Page with Draft Articles'
+              : (activeTab === 'FAQs' || activeTab === 'faqs')
+              ? 'Preview Live Contact & Support Page with Draft FAQs'
+              : 'Preview Live Storefront Page'
+          }
         >
-          {isPreviewMode ? <EyeOff className="w-3.5 h-3.5" /> : <Eye className="w-3.5 h-3.5" />}
-          <span>Preview</span>
+          {isPreviewMode ? <EyeOff className="w-3.5 h-3.5 text-blue-300" /> : <Eye className="w-3.5 h-3.5" />}
+          <span>{isPreviewMode ? 'Exit Preview' : 'Preview'}</span>
         </button>
 
         {/* Primary PUBLISH Button */}

@@ -1,6 +1,8 @@
-import React, { useState, useMemo } from 'react'
+import React, { useState, useEffect, useMemo } from 'react'
 import { Search, ShoppingCart } from 'lucide-react'
 import CustomSquadBanner from '../components/CustomSquadBanner'
+import { initialAdminProducts } from '../admin/data/initialProducts'
+import { supabase } from '../../lib/supabaseClient'
 
 export default function ShopPage({ onAddToCart }) {
   const [activeCategory, setActiveCategory] = useState('All Products')
@@ -8,87 +10,98 @@ export default function ShopPage({ onAddToCart }) {
   const [searchQuery, setSearchQuery] = useState('')
   const [addedItem, setAddedItem] = useState(null)
 
-  const categories = ['All Products', 'Thigh Guards', 'Inner Pads', 'Leg Guards']
-  const stances = ['All Stances', 'Right-Handed', 'Left-Handed']
-
-  const allProducts = [
-    {
-      id: 'pro-dual-thigh',
-      title: 'Pro Dual-Leg Thigh Guard Set',
-      description: 'Ultimate protection for professional openers and heavy hitters.',
-      price: '$79.99',
-      image: '/images/product_thigh_guard.png',
-      category: 'Thigh Guards',
-      stances: ['All Stances', 'Right-Handed', 'Left-Handed']
-    },
-    {
-      id: 'aero-leg-guards',
-      title: 'Aero Ultra-Light Leg Guards',
-      description: 'Revolutionary 3D-molded foam for zero-weight sprinting speed.',
-      price: '$119.99',
-      image: '/images/product_leg_guard.png',
-      category: 'Leg Guards',
-      stances: ['All Stances', 'Right-Handed', 'Left-Handed']
-    },
-    {
-      id: 'smart-inner-thigh',
-      title: 'Smart Inner Thigh Guard',
-      description: 'Extra internal protection for high-impact deliveries. Discrete & comfortable.',
-      price: '$39.99',
-      image: '/images/product_inner_guard.png',
-      category: 'Inner Pads',
-      stances: ['All Stances', 'Right-Handed', 'Left-Handed']
-    },
-    {
-      id: 'youth-elite-thigh',
-      title: 'Youth Elite Thigh Guard',
-      description: 'Ages 8-14 high impact EVA protection for junior & academy players.',
-      price: '$54.99',
-      image: '/images/product_youth_guard.png',
-      category: 'Thigh Guards',
-      stances: ['All Stances', 'Right-Handed', 'Left-Handed']
-    },
-    {
-      id: 'flex-fit-straps',
-      title: 'Flex-Fit Replacement Straps',
-      description: 'Pack of 4 industrial-strength double-velcro replacement straps.',
-      price: '$19.99',
-      image: '/images/product_straps.png',
-      category: 'Inner Pads',
-      stances: ['All Stances', 'Right-Handed', 'Left-Handed']
-    },
-    {
-      id: 'pro-comfort-sleeves',
-      title: 'Pro-Comfort Compression Sleeves',
-      description: 'Under-guard moisture-wicking muscle compression sleeves.',
-      price: '$29.99',
-      image: '/images/product_sleeves.png',
-      category: 'Leg Guards',
-      stances: ['All Stances', 'Right-Handed', 'Left-Handed']
+  // 1. Dynamic Products List initialized from localStorage / fallback
+  const [productsList, setProductsList] = useState(() => {
+    if (typeof window === 'undefined') return initialAdminProducts
+    try {
+      const saved = window.localStorage.getItem('armourcraft_admin_products_v1')
+      if (saved) {
+        const parsed = JSON.parse(saved)
+        if (Array.isArray(parsed) && parsed.length > 0) return parsed
+      }
+    } catch (e) {
+      console.warn('Error reading stored products in ShopPage:', e)
     }
-  ]
+    return initialAdminProducts
+  })
+
+  // 2. Realtime sync listener & Supabase fetch
+  useEffect(() => {
+    const handleUpdate = (e) => {
+      if (Array.isArray(e.detail) && e.detail.length > 0) {
+        setProductsList(e.detail)
+      }
+    }
+    window.addEventListener('armourcraft:products-updated', handleUpdate)
+
+    async function fetchFromSupabase() {
+      try {
+        if (supabase && typeof supabase.from === 'function') {
+          const { data, error } = await supabase
+            .from('products')
+            .select('*')
+            .order('created_at', { ascending: false })
+
+          if (!error && Array.isArray(data) && data.length > 0) {
+            setProductsList(data)
+          }
+        }
+      } catch (err) {
+        console.info('ShopPage fetch notice:', err?.message || err)
+      }
+    }
+    fetchFromSupabase()
+
+    return () => window.removeEventListener('armourcraft:products-updated', handleUpdate)
+  }, [])
+
+  // 3. Dynamic Categories derived from categories storage or active products
+  const categories = useMemo(() => {
+    try {
+      if (typeof window !== 'undefined') {
+        const saved = window.localStorage.getItem('armourcraft_admin_categories_list_v2')
+        if (saved) {
+          const parsed = JSON.parse(saved)
+          if (Array.isArray(parsed) && parsed.length > 0) return parsed
+        }
+      }
+    } catch {}
+    const set = new Set(['All Products'])
+    productsList.forEach((p) => {
+      if (p.category) set.add(p.category)
+    })
+    return Array.from(set)
+  }, [productsList])
+
+  const stances = ['All Stances', 'Right-Handed', 'Left-Handed']
 
   // Filter products based on Category, Stance, and Search Query
   const filteredProducts = useMemo(() => {
-    return allProducts.filter((product) => {
+    return productsList.filter((product) => {
       // Category filter
       const matchesCategory =
         activeCategory === 'All Products' || product.category === activeCategory
 
       // Stance filter
+      const productStances = Array.isArray(product.stances)
+        ? product.stances
+        : product.stance
+        ? ['All Stances', product.stance]
+        : ['All Stances', 'Right-Handed', 'Left-Handed']
+
       const matchesStance =
-        activeStance === 'All Stances' || product.stances.includes(activeStance)
+        activeStance === 'All Stances' || productStances.includes(activeStance)
 
       // Search filter
       const query = searchQuery.trim().toLowerCase()
       const matchesSearch =
         !query ||
-        product.title.toLowerCase().includes(query) ||
-        product.description.toLowerCase().includes(query)
+        product.title?.toLowerCase().includes(query) ||
+        product.description?.toLowerCase().includes(query)
 
       return matchesCategory && matchesStance && matchesSearch
     })
-  }, [activeCategory, activeStance, searchQuery])
+  }, [productsList, activeCategory, activeStance, searchQuery])
 
   const handleAdd = (product) => {
     setAddedItem(product.id)
@@ -214,7 +227,11 @@ export default function ShopPage({ onAddToCart }) {
                     {/* Price and QUICK ADD Button */}
                     <div className="flex items-center justify-between gap-4 pt-3 border-t border-slate-800/60 mt-auto">
                       <div className="text-white font-black text-xl sm:text-2xl tracking-tight">
-                        {product.price}
+                        {typeof product.price === 'number'
+                          ? `$${product.price.toFixed(2)}`
+                          : product.price?.toString().startsWith('$')
+                          ? product.price
+                          : `$${product.price || '0.00'}`}
                       </div>
 
                       <button

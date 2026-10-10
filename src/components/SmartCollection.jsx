@@ -1,13 +1,12 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { ShoppingCart } from 'lucide-react'
+import { supabase } from '../../lib/supabaseClient'
 
 export default function SmartCollection({ onAddToCart }) {
   const [activeTab, setActiveTab] = useState('ALL')
   const [addedItem, setAddedItem] = useState(null)
 
-  const categories = ['ALL', 'THIGH PADS', 'LEG PADS', 'GLOVES', 'HELMET']
-
-  const allProducts = [
+  const defaultProducts = [
     {
       id: 'straps',
       title: 'FLEX-FIT REPLACEMENT STRAPS',
@@ -46,9 +45,36 @@ export default function SmartCollection({ onAddToCart }) {
     }
   ]
 
+  const [allProducts, setAllProducts] = useState(() => {
+    if (typeof window === 'undefined') return defaultProducts
+    try {
+      const saved = window.localStorage.getItem('armourcraft_admin_products_v1')
+      if (saved) {
+        const parsed = JSON.parse(saved)
+        if (Array.isArray(parsed) && parsed.length > 0) return parsed
+      }
+    } catch {}
+    return defaultProducts
+  })
+
+  useEffect(() => {
+    const handleUpdate = (e) => {
+      if (Array.isArray(e.detail) && e.detail.length > 0) {
+        setAllProducts(e.detail)
+      }
+    }
+    window.addEventListener('armourcraft:products-updated', handleUpdate)
+    return () => window.removeEventListener('armourcraft:products-updated', handleUpdate)
+  }, [])
+
+  const categories = ['ALL', 'THIGH PADS', 'LEG PADS', 'GLOVES', 'HELMET']
+
   const filteredProducts = activeTab === 'ALL' 
     ? allProducts 
-    : allProducts.filter(p => p.category === activeTab || p.category === 'ALL')
+    : allProducts.filter(p => {
+        const cat = (p.category || '').toUpperCase()
+        return cat.includes(activeTab) || activeTab.includes(cat) || p.category === 'ALL'
+      })
 
   const handleAdd = (product) => {
     setAddedItem(product.id)

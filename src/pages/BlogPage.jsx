@@ -1,12 +1,44 @@
-import React, { useState, useMemo } from 'react'
+import React, { useState, useEffect, useMemo } from 'react'
 import { ArrowRight, ChevronRight, X, Clock, Calendar, User, BookOpen } from 'lucide-react'
-import { initialBlogs, getSortedBlogs } from '../data/blogsData'
+import { initialBlogs, getSortedBlogs, getStoredBlogs } from '../data/blogsData'
 import WhatsAppCalloutBanner from '../components/WhatsAppCalloutBanner'
+import { supabase } from '../../lib/supabaseClient'
 
 export default function BlogPage({ onNavigate }) {
-  const [blogsList] = useState(initialBlogs)
+  const [blogsList, setBlogsList] = useState(() => getStoredBlogs())
   const [viewAll, setViewAll] = useState(false)
   const [activeArticle, setActiveArticle] = useState(null)
+
+  useEffect(() => {
+    // 1. Sync on custom live update event
+    const handleUpdate = (e) => {
+      if (Array.isArray(e.detail) && e.detail.length > 0) {
+        setBlogsList(e.detail)
+      }
+    }
+    window.addEventListener('armourcraft:blogs-updated', handleUpdate)
+
+    // 2. Fetch from Supabase
+    async function fetchFromSupabase() {
+      try {
+        if (supabase && typeof supabase.from === 'function') {
+          const { data, error } = await supabase
+            .from('blogs')
+            .select('*')
+            .order('created_at', { ascending: false })
+
+          if (!error && Array.isArray(data) && data.length > 0) {
+            setBlogsList(data)
+          }
+        }
+      } catch (err) {
+        console.info('BlogPage fetch notice:', err?.message || err)
+      }
+    }
+    fetchFromSupabase()
+
+    return () => window.removeEventListener('armourcraft:blogs-updated', handleUpdate)
+  }, [])
 
   // Dynamically sort blogs by date / createdAt descending
   const sortedBlogs = useMemo(() => {

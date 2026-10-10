@@ -102,11 +102,32 @@ export function AdminAuthProvider({ children }) {
     }
   }, [registeredAdmins])
 
-  // Persist products
+  // Fetch initial products from Supabase on mount
+  useEffect(() => {
+    async function fetchSupabaseProducts() {
+      try {
+        if (supabase && typeof supabase.from === 'function') {
+          const { data, error } = await supabase
+            .from('products')
+            .select('*')
+            .order('created_at', { ascending: false })
+          if (!error && Array.isArray(data) && data.length > 0) {
+            setProducts(data)
+          }
+        }
+      } catch (err) {
+        console.info('AdminAuthContext products fetch notice:', err?.message || err)
+      }
+    }
+    fetchSupabaseProducts()
+  }, [])
+
+  // Persist products & dispatch live event
   useEffect(() => {
     if (typeof window === 'undefined') return
     try {
       window.localStorage.setItem(ADMIN_PRODUCTS_KEY, JSON.stringify(products))
+      window.dispatchEvent(new CustomEvent('armourcraft:products-updated', { detail: products }))
     } catch (e) {
       console.warn('Error saving admin products:', e)
     }
