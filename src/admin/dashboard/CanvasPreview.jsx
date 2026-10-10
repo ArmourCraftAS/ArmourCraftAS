@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react'
-import { CmsProvider } from '../cmsStore'
+import { CmsProvider, getDraftCmsData } from '../cmsStore'
 
 // Import live portal components for full landing page rendering
 import Navbar from '../../components/Navbar'
@@ -44,6 +44,88 @@ export default function CanvasPreview({
   // Pure static no-op for internal links
   const noop = () => {}
 
+  // Helper to select background media component by path and populate live draft mediaProps
+  const selectBackgroundMediaByPath = (path = 'home.hero.imageSrc', labelFallback = 'Hero Background Media') => {
+    const cms = typeof getDraftCmsData === 'function' ? getDraftCmsData() : {}
+    let targetData = cms
+    const parts = path.split('.')
+    for (let i = 0; i < parts.length - 1; i++) {
+      if (targetData) targetData = targetData[parts[i]]
+    }
+    const fieldName = parts[parts.length - 1]
+    const val = targetData ? targetData[fieldName] : ''
+    const isVideo = targetData?.mediaType === 'video'
+    const mediaSrc = isVideo ? (targetData?.videoSrc || val || '/images/batsman_hero.jpg') : (val || targetData?.imageSrc || '/images/batsman_hero.jpg')
+
+    onSelectElement({
+      id: path,
+      type: 'media',
+      label: isVideo ? 'Hero Background Video' : labelFallback,
+      path: path,
+      value: mediaSrc,
+      originalValue: mediaSrc,
+      mediaProps: {
+        mediaType: targetData?.mediaType || (isVideo ? 'video' : 'image'),
+        src: targetData?.imageSrc || val || mediaSrc,
+        imageSrc: targetData?.imageSrc || val || mediaSrc,
+        videoSrc: targetData?.videoSrc || '',
+        poster: targetData?.videoPoster || val || '',
+        videoPoster: targetData?.videoPoster || val || '',
+        opacity: targetData?.imageOpacity !== undefined ? targetData.imageOpacity : (targetData?.opacity || 100),
+        autoplay: targetData?.videoAutoplay !== false,
+        loop: targetData?.videoLoop !== false,
+        muted: targetData?.videoMute !== false,
+        controls: targetData?.videoControls === true
+      }
+    })
+  }
+
+  // Handle double click on canvas in Inspector Mode
+  // Bypasses foreground text elements and directly targets underlying background Image / Video
+  const handleCanvasDoubleClick = (e) => {
+    if (!isInspectorMode || !onSelectElement) return
+
+    e.preventDefault()
+    e.stopPropagation()
+
+    const target = e.target
+    if (!target || !containerRef.current || !containerRef.current.contains(target)) return
+
+    // 1. Check if double-click occurred within a section with background media (e.g. Hero section)
+    const sectionEl = target.closest('[data-hero-section]') || target.closest('[data-background-media-path]') || target.closest('section')
+    let bgMediaPath = sectionEl?.getAttribute('data-background-media-path')
+
+    if (!bgMediaPath && sectionEl) {
+      const bgTarget = sectionEl.querySelector('[data-background-media-target]')
+      if (bgTarget) bgMediaPath = bgTarget.getAttribute('data-background-media-target')
+    }
+
+    if (!bgMediaPath && sectionEl) {
+      const mediaEl = sectionEl.querySelector('[data-cms-type="media"]') || sectionEl.querySelector('img[data-cms-path], video[data-cms-path]')
+      if (mediaEl) bgMediaPath = mediaEl.getAttribute('data-cms-path')
+    }
+
+    // Default to home.hero.imageSrc on Home page or if hero section was double-clicked
+    if (!bgMediaPath && (activePage === 'Home' || target.closest('section'))) {
+      bgMediaPath = 'home.hero.imageSrc'
+    }
+
+    if (bgMediaPath) {
+      selectBackgroundMediaByPath(bgMediaPath, 'Hero Background Media')
+      return
+    }
+
+    // 2. Direct media element double-clicked
+    const directMedia = target.closest('[data-cms-type="media"]') || (target.tagName.toLowerCase() === 'img' || target.tagName.toLowerCase() === 'video' ? target : null)
+    if (directMedia) {
+      const p = directMedia.getAttribute('data-cms-path')
+      if (p) {
+        selectBackgroundMediaByPath(p, directMedia.getAttribute('data-cms-label') || 'Media Component')
+        return
+      }
+    }
+  }
+
   // Handle click on canvas in Inspector Mode
   const handleCanvasClick = (e) => {
     if (!isInspectorMode || !onSelectElement) {
@@ -57,6 +139,14 @@ export default function CanvasPreview({
 
     const target = e.target
     if (!target || !containerRef.current || !containerRef.current.contains(target)) return
+
+    // 0. Background media target click (direct click on background image/video or container)
+    const bgMediaTarget = target.closest('[data-background-media-target]')
+    if (bgMediaTarget && !target.closest('[data-cms-path]:not([data-cms-type="media"])')) {
+      const targetPath = bgMediaTarget.getAttribute('data-background-media-target') || 'home.hero.imageSrc'
+      selectBackgroundMediaByPath(targetPath, 'Hero Background Media')
+      return
+    }
 
     // 1. Check for dynamic database-driven element scoping rule
     // Products, individual blog cards, or FAQ accordion items
@@ -103,27 +193,7 @@ export default function CanvasPreview({
 
       // Media element
       if (explicitType === 'media' || cmsEl.tagName.toLowerCase() === 'img' || cmsEl.tagName.toLowerCase() === 'video') {
-        const isVideo = cmsEl.tagName.toLowerCase() === 'video'
-        const src = cmsEl.getAttribute('src') || cmsEl.currentSrc || ''
-        onSelectElement({
-          id: path,
-          type: 'media',
-          label: label || 'Media Component',
-          path,
-          value: src,
-          originalValue: src,
-          mediaProps: {
-            mediaType: isVideo ? 'video' : 'image',
-            imageSrc: src,
-            opacity: 100,
-            videoSrc: isVideo ? src : '',
-            videoPoster: cmsEl.getAttribute('poster') || '',
-            videoAutoplay: true,
-            videoLoop: true,
-            videoMute: true,
-            videoControls: false
-          }
-        })
+        selectBackgroundMediaByPath(path, label || 'Media Component')
         return
       }
 
@@ -246,7 +316,16 @@ export default function CanvasPreview({
             isItalic
           }
         })
+        return
       }
+    }
+
+    // D. Background Canvas Area Click (Hero / Section Canvas background)
+    const bgSection = target.closest('[data-hero-section]') || target.closest('[data-background-media-path]') || (activePage === 'Home' && target.closest('section'))
+    if (bgSection) {
+      const p = bgSection.getAttribute?.('data-background-media-path') || 'home.hero.imageSrc'
+      selectBackgroundMediaByPath(p, 'Hero Background Media')
+      return
     }
   }
 
@@ -362,6 +441,7 @@ export default function CanvasPreview({
     <div
       ref={containerRef}
       onClickCapture={handleCanvasClick}
+      onDoubleClickCapture={handleCanvasDoubleClick}
       onMouseOver={handleMouseOver}
       onMouseLeave={handleMouseLeave}
       className={`preview-canvas-wrapper w-full min-h-full relative ${
@@ -449,7 +529,7 @@ export default function CanvasPreview({
               }`}
             />
             <span>{hoveredInfo.label}</span>
-            <span className="text-[10px] text-slate-400 lowercase">• click to edit</span>
+            <span className="text-[10px] text-slate-400 lowercase">• click to edit | double-click for background media</span>
           </div>
         </div>
       )}

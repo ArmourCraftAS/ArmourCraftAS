@@ -33,10 +33,17 @@ export default function Hero({ onNavigate, onOpenCustomModal }) {
   const currentSlide = heroSlides[activeSlide]
 
   return (
-    <section className="relative w-full min-h-[calc(100vh-80px)] flex items-center bg-[#060a12] overflow-hidden">
+    <section
+      data-hero-section="true"
+      data-background-media-path="home.hero.imageSrc"
+      className="relative w-full min-h-[calc(100vh-80px)] flex items-center bg-[#060a12] overflow-hidden"
+    >
       
       {/* Background Hero Image Container (Right Side) */}
-      <div className="absolute inset-0 pointer-events-none z-0">
+      <div
+        data-background-media-target="home.hero.imageSrc"
+        className="absolute inset-0 z-0"
+      >
         <div className="relative w-full h-full">
           {cmsHero?.mediaType === 'video' && cmsHero?.videoSrc ? (
             <video
@@ -65,11 +72,11 @@ export default function Hero({ onNavigate, onOpenCustomModal }) {
           )}
 
           {/* Left-to-Right Dark Gradient Overlay (Guarantees High Contrast for Headline) */}
-          <div className="absolute inset-0 bg-gradient-to-r from-[#060a12] via-[#060a12]/90 md:via-[#060a12]/75 to-transparent to-75%" />
+          <div className="absolute inset-0 bg-gradient-to-r from-[#060a12] via-[#060a12]/90 md:via-[#060a12]/75 to-transparent to-75% pointer-events-none" />
 
           {/* Top & Bottom Soft Vignettes */}
-          <div className="absolute inset-0 bg-gradient-to-t from-[#060a12] via-transparent to-[#060a12]/50" />
-          <div className="absolute top-0 inset-x-0 h-24 bg-gradient-to-b from-[#060a12] to-transparent" />
+          <div className="absolute inset-0 bg-gradient-to-t from-[#060a12] via-transparent to-[#060a12]/50 pointer-events-none" />
+          <div className="absolute top-0 inset-x-0 h-24 bg-gradient-to-b from-[#060a12] to-transparent pointer-events-none" />
           
           {/* Subtle Atmospheric Blue Radial Glow */}
           <div className="absolute top-1/4 left-1/4 -translate-x-1/2 -translate-y-1/2 w-[550px] h-[550px] bg-blue-600/10 blur-[130px] rounded-full pointer-events-none" />
