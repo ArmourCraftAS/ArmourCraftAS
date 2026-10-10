@@ -3,27 +3,15 @@ import { ArrowRight, ShieldCheck, Sparkles, Activity } from 'lucide-react'
 import Armour3DModal from './Armour3DModal'
 import CustomQuoteModal from './CustomQuoteModal'
 
-import { getCmsData } from '../admin/cmsStore'
+import { useCmsContent } from '../admin/cmsStore'
 
 export default function Hero({ onNavigate, onOpenCustomModal }) {
   const [is3DModalOpen, setIs3DModalOpen] = useState(false)
   const [isCustomizationModalOpen, setIsCustomizationModalOpen] = useState(false)
   const [activeSlide, setActiveSlide] = useState(0)
 
-  // Listen to CMS publish events
-  const [cmsHero, setCmsHero] = useState(() => getCmsData().home?.hero || null)
-
-  React.useEffect(() => {
-    const handleCmsUpdate = () => {
-      setCmsHero(getCmsData().home?.hero || null)
-    }
-    window.addEventListener('armourcraft_cms_published', handleCmsUpdate)
-    window.addEventListener('armourcraft_cms_updated', handleCmsUpdate)
-    return () => {
-      window.removeEventListener('armourcraft_cms_published', handleCmsUpdate)
-      window.removeEventListener('armourcraft_cms_updated', handleCmsUpdate)
-    }
-  }, [])
+  // Context-aware CMS Hero Content (Draft in Admin/Canvas Preview, Published on Live Storefront)
+  const cmsHero = useCmsContent('home.hero', null)
 
   const heroSlides = [
     {

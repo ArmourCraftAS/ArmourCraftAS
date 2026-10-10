@@ -1,5 +1,6 @@
 // Comprehensive Visual CMS Store for ARMOURCRAFT AS
-import { useState, useEffect } from 'react'
+import React, { createContext, useContext, useState, useEffect } from 'react'
+import { supabase } from '../../lib/supabaseClient'
 
 export const DEFAULT_CMS_DATA = {
   home: {
@@ -57,7 +58,8 @@ export const DEFAULT_CMS_DATA = {
       ctaText: 'GET CUSTOM TEAM QUOTE',
       ctaLink: '/contact',
       image: '/images/custom_pads.png',
-      mediaType: 'image'
+      mediaType: 'image',
+      videoSrc: ''
     },
     comparison: {
       heading: 'SmartThighs vs. The Others',
@@ -106,68 +108,134 @@ export const DEFAULT_CMS_DATA = {
   }
 }
 
-const STORAGE_KEY = 'armourcraft_cms_data'
+// -----------------------------------------------------------------------------
+// STRICT DRAFT VS. LIVE PUBLISHING STORAGE KEYS
+// -----------------------------------------------------------------------------
+export const DRAFT_STORAGE_KEY = 'armourcraft_cms_draft'
+export const PUBLISHED_STORAGE_KEY = 'armourcraft_cms_published'
 
-export function getCmsData() {
+// React Context to control whether components read Draft or Live Published CMS data
+export const CmsContext = createContext({ isDraft: false })
+
+export function CmsProvider({ isDraft = false, children }) {
+  return React.createElement(CmsContext.Provider, { value: { isDraft } }, children)
+}
+
+// Helper to deep-merge data with DEFAULT_CMS_DATA
+function mergeWithDefaults(parsed) {
+  if (!parsed || typeof parsed !== 'object') return DEFAULT_CMS_DATA
+  return {
+    ...DEFAULT_CMS_DATA,
+    ...parsed,
+    home: {
+      ...DEFAULT_CMS_DATA.home,
+      ...(parsed.home || {}),
+      hero: {
+        ...DEFAULT_CMS_DATA.home.hero,
+        ...(parsed.home?.hero || {})
+      },
+      essentials: {
+        ...DEFAULT_CMS_DATA.home.essentials,
+        ...(parsed.home?.essentials || {})
+      },
+      advantage: {
+        ...DEFAULT_CMS_DATA.home.advantage,
+        ...(parsed.home?.advantage || {})
+      },
+      customSquad: {
+        ...DEFAULT_CMS_DATA.home.customSquad,
+        ...(parsed.home?.customSquad || {})
+      },
+      footer: {
+        ...DEFAULT_CMS_DATA.home.footer,
+        ...(parsed.home?.footer || {})
+      }
+    },
+    shop: {
+      ...DEFAULT_CMS_DATA.shop,
+      ...(parsed.shop || {})
+    },
+    whatWeAre: {
+      ...DEFAULT_CMS_DATA.whatWeAre,
+      ...(parsed.whatWeAre || {})
+    },
+    blog: {
+      ...DEFAULT_CMS_DATA.blog,
+      ...(parsed.blog || {})
+    },
+    contact: {
+      ...DEFAULT_CMS_DATA.contact,
+      ...(parsed.contact || {})
+    }
+  }
+}
+
+/**
+ * 1. GET PUBLISHED CMS DATA (LIVE USER STOREFRONT)
+ * Strictly returns live published data. Never contains uncommitted draft edits.
+ */
+export function getPublishedCmsData() {
   if (typeof window === 'undefined') return DEFAULT_CMS_DATA
   try {
-    const raw = localStorage.getItem(STORAGE_KEY)
+    const raw = localStorage.getItem(PUBLISHED_STORAGE_KEY)
     if (raw) {
-      const parsed = JSON.parse(raw)
-      return {
-        ...DEFAULT_CMS_DATA,
-        ...parsed,
-        home: {
-          ...DEFAULT_CMS_DATA.home,
-          ...(parsed.home || {}),
-          hero: {
-            ...DEFAULT_CMS_DATA.home.hero,
-            ...(parsed.home?.hero || {})
-          },
-          essentials: {
-            ...DEFAULT_CMS_DATA.home.essentials,
-            ...(parsed.home?.essentials || {})
-          },
-          advantage: {
-            ...DEFAULT_CMS_DATA.home.advantage,
-            ...(parsed.home?.advantage || {})
-          },
-          customSquad: {
-            ...DEFAULT_CMS_DATA.home.customSquad,
-            ...(parsed.home?.customSquad || {})
-          },
-          footer: {
-            ...DEFAULT_CMS_DATA.home.footer,
-            ...(parsed.home?.footer || {})
-          }
-        },
-        shop: {
-          ...DEFAULT_CMS_DATA.shop,
-          ...(parsed.shop || {})
-        },
-        whatWeAre: {
-          ...DEFAULT_CMS_DATA.whatWeAre,
-          ...(parsed.whatWeAre || {})
-        },
-        blog: {
-          ...DEFAULT_CMS_DATA.blog,
-          ...(parsed.blog || {})
-        },
-        contact: {
-          ...DEFAULT_CMS_DATA.contact,
-          ...(parsed.contact || {})
-        }
-      }
+      return mergeWithDefaults(JSON.parse(raw))
     }
   } catch (e) {
-    console.warn('Error reading CMS data from localStorage:', e)
+    console.warn('Error reading published CMS data:', e)
   }
   return DEFAULT_CMS_DATA
 }
 
+/**
+ * 2. GET WORKING DRAFT CMS DATA (ADMIN WORKSPACE & CANVAS PREVIEW)
+ * Returns the active uncommitted working draft.
+ * If no draft exists yet, initializes it from the currently published state.
+ */
+export function getDraftCmsData() {
+  if (typeof window === 'undefined') return DEFAULT_CMS_DATA
+  try {
+    const raw = localStorage.getItem(DRAFT_STORAGE_KEY)
+    if (raw) {
+      return mergeWithDefaults(JSON.parse(raw))
+    }
+    // Initialize draft from published data if none exists
+    const published = getPublishedCmsData()
+    saveDraftCmsData(published)
+    return published
+  } catch (e) {
+    console.warn('Error reading draft CMS data:', e)
+  }
+  return DEFAULT_CMS_DATA
+}
+
+// Backward-compatibility alias: in admin contexts getCmsData() returns draft
+export function getCmsData() {
+  return getDraftCmsData()
+}
+
+/**
+ * 3. SAVE WORKING DRAFT STATE (LOCAL ONLY)
+ * Strictly writes to local draft store and notifies the preview canvas.
+ * DOES NOT write to Supabase. DOES NOT update live user storefront.
+ */
+export function saveDraftCmsData(data) {
+  if (typeof window === 'undefined') return
+  try {
+    localStorage.setItem(DRAFT_STORAGE_KEY, JSON.stringify(data))
+    window.dispatchEvent(new CustomEvent('armourcraft_cms_draft_updated', { detail: data }))
+  } catch (e) {
+    console.error('Error saving working draft CMS data:', e)
+  }
+}
+
+/**
+ * 4. INLINE INSPECTOR FIELD UPDATE
+ * Updates an uncommitted draft field only.
+ */
 export function updateCmsField(path, value) {
   if (typeof window === 'undefined') return DEFAULT_CMS_DATA
-  const current = getCmsData()
+  const current = getDraftCmsData()
   if (!path) return current
   const keys = path.split('.')
   let target = current
@@ -179,58 +247,111 @@ export function updateCmsField(path, value) {
     target = target[k]
   }
   target[keys[keys.length - 1]] = value
-  saveCmsData(current)
+  saveDraftCmsData(current)
   return current
 }
 
-export function getPublishedCmsData() {
-  if (typeof window === 'undefined') return DEFAULT_CMS_DATA
+/**
+ * 5. TOP HEADER PUBLISH BUTTON WORKFLOW
+ * Commits the working draft to the live published state and syncs to Supabase.
+ */
+export async function publishCmsData(data) {
+  const toPublish = data || getDraftCmsData()
+  if (typeof window === 'undefined') return true
+
   try {
-    const pub = localStorage.getItem('armourcraft_cms_published')
-    if (pub) {
-      return JSON.parse(pub)
+    // 1. Commit to live published localStorage
+    localStorage.setItem(PUBLISHED_STORAGE_KEY, JSON.stringify(toPublish))
+    // Also align draft store with published
+    localStorage.setItem(DRAFT_STORAGE_KEY, JSON.stringify(toPublish))
+
+    // 2. Commit to Supabase cms_content table
+    if (supabase && typeof supabase.from === 'function') {
+      try {
+        await supabase.from('cms_content').upsert([
+          {
+            key: 'landing_cms_data',
+            data: toPublish,
+            updated_at: new Date().toISOString()
+          }
+        ], { onConflict: 'key' })
+      } catch (sErr) {
+        console.warn('Supabase publish cms_content notice:', sErr)
+      }
     }
-  } catch {}
-  return getCmsData()
-}
 
-export function saveCmsData(data) {
-  if (typeof window === 'undefined') return
-  try {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(data))
-    window.dispatchEvent(new CustomEvent('armourcraft_cms_updated', { detail: data }))
+    // 3. Dispatch published event for all active storefront listeners
+    window.dispatchEvent(new CustomEvent('armourcraft_cms_published', { detail: toPublish }))
+    return true
   } catch (e) {
-    console.error('Error saving CMS data:', e)
+    console.error('Error publishing CMS data:', e)
+    return false
   }
 }
 
-export function publishCmsData(data) {
-  const toSave = data || getCmsData()
-  saveCmsData(toSave)
-  if (typeof window !== 'undefined') {
-    try {
-      localStorage.setItem('armourcraft_cms_published', JSON.stringify(toSave))
-      window.dispatchEvent(new CustomEvent('armourcraft_cms_published', { detail: toSave }))
-    } catch (e) {}
-  }
-  return true
+/**
+ * 6. DISCARD DRAFT CHANGES
+ * Reverts the working draft back to the last published state.
+ */
+export function discardDraftCmsData() {
+  const published = getPublishedCmsData()
+  saveDraftCmsData(published)
+  return published
 }
 
+/**
+ * 7. RESET ALL CMS DATA TO SYSTEM DEFAULTS
+ */
 export function resetCmsData() {
   if (typeof window !== 'undefined') {
     try {
-      localStorage.removeItem(STORAGE_KEY)
-      localStorage.removeItem('armourcraft_cms_published')
-      window.dispatchEvent(new CustomEvent('armourcraft_cms_updated', { detail: DEFAULT_CMS_DATA }))
+      localStorage.removeItem(DRAFT_STORAGE_KEY)
+      localStorage.removeItem(PUBLISHED_STORAGE_KEY)
+      window.dispatchEvent(new CustomEvent('armourcraft_cms_draft_updated', { detail: DEFAULT_CMS_DATA }))
+      window.dispatchEvent(new CustomEvent('armourcraft_cms_published', { detail: DEFAULT_CMS_DATA }))
     } catch (e) {}
   }
   return DEFAULT_CMS_DATA
 }
 
-// Custom React hook for live real-time CMS content sync
+/**
+ * 8. SYNC PUBLISHED DATA FROM SUPABASE
+ * Called on public customer app initialization to ensure live sync with cloud database.
+ */
+export async function syncPublishedCmsFromSupabase() {
+  if (typeof window === 'undefined' || !supabase || typeof supabase.from !== 'function') return null
+  try {
+    const { data, error } = await supabase
+      .from('cms_content')
+      .select('data')
+      .eq('key', 'landing_cms_data')
+      .single()
+
+    if (!error && data?.data) {
+      const merged = mergeWithDefaults(data.data)
+      localStorage.setItem(PUBLISHED_STORAGE_KEY, JSON.stringify(merged))
+      window.dispatchEvent(new CustomEvent('armourcraft_cms_published', { detail: merged }))
+      return merged
+    }
+  } catch (e) {
+    console.info('Storefront Supabase CMS sync notice:', e?.message || e)
+  }
+  return null
+}
+
+/**
+ * 9. REACTIVE useCmsContent HOOK
+ * Automatically switches between Draft (inside Preview Canvas / Admin) and Live Published (Storefront).
+ */
 export function useCmsContent(path, defaultValue) {
-  const [value, setValue] = useState(() => {
-    const data = getCmsData()
+  const context = useContext(CmsContext)
+  // Determine if in Draft mode: either explicitly in CmsContext, or inside admin path
+  const isDraftMode = Boolean(
+    context?.isDraft ||
+    (typeof window !== 'undefined' && window.location.pathname.startsWith('/admin'))
+  )
+
+  const resolveValue = (data) => {
     if (!path) return data
     const keys = path.split('.')
     let current = data
@@ -239,35 +360,33 @@ export function useCmsContent(path, defaultValue) {
       current = current[k]
     }
     return current !== undefined ? current : defaultValue
+  }
+
+  const [value, setValue] = useState(() => {
+    const sourceData = isDraftMode ? getDraftCmsData() : getPublishedCmsData()
+    return resolveValue(sourceData)
   })
 
   useEffect(() => {
     const handleUpdate = () => {
-      const data = getCmsData()
-      if (!path) {
-        setValue(data)
-        return
-      }
-      const keys = path.split('.')
-      let current = data
-      for (const k of keys) {
-        if (current === undefined || current === null) {
-          setValue(defaultValue)
-          return
-        }
-        current = current[k]
-      }
-      setValue(current !== undefined ? current : defaultValue)
+      const sourceData = isDraftMode ? getDraftCmsData() : getPublishedCmsData()
+      setValue(resolveValue(sourceData))
     }
 
-    window.addEventListener('armourcraft_cms_updated', handleUpdate)
+    // In Draft mode, listen for working draft updates
+    if (isDraftMode) {
+      window.addEventListener('armourcraft_cms_draft_updated', handleUpdate)
+    }
+    // In all modes, listen for published updates
     window.addEventListener('armourcraft_cms_published', handleUpdate)
+
     return () => {
-      window.removeEventListener('armourcraft_cms_updated', handleUpdate)
+      if (isDraftMode) {
+        window.removeEventListener('armourcraft_cms_draft_updated', handleUpdate)
+      }
       window.removeEventListener('armourcraft_cms_published', handleUpdate)
     }
-  }, [path, defaultValue])
+  }, [path, defaultValue, isDraftMode])
 
   return value
 }
-

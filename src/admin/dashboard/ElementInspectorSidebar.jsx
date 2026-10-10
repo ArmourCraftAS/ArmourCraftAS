@@ -118,7 +118,10 @@ export default function ElementInspectorSidebar({
     dynamicNotice = null
   } = selectedElement
 
-  // Handle local file upload converting to data URL
+  const [videoStatus, setVideoStatus] = useState(null)
+  const [videoFileName, setVideoFileName] = useState('')
+
+  // Handle local image file upload converting to data URL
   const handleFileUpload = (e) => {
     const file = e.target.files?.[0]
     if (!file) return
@@ -131,6 +134,54 @@ export default function ElementInspectorSidebar({
           ...mediaProps,
           src: reader.result,
           mediaType: 'image'
+        }
+      })
+    }
+    reader.readAsDataURL(file)
+  }
+
+  // Handle local video file upload (.mp4, .webm, .mov, etc.)
+  const handleVideoFileProcess = (file) => {
+    if (!file) return
+    setVideoStatus('uploading')
+    setVideoFileName(file.name)
+    const reader = new FileReader()
+    reader.onload = () => {
+      const dataUrl = reader.result
+      onUpdateElement({
+        ...selectedElement,
+        value: dataUrl,
+        mediaProps: {
+          ...mediaProps,
+          videoSrc: dataUrl,
+          mediaType: 'video',
+          fileName: file.name
+        }
+      })
+      setVideoStatus('success')
+    }
+    reader.onerror = () => {
+      setVideoStatus('error')
+    }
+    reader.readAsDataURL(file)
+  }
+
+  const handleVideoUpload = (e) => {
+    const file = e.target.files?.[0]
+    handleVideoFileProcess(file)
+  }
+
+  // Handle local poster image upload
+  const handlePosterUpload = (e) => {
+    const file = e.target.files?.[0]
+    if (!file) return
+    const reader = new FileReader()
+    reader.onload = () => {
+      onUpdateElement({
+        ...selectedElement,
+        mediaProps: {
+          ...mediaProps,
+          poster: reader.result
         }
       })
     }
@@ -602,9 +653,60 @@ export default function ElementInspectorSidebar({
             ) : (
               /* 3. Video Source Configuration */
               <div className="space-y-4">
+                {/* A. Local Video File Upload Dropzone / Browse */}
                 <div className="space-y-2">
                   <label className="text-xs font-bold text-slate-300 uppercase tracking-wider block">
-                    Direct Video Link (MP4 / WebM)
+                    Local Video File Upload
+                  </label>
+                  
+                  <label
+                    onDragOver={(e) => { e.preventDefault(); e.stopPropagation(); }}
+                    onDrop={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      const file = e.dataTransfer.files?.[0];
+                      if (file) handleVideoFileProcess(file);
+                    }}
+                    className="w-full py-4 px-3 rounded-xl bg-slate-800/80 hover:bg-slate-700/90 text-slate-200 border-2 border-dashed border-slate-700 hover:border-blue-500 flex flex-col items-center justify-center gap-2 cursor-pointer transition-all duration-200 shadow group"
+                  >
+                    <div className="w-9 h-9 rounded-full bg-blue-500/10 flex items-center justify-center text-blue-400 group-hover:scale-110 transition-transform">
+                      <Upload className="w-4 h-4" />
+                    </div>
+                    <div className="text-center">
+                      <span className="text-xs font-bold text-white block">
+                        Upload Local Video (.mp4, .webm, .mov)
+                      </span>
+                      <span className="text-[10px] text-slate-400 block mt-0.5">
+                        Click to browse or drag &amp; drop video file
+                      </span>
+                    </div>
+                    <input
+                      type="file"
+                      accept="video/mp4,video/webm,video/ogg,video/quicktime,.mp4,.webm,.ogg,.mov"
+                      onChange={handleVideoUpload}
+                      className="hidden"
+                    />
+                  </label>
+
+                  {videoStatus === 'uploading' && (
+                    <div className="text-xs text-blue-400 font-medium flex items-center gap-2 bg-blue-950/40 p-2 rounded-lg border border-blue-500/30">
+                      <span className="w-3 h-3 rounded-full border-2 border-blue-400 border-t-transparent animate-spin" />
+                      <span>Processing local video asset...</span>
+                    </div>
+                  )}
+
+                  {videoStatus === 'success' && (
+                    <div className="text-xs text-emerald-400 font-medium flex items-center gap-2 bg-emerald-950/40 p-2 rounded-lg border border-emerald-500/30 truncate">
+                      <Check className="w-3.5 h-3.5 shrink-0" />
+                      <span className="truncate">Loaded: {videoFileName || 'Local Video File'}</span>
+                    </div>
+                  )}
+                </div>
+
+                {/* B. Direct Video Link Input */}
+                <div className="space-y-2">
+                  <label className="text-xs font-bold text-slate-300 uppercase tracking-wider block">
+                    Or Paste Video URL
                   </label>
                   <input
                     type="text"
@@ -612,6 +714,7 @@ export default function ElementInspectorSidebar({
                     onChange={(e) =>
                       onUpdateElement({
                         ...selectedElement,
+                        value: e.target.value,
                         mediaProps: { ...mediaProps, videoSrc: e.target.value }
                       })
                     }
@@ -620,26 +723,58 @@ export default function ElementInspectorSidebar({
                   />
                 </div>
 
+                {/* C. Video Live Preview Player */}
+                {mediaProps.videoSrc && (
+                  <div className="space-y-1.5">
+                    <label className="text-[11px] font-bold text-slate-400 uppercase tracking-wider block">
+                      Active Video Preview
+                    </label>
+                    <div className="w-full aspect-video rounded-xl bg-black border border-slate-800 overflow-hidden relative shadow-inner">
+                      <video
+                        src={mediaProps.videoSrc}
+                        poster={mediaProps.poster}
+                        controls
+                        muted
+                        playsInline
+                        className="w-full h-full object-contain"
+                      />
+                    </div>
+                  </div>
+                )}
+
+                {/* D. Poster Image Configuration */}
                 <div className="space-y-2">
                   <label className="text-xs font-bold text-slate-300 uppercase tracking-wider block">
-                    Poster Image URL
+                    Poster Thumbnail Image
                   </label>
-                  <input
-                    type="text"
-                    value={mediaProps.poster || ''}
-                    onChange={(e) =>
-                      onUpdateElement({
-                        ...selectedElement,
-                        mediaProps: { ...mediaProps, poster: e.target.value }
-                      })
-                    }
-                    placeholder="/images/poster.jpg"
-                    className="w-full px-3 py-2 rounded-xl bg-[#0e1628] border border-slate-700 text-white text-xs font-mono focus:outline-none focus:border-blue-500"
-                  />
+                  <div className="flex gap-2">
+                    <input
+                      type="text"
+                      value={mediaProps.poster || ''}
+                      onChange={(e) =>
+                        onUpdateElement({
+                          ...selectedElement,
+                          mediaProps: { ...mediaProps, poster: e.target.value }
+                        })
+                      }
+                      placeholder="/images/poster.jpg"
+                      className="flex-1 px-3 py-2 rounded-xl bg-[#0e1628] border border-slate-700 text-white text-xs font-mono focus:outline-none focus:border-blue-500"
+                    />
+                    <label className="py-2 px-3 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 flex items-center justify-center gap-1.5 text-xs font-bold uppercase cursor-pointer transition-colors shrink-0">
+                      <Upload className="w-3.5 h-3.5 text-blue-400" />
+                      <span className="hidden sm:inline">Upload</span>
+                      <input
+                        type="file"
+                        accept="image/*"
+                        onChange={handlePosterUpload}
+                        className="hidden"
+                      />
+                    </label>
+                  </div>
                 </div>
 
-                {/* Playback Toggles */}
-                <div className="space-y-2 pt-1 border-t border-slate-800">
+                {/* E. Playback Toggles */}
+                <div className="space-y-2 pt-2 border-t border-slate-800">
                   <label className="text-xs font-bold text-slate-300 uppercase tracking-wider block mb-2">
                     Playback Behavior
                   </label>
@@ -656,7 +791,7 @@ export default function ElementInspectorSidebar({
                       >
                         <input
                           type="checkbox"
-                          checked={!!mediaProps[item.key]}
+                          checked={mediaProps[item.key] !== undefined ? !!mediaProps[item.key] : item.key === 'autoplay' || item.key === 'loop' || item.key === 'muted'}
                           onChange={(e) =>
                             onUpdateElement({
                               ...selectedElement,

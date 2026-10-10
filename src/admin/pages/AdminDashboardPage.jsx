@@ -88,11 +88,28 @@ export default function AdminDashboardPage({ onNavigate }) {
         updateCmsField(updatedElem.path, updatedElem.value)
         if (updatedElem.fontStyle) {
           updateCmsField(updatedElem.path + 'Style', updatedElem.fontStyle)
+          if (updatedElem.path.includes('.hero.')) {
+            if (updatedElem.fontStyle.fontSize) updateCmsField('home.hero.fontSize', updatedElem.fontStyle.fontSize)
+            if (updatedElem.fontStyle.color) updateCmsField('home.hero.textColor', updatedElem.fontStyle.color)
+            if (updatedElem.fontStyle.textAlign) updateCmsField('home.hero.alignment', updatedElem.fontStyle.textAlign)
+            if (updatedElem.fontStyle.isBold !== undefined) updateCmsField('home.hero.isBold', updatedElem.fontStyle.isBold)
+            if (updatedElem.fontStyle.isItalic !== undefined) updateCmsField('home.hero.isItalic', updatedElem.fontStyle.isItalic)
+          }
         }
       } else if (updatedElem.type === 'media') {
         updateCmsField(updatedElem.path, updatedElem.value)
         if (updatedElem.mediaProps) {
           updateCmsField(updatedElem.path + 'Props', updatedElem.mediaProps)
+          if (updatedElem.path.includes('.hero.')) {
+            if (updatedElem.mediaProps.mediaType) updateCmsField('home.hero.mediaType', updatedElem.mediaProps.mediaType)
+            if (updatedElem.mediaProps.videoSrc !== undefined) updateCmsField('home.hero.videoSrc', updatedElem.mediaProps.videoSrc)
+            if (updatedElem.mediaProps.poster !== undefined) updateCmsField('home.hero.videoPoster', updatedElem.mediaProps.poster)
+            if (updatedElem.mediaProps.autoplay !== undefined) updateCmsField('home.hero.videoAutoplay', updatedElem.mediaProps.autoplay)
+            if (updatedElem.mediaProps.loop !== undefined) updateCmsField('home.hero.videoLoop', updatedElem.mediaProps.loop)
+            if (updatedElem.mediaProps.muted !== undefined) updateCmsField('home.hero.videoMute', updatedElem.mediaProps.muted)
+            if (updatedElem.mediaProps.controls !== undefined) updateCmsField('home.hero.videoControls', updatedElem.mediaProps.controls)
+            if (updatedElem.mediaProps.opacity !== undefined) updateCmsField('home.hero.imageOpacity', updatedElem.mediaProps.opacity)
+          }
         }
       } else if (updatedElem.type === 'icon') {
         updateCmsField(updatedElem.path, updatedElem.value)
@@ -135,7 +152,7 @@ export default function AdminDashboardPage({ onNavigate }) {
     try {
       // 0. Commit Visual CMS store to published state
       const currentCms = getCmsData()
-      publishCmsData(currentCms)
+      await publishCmsData(currentCms)
 
       // 1. Gather all current products
       let currentProducts = []

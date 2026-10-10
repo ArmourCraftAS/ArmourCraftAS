@@ -20,6 +20,7 @@ import CartCheckoutModal from './components/CartCheckoutModal'
 import CartToast from './components/CartToast'
 import { useCart } from './context/CartContext'
 import AdminRoot from './admin/AdminRoot'
+import { syncPublishedCmsFromSupabase } from './admin/cmsStore'
 
 export default function App() {
   const {
@@ -51,6 +52,11 @@ export default function App() {
     }
     window.addEventListener('popstate', handlePopState)
     return () => window.removeEventListener('popstate', handlePopState)
+  }, [])
+
+  // Sync latest published CMS landing page content from Supabase for live customer storefront
+  useEffect(() => {
+    syncPublishedCmsFromSupabase()
   }, [])
 
   const navigate = (path) => {

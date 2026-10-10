@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react'
+import { CmsProvider } from '../cmsStore'
 
 // Import live portal components for full landing page rendering
 import Navbar from '../../components/Navbar'
@@ -454,7 +455,8 @@ export default function CanvasPreview({
       )}
 
       {/* Main Preview Container */}
-      <div className="preview-canvas-container w-full min-h-screen bg-[#060a12] text-slate-100 flex flex-col font-sans">
+      <CmsProvider isDraft={true}>
+        <div className="preview-canvas-container w-full min-h-screen bg-[#060a12] text-slate-100 flex flex-col font-sans">
         {activePage === 'Shop Armours' ? (
           /* ----------------------------------------------------------------------- */
           /* 1. SHOP ARMOURS PAGE                                                    */
@@ -578,6 +580,7 @@ export default function CanvasPreview({
           </div>
         )}
       </div>
+      </CmsProvider>
     </div>
   )
 }
