@@ -1,8 +1,14 @@
 import React from 'react'
 import { Shield, Zap, Gem } from 'lucide-react'
 import NextGenFeatureBanner from '../components/NextGenFeatureBanner'
+import { useCmsContent } from '../admin/cmsStore'
 
 export default function WhatWeArePage({ onNavigate }) {
+  const tag = useCmsContent('whatWeAre.tag', 'WHAT WE ARE')
+  const heading = useCmsContent('whatWeAre.heading', 'CRAFTED FOR IMPACT. ENGINEERED FOR SPEED.')
+  const subheading = useCmsContent('whatWeAre.subheading', 'ArmourCraft is not just an equipment brand. We are a cricket protection lab dedicated to eliminating bulk and maximizing batsman mobility.')
+  const heroImage = useCmsContent('whatWeAre.heroImage', '/images/what_we_are_craftsmanship.jpg')
+
   return (
     <>
       <div className="w-full bg-[#060a12] text-white min-h-[calc(100vh-80px)] py-16 sm:py-20 lg:py-24 px-4 sm:px-6 lg:px-8 selection:bg-blue-600 selection:text-white">
@@ -14,25 +20,33 @@ export default function WhatWeArePage({ onNavigate }) {
         <div className="text-center max-w-4xl mx-auto mb-16 sm:mb-20 lg:mb-24">
           
           {/* Top Pill Badge */}
-          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#0d162a] border border-blue-500/30 shadow-sm shadow-blue-500/20 backdrop-blur-md mb-8">
+          <div
+            data-cms-path="whatWeAre.tag"
+            data-cms-label="What We Are Tag"
+            className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#0d162a] border border-blue-500/30 shadow-sm shadow-blue-500/20 backdrop-blur-md mb-8"
+          >
             <span className="w-2 h-2 rounded-full bg-blue-500 shadow-[0_0_8px_#3b82f6] animate-pulse" />
             <span className="text-[11px] sm:text-xs font-bold tracking-widest text-blue-300 uppercase">
-              WHAT WE ARE
+              {tag}
             </span>
           </div>
 
           {/* Main Heading */}
-          <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-black text-white uppercase tracking-tight leading-[1.08] mb-6">
-            CRAFTED FOR IMPACT. <br className="hidden sm:inline" />
-            ENGINEERED FOR{' '}
-            <span className="text-[#1762f0] drop-shadow-[0_0_30px_rgba(23,98,240,0.55)]">
-              SPEED.
-            </span>
+          <h1
+            data-cms-path="whatWeAre.heading"
+            data-cms-label="What We Are Heading"
+            className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-black text-white uppercase tracking-tight leading-[1.08] mb-6"
+          >
+            {heading}
           </h1>
 
           {/* Subheading Text */}
-          <p className="text-slate-400 text-sm sm:text-base md:text-lg max-w-2xl mx-auto leading-relaxed font-normal">
-            ArmourCraft is not just an equipment brand. We are a cricket protection lab dedicated to eliminating bulk and maximizing batsman mobility.
+          <p
+            data-cms-path="whatWeAre.subheading"
+            data-cms-label="What We Are Subtitle"
+            className="text-slate-400 text-sm sm:text-base md:text-lg max-w-2xl mx-auto leading-relaxed font-normal"
+          >
+            {subheading}
           </p>
 
         </div>
@@ -49,8 +63,11 @@ export default function WhatWeArePage({ onNavigate }) {
               {/* Tall Vertical Image (Textured Carbon/Foam Craftsmanship) */}
               <div className="relative rounded-2xl overflow-hidden bg-[#090f1e] border border-slate-800/80 shadow-2xl group transition-all duration-300 hover:border-blue-500/40">
                 <img
-                  src="/images/what_we_are_craftsmanship.jpg"
+                  src={heroImage}
                   alt="High-density EVA foam and carbon craftsmanship"
+                  data-cms-path="whatWeAre.heroImage"
+                  data-cms-label="What We Are Craftsmanship Image"
+                  data-cms-type="media"
                   className="w-full h-full min-h-[380px] sm:min-h-[460px] lg:min-h-[500px] object-cover select-none group-hover:scale-105 transition-transform duration-500 ease-out"
                   loading="eager"
                 />

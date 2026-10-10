@@ -3,8 +3,10 @@ import { ArrowRight, ChevronRight, X, Clock, Calendar, User, BookOpen } from 'lu
 import { initialBlogs, getSortedBlogs, getStoredBlogs } from '../data/blogsData'
 import WhatsAppCalloutBanner from '../components/WhatsAppCalloutBanner'
 import { supabase } from '../../lib/supabaseClient'
+import { useCmsContent } from '../admin/cmsStore'
 
 export default function BlogPage({ onNavigate }) {
+  const latestInsightsHeading = useCmsContent('blog.latestInsightsHeading', 'LATEST INSIGHTS')
   const [blogsList, setBlogsList] = useState(() => getStoredBlogs())
   const [viewAll, setViewAll] = useState(false)
   const [activeArticle, setActiveArticle] = useState(null)
@@ -76,6 +78,9 @@ export default function BlogPage({ onNavigate }) {
         {featuredBlog && (
           <section
             aria-label="Featured Story"
+            data-dynamic-type="blog"
+            data-dynamic-id={featuredBlog.id}
+            data-dynamic-title={featuredBlog.title}
             className="relative w-full rounded-2xl sm:rounded-3xl bg-[#0c1527] border border-slate-800/80 p-5 sm:p-7 lg:p-9 shadow-2xl backdrop-blur-md overflow-hidden transition-all duration-300"
           >
             {/* Subtle atmospheric ambient glow */}
@@ -152,8 +157,12 @@ export default function BlogPage({ onNavigate }) {
           
           {/* Header Row: Title on Left, Horizontal Line, and VIEW ALL > on Right */}
           <div className="flex items-center justify-between mb-8 sm:mb-10">
-            <h2 className="text-lg sm:text-xl font-black text-white uppercase tracking-wider shrink-0">
-              LATEST INSIGHTS
+            <h2
+              data-cms-path="blog.latestInsightsHeading"
+              data-cms-label="Latest Insights Heading"
+              className="text-lg sm:text-xl font-black text-white uppercase tracking-wider shrink-0"
+            >
+              {latestInsightsHeading}
             </h2>
 
             {/* Subtle Divider Line */}
@@ -175,6 +184,9 @@ export default function BlogPage({ onNavigate }) {
             {displayedGridBlogs.map((blog) => (
               <article
                 key={blog.id}
+                data-dynamic-type="blog"
+                data-dynamic-id={blog.id}
+                data-dynamic-title={blog.title}
                 onClick={() => handleOpenBlog(blog)}
                 className="bg-[#0c1527] border border-slate-800/80 hover:border-slate-700 rounded-2xl overflow-hidden shadow-xl flex flex-col group cursor-pointer transition-all duration-300 hover:-translate-y-1 hover:shadow-blue-900/10"
               >

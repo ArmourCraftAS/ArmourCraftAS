@@ -1,7 +1,15 @@
 import React from 'react'
 import { Layers } from 'lucide-react'
+import { useCmsContent } from '../admin/cmsStore'
 
 export default function ArmourAdvantage() {
+  const tag = useCmsContent('home.advantage.tag', 'THE ARMOURCRAFT ADVANTAGE')
+  const heading = useCmsContent('home.advantage.heading', 'Mastery in Impact Protection')
+  const desc1 = useCmsContent('home.advantage.desc1', 'Designed for elite performance. Our guards combine advanced, light-weight composite materials with high-density impact absorption foam, ensuring unparalleled thigh protection without compromising mobility on the field.')
+  const desc2 = useCmsContent('home.advantage.desc2', 'Every guard is meticulously crafted, integrating carbon-fiber weave for rigid strength and dynamic ergonomic contours that flex with your movements, so you can focus entirely on your stance and scoring runs.')
+  const image1 = useCmsContent('home.advantage.image1', '/images/advantage_carbon.png')
+  const image2 = useCmsContent('home.advantage.image2', '/images/advantage_thigh_guard.png')
+
   return (
     <section className="relative w-full bg-[#060a14] py-20 lg:py-28 overflow-hidden text-white border-t border-slate-900/60">
       
@@ -24,8 +32,11 @@ export default function ArmourAdvantage() {
               {/* 1. Background Card (Carbon-fiber/Foam Macro Texture) */}
               <div className="absolute top-0 left-0 w-[58%] sm:w-[60%] h-[74%] sm:h-[76%] rounded-2xl sm:rounded-3xl overflow-hidden border border-slate-700/70 shadow-2xl bg-[#090f1d]">
                 <img
-                  src="/images/advantage_carbon.png"
+                  src={image1}
                   alt="High-density Carbon-Fiber Composite Texture"
+                  data-cms-path="home.advantage.image1"
+                  data-cms-label="Carbon Texture Image"
+                  data-cms-type="media"
                   className="w-full h-full object-cover select-none"
                   loading="lazy"
                 />
@@ -42,8 +53,11 @@ export default function ArmourAdvantage() {
               {/* 2. Foreground Floating Card (Static Product Image Display) */}
               <div className="absolute bottom-0 right-0 sm:right-4 w-[65%] sm:w-[66%] h-[74%] sm:h-[76%] rounded-2xl sm:rounded-3xl overflow-hidden border border-slate-700/80 shadow-[0_25px_60px_-15px_rgba(0,0,0,0.9)] bg-[#0a1120]">
                 <img
-                  src="/images/advantage_thigh_guard.png"
+                  src={image2}
                   alt="ArmourCraft Ergonomic Blue Thigh Guard"
+                  data-cms-path="home.advantage.image2"
+                  data-cms-label="Thigh Guard Image"
+                  data-cms-type="media"
                   className="w-full h-full object-cover select-none"
                   loading="lazy"
                 />
@@ -60,18 +74,24 @@ export default function ArmourAdvantage() {
               <div className="absolute top-0 right-0 w-64 h-64 bg-blue-500/5 blur-3xl pointer-events-none rounded-full" />
               
               {/* Top Tag */}
-              <div className="flex items-center gap-2.5 mb-5">
+              <div
+                data-cms-path="home.advantage.tag"
+                data-cms-label="Advantage Pill Tag"
+                className="flex items-center gap-2.5 mb-5"
+              >
                 <span className="w-6 h-[2px] bg-blue-500 rounded-full inline-block" />
                 <span className="text-blue-500 font-extrabold text-xs sm:text-sm tracking-widest uppercase">
-                  THE ARMOURCRAFT ADVANTAGE
+                  {tag}
                 </span>
               </div>
 
               {/* Main Heading */}
-              <h2 className="text-4xl sm:text-5xl lg:text-[54px] font-black text-white leading-[1.08] tracking-tight mb-7">
-                Mastery in <br />
-                Impact <br />
-                Protection
+              <h2
+                data-cms-path="home.advantage.heading"
+                data-cms-label="Advantage Main Heading"
+                className="text-4xl sm:text-5xl lg:text-[54px] font-black text-white leading-[1.08] tracking-tight mb-7"
+              >
+                {heading}
               </h2>
 
               {/* Decorative Divider */}
@@ -81,13 +101,21 @@ export default function ArmourAdvantage() {
               </div>
 
               {/* Paragraph 1 */}
-              <p className="text-slate-300 text-sm sm:text-base leading-relaxed mb-6 font-normal">
-                Designed for elite performance. Our guards combine advanced, light-weight composite materials with high-density impact absorption foam, ensuring unparalleled thigh protection without compromising mobility on the field.
+              <p
+                data-cms-path="home.advantage.desc1"
+                data-cms-label="Advantage Description Paragraph 1"
+                className="text-slate-300 text-sm sm:text-base leading-relaxed mb-6 font-normal"
+              >
+                {desc1}
               </p>
 
               {/* Paragraph 2 */}
-              <p className="text-slate-400 text-sm sm:text-base leading-relaxed font-normal">
-                Every guard is meticulously crafted, integrating carbon-fiber weave for rigid strength and dynamic ergonomic contours that flex with your movements, so you can focus entirely on your stance and scoring runs.
+              <p
+                data-cms-path="home.advantage.desc2"
+                data-cms-label="Advantage Description Paragraph 2"
+                className="text-slate-400 text-sm sm:text-base leading-relaxed font-normal"
+              >
+                {desc2}
               </p>
 
             </div>

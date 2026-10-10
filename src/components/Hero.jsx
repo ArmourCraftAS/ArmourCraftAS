@@ -50,12 +50,31 @@ export default function Hero({ onNavigate, onOpenCustomModal }) {
       {/* Background Hero Image Container (Right Side) */}
       <div className="absolute inset-0 pointer-events-none z-0">
         <div className="relative w-full h-full">
-          <img
-            key={currentSlide.image}
-            src={currentSlide.image}
-            alt={currentSlide.alt}
-            className="w-full h-full object-cover object-[70%_25%] md:object-[right_top] transition-opacity duration-700 ease-in-out opacity-90 scale-[1.01]"
-          />
+          {cmsHero?.mediaType === 'video' && cmsHero?.videoSrc ? (
+            <video
+              src={cmsHero.videoSrc}
+              poster={cmsHero.videoPoster || cmsHero.imageSrc}
+              autoPlay={cmsHero.videoAutoplay !== false}
+              loop={cmsHero.videoLoop !== false}
+              muted={cmsHero.videoMute !== false}
+              controls={cmsHero.videoControls === true}
+              className="w-full h-full object-cover"
+              data-cms-path="home.hero.imageSrc"
+              data-cms-label="Hero Background Video"
+              data-cms-type="media"
+            />
+          ) : (
+            <img
+              key={cmsHero?.imageSrc || currentSlide.image}
+              src={cmsHero?.imageSrc || currentSlide.image}
+              alt={currentSlide.alt}
+              className="w-full h-full object-cover object-[70%_25%] md:object-[right_top] transition-opacity duration-700 ease-in-out scale-[1.01]"
+              style={{ opacity: (cmsHero?.imageOpacity || 90) / 100 }}
+              data-cms-path="home.hero.imageSrc"
+              data-cms-label="Hero Background Media"
+              data-cms-type="media"
+            />
+          )}
 
           {/* Left-to-Right Dark Gradient Overlay (Guarantees High Contrast for Headline) */}
           <div className="absolute inset-0 bg-gradient-to-r from-[#060a12] via-[#060a12]/90 md:via-[#060a12]/75 to-transparent to-75%" />
@@ -74,15 +93,30 @@ export default function Hero({ onNavigate, onOpenCustomModal }) {
         <div className="max-w-2xl lg:max-w-3xl">
           
           {/* Pill Badge */}
-          <div className="inline-flex items-center gap-2.5 px-4 py-1.5 rounded-full bg-[#0d162a]/90 border border-blue-500/25 shadow-sm shadow-blue-500/20 backdrop-blur-md mb-8">
+          <div
+            data-cms-path="home.hero.tag"
+            data-cms-label="Hero Pill Badge"
+            className="inline-flex items-center gap-2.5 px-4 py-1.5 rounded-full bg-[#0d162a]/90 border border-blue-500/25 shadow-sm shadow-blue-500/20 backdrop-blur-md mb-8"
+          >
             <span className="w-2 h-2 rounded-full bg-blue-500 shadow-[0_0_8px_#3b82f6] animate-pulse" />
             <span className="text-[11px] sm:text-xs font-bold tracking-widest text-blue-300 uppercase">
-              {currentSlide.badge}
+              {cmsHero?.tag || currentSlide.badge}
             </span>
           </div>
 
           {/* Main Headline */}
-          <h1 className="text-5xl sm:text-6xl md:text-7xl lg:text-[76px] font-black text-white tracking-tight leading-[1.06] mb-6">
+          <h1
+            data-cms-path="home.hero.mainHeading"
+            data-cms-label="Hero Main Headline"
+            style={{
+              fontSize: cmsHero?.fontSize ? `${cmsHero.fontSize}px` : undefined,
+              color: cmsHero?.textColor || undefined,
+              textAlign: cmsHero?.alignment || undefined,
+              fontWeight: cmsHero?.isBold !== false ? '900' : 'normal',
+              fontStyle: cmsHero?.isItalic ? 'italic' : 'normal'
+            }}
+            className="text-5xl sm:text-6xl md:text-7xl lg:text-[76px] font-black text-white tracking-tight leading-[1.06] mb-6"
+          >
             {cmsHero?.mainHeading ? (
               (() => {
                 const parts = cmsHero.mainHeading.split(' ')
@@ -111,7 +145,11 @@ export default function Hero({ onNavigate, onOpenCustomModal }) {
           </h1>
 
           {/* Subtitle */}
-          <p className="text-slate-300 text-base sm:text-lg md:text-xl font-normal leading-relaxed max-w-xl mb-10 text-slate-300/90">
+          <p
+            data-cms-path="home.hero.subHeading"
+            data-cms-label="Hero Subtitle"
+            className="text-slate-300 text-base sm:text-lg md:text-xl font-normal leading-relaxed max-w-xl mb-10 text-slate-300/90"
+          >
             {cmsHero?.subHeading || 'Engineered for maximum mobility & impact absorption in every stance. Tested against 160+ km/h deliveries.'}
           </p>
 
@@ -121,6 +159,8 @@ export default function Hero({ onNavigate, onOpenCustomModal }) {
             {/* Primary Blue Button */}
             <a
               href="/shop"
+              data-cms-path="home.hero.ctaText"
+              data-cms-label="Hero Primary Button"
               onClick={(e) => {
                 if (onNavigate) {
                   e.preventDefault()
@@ -129,13 +169,15 @@ export default function Hero({ onNavigate, onOpenCustomModal }) {
               }}
               className="inline-flex items-center justify-center gap-2.5 bg-[#1762f0] hover:bg-[#1354d4] text-white px-8 py-4 rounded-xl font-bold text-sm sm:text-base tracking-wide transition-all duration-200 shadow-lg shadow-blue-600/35 hover:shadow-blue-500/50 hover:translate-y-[-1px] active:translate-y-[0px] group cursor-pointer"
             >
-              <span>Explore Collection</span>
+              <span>{cmsHero?.ctaText || 'Explore Collection'}</span>
               <ArrowRight className="w-4 h-4 transition-transform duration-200 group-hover:translate-x-1" />
             </a>
 
             {/* Secondary Dark Outlined Button (Opens Customization Modal) */}
             <button
               type="button"
+              data-cms-path="home.hero.secondaryCtaText"
+              data-cms-label="Hero Secondary Button"
               onClick={() => {
                 if (onOpenCustomModal) {
                   onOpenCustomModal()
@@ -145,7 +187,7 @@ export default function Hero({ onNavigate, onOpenCustomModal }) {
               }}
               className="inline-flex items-center justify-center gap-2.5 bg-[#0a1120]/80 hover:bg-[#111c33] border border-slate-700/80 hover:border-slate-500 text-white px-8 py-4 rounded-xl font-bold text-sm sm:text-base tracking-wide transition-all duration-200 backdrop-blur-sm hover:translate-y-[-1px] active:translate-y-[0px] cursor-pointer"
             >
-              <span>Customize Your Stance</span>
+              <span>{cmsHero?.secondaryCtaText || 'Customize Your Stance'}</span>
             </button>
           </div>
 

@@ -1,6 +1,6 @@
-import React from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 
-// Import live portal components for full untouched landing page rendering
+// Import live portal components for full landing page rendering
 import Navbar from '../../components/Navbar'
 import Hero from '../../components/Hero'
 import ProMatchEssentials from '../../components/ProMatchEssentials'
@@ -16,73 +16,445 @@ import WhatWeArePage from '../../pages/WhatWeArePage'
 import BlogPage from '../../pages/BlogPage'
 import ContactPage from '../../pages/ContactPage'
 
+// Helper to convert rgb(...) strings to hex for input[type="color"]
+function rgbToHex(rgb) {
+  if (!rgb || typeof rgb !== 'string') return '#FFFFFF'
+  if (rgb.startsWith('#')) return rgb
+  const match = rgb.match(/^rgba?\((\d+),\s*(\d+),\s*(\d+)/i)
+  if (!match) return '#FFFFFF'
+  const r = parseInt(match[1], 10).toString(16).padStart(2, '0')
+  const g = parseInt(match[2], 10).toString(16).padStart(2, '0')
+  const b = parseInt(match[3], 10).toString(16).padStart(2, '0')
+  return `#${r}${g}${b}`.toUpperCase()
+}
+
 export default function CanvasPreview({
-  activePage = 'Home'
+  activePage = 'Home',
+  selectedElement = null,
+  onSelectElement = null,
+  cmsData = null,
+  isInspectorMode = true,
+  onSwitchTab = null,
+  onNavigate = null
 }) {
-  // Pure static no-op to completely neutralize all action, navigation, and modal triggers
+  const containerRef = useRef(null)
+  const [hoveredInfo, setHoveredInfo] = useState(null)
+
+  // Pure static no-op for internal links
   const noop = () => {}
 
-  // Comprehensive capture blocker to intercept and nullify all click, mouse, pointer, touch, form, and key events
-  const blockInteractionCapture = (e) => {
+  // Handle click on canvas in Inspector Mode
+  const handleCanvasClick = (e) => {
+    if (!isInspectorMode || !onSelectElement) {
+      e.preventDefault()
+      e.stopPropagation()
+      return
+    }
+
     e.preventDefault()
     e.stopPropagation()
+
+    const target = e.target
+    if (!target || !containerRef.current || !containerRef.current.contains(target)) return
+
+    // 1. Check for dynamic database-driven element scoping rule
+    // Products, individual blog cards, or FAQ accordion items
+    const dynamicCard = target.closest('[data-dynamic-type]')
+    if (dynamicCard) {
+      const dynType = dynamicCard.getAttribute('data-dynamic-type') // 'product' | 'blog' | 'faq'
+      const dynId = dynamicCard.getAttribute('data-dynamic-id') || 'item'
+      const dynTitle = dynamicCard.getAttribute('data-dynamic-title') || 'Database Entity'
+
+      let notice = 'This card is dynamically bound to Supabase backend tables. Layout structure and styling are isolated to preserve storefront integrity.'
+      let label = 'Dynamic Component'
+      let targetTab = 'product'
+
+      if (dynType === 'product') {
+        label = `Product Card: ${dynTitle}`
+        notice = `Product "${dynTitle}" is dynamically managed in the Products database table. To edit pricing, stance, impact rating, stock, or product images, open the Products tab.`
+        targetTab = 'product'
+      } else if (dynType === 'blog') {
+        label = `Blog Post: ${dynTitle}`
+        notice = `Blog article "${dynTitle}" is dynamically managed in the Blog CMS table. To edit story content, authors, publication date, or article banners, open the Blog tab.`
+        targetTab = 'Blog'
+      } else if (dynType === 'faq') {
+        label = `FAQ Item: ${dynTitle}`
+        notice = `Frequently Asked Question "${dynTitle}" is dynamically managed in the FAQs table. To edit question and answer text or order, open the FAQs tab.`
+        targetTab = 'FAQs'
+      }
+
+      onSelectElement({
+        id: `dynamic-${dynType}-${dynId}`,
+        type: 'dynamic',
+        label,
+        dynamicNotice: notice,
+        targetTab
+      })
+      return
+    }
+
+    // 2. Check for explicit CMS path element
+    const cmsEl = target.closest('[data-cms-path]')
+    if (cmsEl) {
+      const path = cmsEl.getAttribute('data-cms-path')
+      const label = cmsEl.getAttribute('data-cms-label') || path
+      const explicitType = cmsEl.getAttribute('data-cms-type')
+
+      // Media element
+      if (explicitType === 'media' || cmsEl.tagName.toLowerCase() === 'img' || cmsEl.tagName.toLowerCase() === 'video') {
+        const isVideo = cmsEl.tagName.toLowerCase() === 'video'
+        const src = cmsEl.getAttribute('src') || cmsEl.currentSrc || ''
+        onSelectElement({
+          id: path,
+          type: 'media',
+          label: label || 'Media Component',
+          path,
+          value: src,
+          originalValue: src,
+          mediaProps: {
+            mediaType: isVideo ? 'video' : 'image',
+            imageSrc: src,
+            opacity: 100,
+            videoSrc: isVideo ? src : '',
+            videoPoster: cmsEl.getAttribute('poster') || '',
+            videoAutoplay: true,
+            videoLoop: true,
+            videoMute: true,
+            videoControls: false
+          }
+        })
+        return
+      }
+
+      // Icon element
+      if (explicitType === 'icon' || cmsEl.tagName.toLowerCase() === 'svg' || cmsEl.querySelector('svg')) {
+        onSelectElement({
+          id: path,
+          type: 'icon',
+          label: label || 'Icon Component',
+          path,
+          value: cmsEl.getAttribute('data-cms-icon') || 'Shield',
+          originalValue: cmsEl.getAttribute('data-cms-icon') || 'Shield',
+          iconProps: {
+            iconName: cmsEl.getAttribute('data-cms-icon') || 'Shield',
+            color: '#60A5FA',
+            size: 24
+          }
+        })
+        return
+      }
+
+      // Text element with CMS path
+      const textVal = cmsEl.innerText?.trim() || cmsEl.textContent?.trim() || ''
+      const computed = window.getComputedStyle(cmsEl)
+      const fontSize = parseInt(computed.fontSize, 10) || 16
+      const color = rgbToHex(computed.color)
+      const textAlign = computed.textAlign === 'center' ? 'center' : computed.textAlign === 'right' ? 'right' : 'left'
+      const isBold = computed.fontWeight === 'bold' || parseInt(computed.fontWeight, 10) >= 600
+      const isItalic = computed.fontStyle === 'italic'
+
+      onSelectElement({
+        id: path,
+        type: 'text',
+        label: label || 'Text Component',
+        path,
+        value: textVal,
+        originalValue: textVal,
+        fontStyle: {
+          fontSize,
+          alignment: textAlign,
+          color,
+          isBold,
+          isItalic
+        }
+      })
+      return
+    }
+
+    // 3. Fallback: Identify clicked DOM target (Media, Icon, or Text)
+    // A. Media element
+    const mediaEl = target.closest('img, video')
+    if (mediaEl) {
+      const isVideo = mediaEl.tagName.toLowerCase() === 'video'
+      const src = mediaEl.getAttribute('src') || mediaEl.currentSrc || ''
+      onSelectElement({
+        id: 'media-' + Math.random().toString(36).substr(2, 6),
+        type: 'media',
+        label: isVideo ? 'Video Component' : 'Image Component',
+        path: '',
+        value: src,
+        originalValue: src,
+        mediaProps: {
+          mediaType: isVideo ? 'video' : 'image',
+          imageSrc: src,
+          opacity: 100,
+          videoSrc: isVideo ? src : '',
+          videoPoster: mediaEl.getAttribute('poster') || '',
+          videoAutoplay: true,
+          videoLoop: true,
+          videoMute: true,
+          videoControls: false
+        }
+      })
+      return
+    }
+
+    // B. Icon element
+    const iconEl = target.closest('svg')
+    if (iconEl) {
+      onSelectElement({
+        id: 'icon-' + Math.random().toString(36).substr(2, 6),
+        type: 'icon',
+        label: 'Icon Component',
+        path: '',
+        value: 'Shield',
+        originalValue: 'Shield',
+        iconProps: {
+          iconName: 'Shield',
+          color: '#60A5FA',
+          size: 24
+        }
+      })
+      return
+    }
+
+    // C. Text / Heading element
+    const textEl = target.closest('h1, h2, h3, h4, h5, h6, p, span, a, button, label, li')
+    if (textEl) {
+      const textVal = textEl.innerText?.trim() || textEl.textContent?.trim() || ''
+      if (textVal) {
+        const computed = window.getComputedStyle(textEl)
+        const fontSize = parseInt(computed.fontSize, 10) || 16
+        const color = rgbToHex(computed.color)
+        const textAlign = computed.textAlign === 'center' ? 'center' : computed.textAlign === 'right' ? 'right' : 'left'
+        const isBold = computed.fontWeight === 'bold' || parseInt(computed.fontWeight, 10) >= 600
+        const isItalic = computed.fontStyle === 'italic'
+
+        onSelectElement({
+          id: 'text-' + Math.random().toString(36).substr(2, 6),
+          type: 'text',
+          label: `${textEl.tagName.toUpperCase()} Text`,
+          path: '',
+          value: textVal,
+          originalValue: textVal,
+          fontStyle: {
+            fontSize,
+            alignment: textAlign,
+            color,
+            isBold,
+            isItalic
+          }
+        })
+      }
+    }
   }
+
+  // Handle Mouse Over to provide visual inspector outlines
+  const handleMouseOver = (e) => {
+    if (!isInspectorMode) return
+    const target = e.target
+    if (!target || !containerRef.current || !containerRef.current.contains(target)) return
+
+    // Dynamic card
+    const dynamicCard = target.closest('[data-dynamic-type]')
+    if (dynamicCard) {
+      const dynType = dynamicCard.getAttribute('data-dynamic-type')
+      const dynTitle = dynamicCard.getAttribute('data-dynamic-title') || 'Database Entity'
+      setHoveredInfo({
+        el: dynamicCard,
+        type: 'dynamic',
+        label: `${dynType.toUpperCase()} (DB Managed): ${dynTitle}`
+      })
+      return
+    }
+
+    // CMS path element
+    const cmsEl = target.closest('[data-cms-path]')
+    if (cmsEl) {
+      const label = cmsEl.getAttribute('data-cms-label') || cmsEl.getAttribute('data-cms-path')
+      const explicitType = cmsEl.getAttribute('data-cms-type') || (cmsEl.tagName === 'IMG' || cmsEl.tagName === 'VIDEO' ? 'media' : 'text')
+      setHoveredInfo({
+        el: cmsEl,
+        type: explicitType,
+        label
+      })
+      return
+    }
+
+    // Media
+    const mediaEl = target.closest('img, video')
+    if (mediaEl) {
+      setHoveredInfo({
+        el: mediaEl,
+        type: 'media',
+        label: mediaEl.tagName === 'VIDEO' ? 'Video Media' : 'Image Media'
+      })
+      return
+    }
+
+    // Icon
+    const iconEl = target.closest('svg')
+    if (iconEl) {
+      setHoveredInfo({
+        el: iconEl,
+        type: 'icon',
+        label: 'Icon Component'
+      })
+      return
+    }
+
+    // Text
+    const textEl = target.closest('h1, h2, h3, h4, h5, h6, p, span, a, button, label')
+    if (textEl && (textEl.innerText?.trim() || textEl.textContent?.trim())) {
+      setHoveredInfo({
+        el: textEl,
+        type: 'text',
+        label: `${textEl.tagName.toUpperCase()} Text`
+      })
+      return
+    }
+
+    setHoveredInfo(null)
+  }
+
+  const handleMouseLeave = () => {
+    setHoveredInfo(null)
+  }
+
+  // Apply visual outline classes directly based on hovered and selected states
+  useEffect(() => {
+    if (!containerRef.current) return
+    const root = containerRef.current
+
+    // Clean previous highlight outlines
+    root.querySelectorAll('.cms-inspector-hover').forEach((el) => {
+      el.classList.remove('cms-inspector-hover', 'cms-hover-dynamic', 'cms-hover-media', 'cms-hover-icon', 'cms-hover-text')
+    })
+    root.querySelectorAll('.cms-inspector-selected').forEach((el) => {
+      el.classList.remove('cms-inspector-selected')
+    })
+
+    // Apply hovered outline
+    if (isInspectorMode && hoveredInfo?.el) {
+      hoveredInfo.el.classList.add('cms-inspector-hover')
+      if (hoveredInfo.type === 'dynamic') {
+        hoveredInfo.el.classList.add('cms-hover-dynamic')
+      } else if (hoveredInfo.type === 'media') {
+        hoveredInfo.el.classList.add('cms-hover-media')
+      } else if (hoveredInfo.type === 'icon') {
+        hoveredInfo.el.classList.add('cms-hover-icon')
+      } else {
+        hoveredInfo.el.classList.add('cms-hover-text')
+      }
+    }
+
+    // Apply selected outline
+    if (isInspectorMode && selectedElement) {
+      if (selectedElement.path) {
+        const found = root.querySelector(`[data-cms-path="${selectedElement.path}"]`)
+        if (found) found.classList.add('cms-inspector-selected')
+      }
+    }
+  }, [hoveredInfo, selectedElement, isInspectorMode])
 
   return (
     <div
-      onClickCapture={blockInteractionCapture}
-      onMouseDownCapture={blockInteractionCapture}
-      onMouseUpCapture={blockInteractionCapture}
-      onPointerDownCapture={blockInteractionCapture}
-      onSubmitCapture={blockInteractionCapture}
-      onChangeCapture={blockInteractionCapture}
-      onFocusCapture={blockInteractionCapture}
-      onKeyDownCapture={(e) => {
-        if (e.key === ' ' || e.key === 'Enter') {
-          e.preventDefault()
-          e.stopPropagation()
-        }
-      }}
-      className="preview-canvas-wrapper w-full min-h-full relative select-none cursor-default"
+      ref={containerRef}
+      onClickCapture={handleCanvasClick}
+      onMouseOver={handleMouseOver}
+      onMouseLeave={handleMouseLeave}
+      className={`preview-canvas-wrapper w-full min-h-full relative ${
+        isInspectorMode ? 'cursor-pointer' : 'cursor-default select-none'
+      }`}
     >
       {/* ========================================================================= */}
-      {/* STRICT CANVAS INTERACTION LOCK & DISABLE ALL PREVIEW POPUPS               */}
-      {/* Completely blocks ALL click events, form inputs, button handlers, and     */}
-      {/* modal popups inside the preview canvas. Pure visual layout view.           */}
+      {/* VISUAL INSPECTOR SYSTEM STYLES                                            */}
+      {/* Ensures Layout Structure & CSS design CANNOT be broken                    */}
       {/* ========================================================================= */}
       <style>{`
-        .preview-canvas-locked,
-        .preview-canvas-locked * {
-          pointer-events: none !important;
-          cursor: default !important;
-          user-select: none !important;
-          -webkit-user-select: none !important;
-          -webkit-touch-callout: none !important;
+        /* Neutralize standard form/submit/link events inside preview */
+        .preview-canvas-container a,
+        .preview-canvas-container button,
+        .preview-canvas-container input,
+        .preview-canvas-container textarea {
+          cursor: pointer !important;
         }
 
-        .preview-canvas-locked a,
-        .preview-canvas-locked button,
-        .preview-canvas-locked input,
-        .preview-canvas-locked select,
-        .preview-canvas-locked textarea {
-          pointer-events: none !important;
-          cursor: default !important;
-          outline: none !important;
-          box-shadow: none !important;
+        /* Hover outlines for inspectable elements */
+        .cms-inspector-hover {
+          position: relative;
+          transition: outline 0.15s ease-in-out;
         }
 
-        .preview-canvas-locked img {
-          pointer-events: none !important;
-          -webkit-user-drag: none !important;
-          user-drag: none !important;
+        .cms-hover-text {
+          outline: 2px dashed #3b82f6 !important;
+          outline-offset: 3px !important;
+        }
+
+        .cms-hover-media {
+          outline: 2px dashed #10b981 !important;
+          outline-offset: 3px !important;
+        }
+
+        .cms-hover-icon {
+          outline: 2px dashed #06b6d4 !important;
+          outline-offset: 3px !important;
+        }
+
+        .cms-hover-dynamic {
+          outline: 2px dashed #a855f7 !important;
+          outline-offset: 3px !important;
+        }
+
+        /* Active Selected Element Outline */
+        .cms-inspector-selected {
+          outline: 2px solid #2563eb !important;
+          outline-offset: 4px !important;
+          box-shadow: 0 0 25px rgba(37, 99, 235, 0.45) !important;
+          position: relative;
+          z-index: 20;
+        }
+
+        /* Prevent link dragging or modal popups */
+        .preview-canvas-container img {
+          user-drag: none;
+          -webkit-user-drag: none;
         }
       `}</style>
 
-      {/* Pure Visual Layout Container: Scrollable top-to-bottom visual preview */}
-      <div
-        className="preview-canvas-locked w-full min-h-screen bg-[#060a12] text-slate-100 flex flex-col font-sans pointer-events-none select-none cursor-default"
-        inert="true"
-      >
+      {/* Ambient Floating Inspector Badge (Shows hovered element type) */}
+      {isInspectorMode && hoveredInfo && (
+        <div className="fixed bottom-6 left-6 z-[9999] pointer-events-none animate-in fade-in duration-150">
+          <div
+            className={`px-3 py-1.5 rounded-lg text-xs font-bold uppercase tracking-wider backdrop-blur-md shadow-2xl border flex items-center gap-2 ${
+              hoveredInfo.type === 'dynamic'
+                ? 'bg-purple-950/90 text-purple-300 border-purple-500/40'
+                : hoveredInfo.type === 'media'
+                ? 'bg-emerald-950/90 text-emerald-300 border-emerald-500/40'
+                : hoveredInfo.type === 'icon'
+                ? 'bg-cyan-950/90 text-cyan-300 border-cyan-500/40'
+                : 'bg-blue-950/90 text-blue-300 border-blue-500/40'
+            }`}
+          >
+            <span
+              className={`w-2 h-2 rounded-full ${
+                hoveredInfo.type === 'dynamic'
+                  ? 'bg-purple-400'
+                  : hoveredInfo.type === 'media'
+                  ? 'bg-emerald-400'
+                  : hoveredInfo.type === 'icon'
+                  ? 'bg-cyan-400'
+                  : 'bg-blue-400'
+              }`}
+            />
+            <span>{hoveredInfo.label}</span>
+            <span className="text-[10px] text-slate-400 lowercase">• click to edit</span>
+          </div>
+        </div>
+      )}
+
+      {/* Main Preview Container */}
+      <div className="preview-canvas-container w-full min-h-screen bg-[#060a12] text-slate-100 flex flex-col font-sans">
         {activePage === 'Shop Armours' ? (
           /* ----------------------------------------------------------------------- */
           /* 1. SHOP ARMOURS PAGE                                                    */

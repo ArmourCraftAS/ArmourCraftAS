@@ -1,8 +1,11 @@
 import React, { useState } from 'react'
 import { Hammer, Zap, ShieldCheck, Lock, ShoppingCart, ExternalLink } from 'lucide-react'
+import { useCmsContent } from '../admin/cmsStore'
 
 export default function ProMatchEssentials({ onAddToCart, onNavigate }) {
   const [addedItem, setAddedItem] = useState(null)
+  const heading = useCmsContent('home.essentials.heading', 'PRO MATCH ESSENTIALS')
+  const subheading = useCmsContent('home.essentials.subheading', 'Elite-level protection for competitive cricket.')
 
   const featureHighlights = [
     {
@@ -89,11 +92,19 @@ export default function ProMatchEssentials({ onAddToCart, onNavigate }) {
         {/* Section Header */}
         <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-12">
           <div>
-            <h2 className="text-3xl sm:text-4xl md:text-5xl font-black text-white tracking-tight uppercase">
-              PRO MATCH ESSENTIALS
+            <h2
+              data-cms-path="home.essentials.heading"
+              data-cms-label="Pro Match Essentials Heading"
+              className="text-3xl sm:text-4xl md:text-5xl font-black text-white tracking-tight uppercase"
+            >
+              {heading}
             </h2>
-            <p className="text-slate-400 text-sm sm:text-base mt-2">
-              Elite-level protection for competitive cricket.
+            <p
+              data-cms-path="home.essentials.subheading"
+              data-cms-label="Pro Match Essentials Subtitle"
+              className="text-slate-400 text-sm sm:text-base mt-2"
+            >
+              {subheading}
             </p>
           </div>
 
@@ -119,6 +130,9 @@ export default function ProMatchEssentials({ onAddToCart, onNavigate }) {
             return (
               <div
                 key={product.id}
+                data-dynamic-type="product"
+                data-dynamic-id={product.id}
+                data-dynamic-title={product.title}
                 className="bg-[#0b1222] border border-slate-800/90 rounded-2xl p-5 flex flex-col justify-between hover:border-blue-500/40 hover:shadow-2xl hover:shadow-blue-950/40 transition-all duration-300 group"
               >
                 {/* Product Image Frame */}

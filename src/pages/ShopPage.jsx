@@ -3,8 +3,11 @@ import { Search, ShoppingCart } from 'lucide-react'
 import CustomSquadBanner from '../components/CustomSquadBanner'
 import { initialAdminProducts } from '../admin/data/initialProducts'
 import { supabase } from '../../lib/supabaseClient'
+import { useCmsContent } from '../admin/cmsStore'
 
 export default function ShopPage({ onAddToCart }) {
+  const heading = useCmsContent('shop.heading', 'ALL PROTECTION GEAR')
+  const subheading = useCmsContent('shop.subheading', 'Simple, lightweight, and pro-tested cricket pads engineered for maximum comfort and elite performance.')
   const [activeCategory, setActiveCategory] = useState('All Products')
   const [activeStance, setActiveStance] = useState('All Stances')
   const [searchQuery, setSearchQuery] = useState('')
@@ -122,11 +125,19 @@ export default function ShopPage({ onAddToCart }) {
         
         {/* Page Title & Subtitle */}
         <div className="text-center mb-10 sm:mb-12">
-          <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black text-white tracking-tight uppercase mb-4">
-            ALL PROTECTION GEAR
+          <h1
+            data-cms-path="shop.heading"
+            data-cms-label="Shop Page Heading"
+            className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black text-white tracking-tight uppercase mb-4"
+          >
+            {heading}
           </h1>
-          <p className="text-slate-400 text-xs sm:text-sm md:text-base max-w-2xl mx-auto leading-relaxed">
-            Simple, lightweight, and pro-tested cricket pads engineered for maximum comfort and elite performance.
+          <p
+            data-cms-path="shop.subheading"
+            data-cms-label="Shop Page Subtitle"
+            className="text-slate-400 text-xs sm:text-sm md:text-base max-w-2xl mx-auto leading-relaxed"
+          >
+            {subheading}
           </p>
         </div>
 
@@ -201,6 +212,9 @@ export default function ShopPage({ onAddToCart }) {
               return (
                 <div
                   key={product.id}
+                  data-dynamic-type="product"
+                  data-dynamic-id={product.id}
+                  data-dynamic-title={product.title}
                   className="bg-[#0b1222] border border-slate-800/80 rounded-2xl p-5 sm:p-6 flex flex-col justify-between hover:border-blue-500/40 hover:shadow-2xl transition-all duration-300 group"
                 >
                   {/* Product Image Frame */}

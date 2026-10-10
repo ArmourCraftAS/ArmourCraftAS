@@ -1,7 +1,9 @@
 import React from 'react'
 import { Check } from 'lucide-react'
+import { useCmsContent } from '../admin/cmsStore'
 
 export default function Testimonials() {
+  const heading = useCmsContent('home.testimonials.heading', 'TRUSTED BY 10,000+ BATSMEN')
   const testimonials = [
     {
       id: 'david',
@@ -34,8 +36,12 @@ export default function Testimonials() {
       <div className="max-w-7xl mx-auto relative z-10">
         {/* Main Section Heading (Without Star Rating Line) */}
         <div className="text-center mb-10 sm:mb-14">
-          <h2 className="text-3xl sm:text-4xl md:text-5xl font-black text-white tracking-tight uppercase">
-            TRUSTED BY 10,000+ BATSMEN
+          <h2
+            data-cms-path="home.testimonials.heading"
+            data-cms-label="Testimonials Heading"
+            className="text-3xl sm:text-4xl md:text-5xl font-black text-white tracking-tight uppercase"
+          >
+            {heading}
           </h2>
         </div>
 

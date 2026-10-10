@@ -3,8 +3,11 @@ import { Send, Headphones, Users, CheckCircle2, ChevronDown } from 'lucide-react
 import CountryPhoneInput from '../components/CountryPhoneInput'
 import { getStoredFaqs } from '../data/faqsData'
 import { supabase } from '../../lib/supabaseClient'
+import { useCmsContent } from '../admin/cmsStore'
 
 export default function ContactPage() {
+  const heading = useCmsContent('contact.heading', "WE'RE HERE TO KEEP YOU PROTECTED.")
+  const subheading = useCmsContent('contact.subheading', 'Have a question about sizing, order tracking, or custom team printing? Reach out to us—we usually reply within a few hours.')
   const [openFaq, setOpenFaq] = useState(0)
   const [faqList, setFaqList] = useState(() => getStoredFaqs())
   const [countryCode, setCountryCode] = useState('+92')
@@ -89,14 +92,19 @@ export default function ContactPage() {
         {/* 1. HEADER SECTION (CENTERED TEXT)                                         */}
         {/* ========================================================================= */}
         <div className="text-center max-w-3xl mx-auto">
-          <h1 className="text-4xl sm:text-5xl lg:text-6xl font-black text-white uppercase tracking-tight leading-[1.08] mb-4 sm:mb-6">
-            WE&apos;RE HERE TO KEEP <br className="hidden sm:inline" />
-            <span className="text-[#1762f0] drop-shadow-[0_0_30px_rgba(23,98,240,0.55)]">
-              YOU PROTECTED.
-            </span>
+          <h1
+            data-cms-path="contact.heading"
+            data-cms-label="Contact Page Main Heading"
+            className="text-4xl sm:text-5xl lg:text-6xl font-black text-white uppercase tracking-tight leading-[1.08] mb-4 sm:mb-6"
+          >
+            {heading}
           </h1>
-          <p className="text-slate-400 text-sm sm:text-base md:text-lg max-w-2xl mx-auto leading-relaxed font-normal">
-            Have a question about sizing, order tracking, or custom team printing? Reach out to us&mdash;we usually reply within a few hours.
+          <p
+            data-cms-path="contact.subheading"
+            data-cms-label="Contact Page Subtitle"
+            className="text-slate-400 text-sm sm:text-base md:text-lg max-w-2xl mx-auto leading-relaxed font-normal"
+          >
+            {subheading}
           </p>
         </div>
 

@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from 'react'
 import { ShoppingCart } from 'lucide-react'
 import { supabase } from '../../lib/supabaseClient'
+import { useCmsContent } from '../admin/cmsStore'
 
 export default function SmartCollection({ onAddToCart }) {
   const [activeTab, setActiveTab] = useState('ALL')
   const [addedItem, setAddedItem] = useState(null)
+  const heading = useCmsContent('home.showcase.heading', 'BROWSE THE SMART COLLECTION')
 
   const defaultProducts = [
     {
@@ -92,8 +94,12 @@ export default function SmartCollection({ onAddToCart }) {
       <div className="max-w-7xl mx-auto relative z-10">
         
         {/* Section Heading */}
-        <h2 className="text-3xl sm:text-4xl md:text-5xl font-black text-white text-center tracking-tight uppercase mb-8">
-          BROWSE THE SMART COLLECTION
+        <h2
+          data-cms-path="home.showcase.heading"
+          data-cms-label="Smart Collection Heading"
+          className="text-3xl sm:text-4xl md:text-5xl font-black text-white text-center tracking-tight uppercase mb-8"
+        >
+          {heading}
         </h2>
 
         {/* Category Filter Tabs */}
@@ -123,6 +129,9 @@ export default function SmartCollection({ onAddToCart }) {
             return (
               <div
                 key={product.id}
+                data-dynamic-type="product"
+                data-dynamic-id={product.id}
+                data-dynamic-title={product.title}
                 className="bg-[#0b1222] border border-slate-800/80 rounded-2xl p-4 sm:p-5 flex flex-col justify-between hover:border-blue-500/40 hover:shadow-xl transition-all duration-300 group"
               >
                 {/* Product Image Frame */}

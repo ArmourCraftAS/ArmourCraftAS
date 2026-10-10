@@ -3,10 +3,12 @@ import { Plus, Minus } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { getStoredFaqs } from '../data/faqsData'
 import { supabase } from '../../lib/supabaseClient'
+import { useCmsContent } from '../admin/cmsStore'
 
 export default function FAQ() {
   const [openIndex, setOpenIndex] = useState(0)
   const [faqItems, setFaqItems] = useState(() => getStoredFaqs())
+  const heading = useCmsContent('home.faq.heading', 'Frequently Asked Questions')
 
   useEffect(() => {
     // 1. Sync on custom event
@@ -50,8 +52,12 @@ export default function FAQ() {
 
       <div className="max-w-4xl mx-auto relative z-10">
         {/* Section Heading */}
-        <h2 className="text-3xl sm:text-4xl md:text-5xl font-black text-white text-center tracking-tight mb-12 sm:mb-14">
-          Frequently Asked Questions
+        <h2
+          data-cms-path="home.faq.heading"
+          data-cms-label="FAQ Section Heading"
+          className="text-3xl sm:text-4xl md:text-5xl font-black text-white text-center tracking-tight mb-12 sm:mb-14"
+        >
+          {heading}
         </h2>
 
         {/* Accordion Layout */}
@@ -62,6 +68,9 @@ export default function FAQ() {
             return (
               <div
                 key={item.id}
+                data-dynamic-type="faq"
+                data-dynamic-id={item.id}
+                data-dynamic-title={item.question}
                 className="bg-[#091734] border border-blue-900/40 rounded-xl sm:rounded-2xl transition-colors duration-200 overflow-hidden hover:border-blue-700/50"
               >
                 {/* Accordion Header Button */}

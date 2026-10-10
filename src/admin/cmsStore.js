@@ -1,16 +1,18 @@
 // Comprehensive Visual CMS Store for ARMOURCRAFT AS
+import { useState, useEffect } from 'react'
+
 export const DEFAULT_CMS_DATA = {
   home: {
     hero: {
-      tag: 'ELITE PERFORMANCE',
+      tag: 'NEW 2026 COLLECTION',
       mainHeading: 'Next-Gen Ergonomic Thigh Protection',
       subHeading:
-        'Engineered for maximum mobility & impact absorption in every stroke. Trusted against 150+ km/h deliveries.',
+        'Engineered for maximum mobility & impact absorption in every stance. Tested against 160+ km/h deliveries.',
       textColor: '#FFFFFF',
-      fontSize: 48,
-      ctaLink: '/shop-armours',
+      fontSize: 72,
+      ctaLink: '/shop',
       ctaText: 'Explore Collection',
-      secondaryCtaText: 'Customize Your Gear',
+      secondaryCtaText: 'Customize Your Stance',
       secondaryCtaLink: '/contact',
       isHeadingHidden: false,
       isSubHeadingHidden: false,
@@ -20,12 +22,12 @@ export const DEFAULT_CMS_DATA = {
       alignment: 'left',
       // Media settings
       mediaType: 'image', // 'image' | 'video'
-      imageSrc: '/images/nextgen_batsman_helmet.jpg',
-      imageOpacity: 100,
+      imageSrc: '/images/batsman_hero.jpg',
+      imageOpacity: 90,
       overlayTint: 40,
       blurAmount: 0,
-      videoSrc: 'https://assets.armourcraft.io/static/batsman_hero.mp4',
-      videoPoster: '/images/nextgen_batsman_helmet.jpg',
+      videoSrc: '',
+      videoPoster: '/images/batsman_hero.jpg',
       videoAutoplay: true,
       videoLoop: true,
       videoMute: true,
@@ -33,95 +35,44 @@ export const DEFAULT_CMS_DATA = {
     },
     essentials: {
       heading: 'PRO MATCH ESSENTIALS',
-      subheading: 'Ballistic-tested thigh guards engineered in Sialkot for modern power hitting.',
-      products: [
-        {
-          id: 'p1',
-          title: 'ADVANTAGE CARBON DUAL GUARD',
-          price: '$169.00',
-          badge: 'BESTSELLER',
-          image: '/images/advantage_carbon.png',
-          mediaType: 'image',
-          desc: 'Ultra-light carbon matrix inner and outer thigh protection with dual ergonomic straps.'
-        },
-        {
-          id: 'p2',
-          title: 'PRO SPLIT THIGH GUARD COMBO',
-          price: '$145.00',
-          badge: 'MATCH DAY READY',
-          image: '/images/advantage_thigh_guard.png',
-          mediaType: 'image',
-          desc: 'High-density multi-cell EVA foam dissipating ball speeds up to 160+ km/h.'
-        },
-        {
-          id: 'p3',
-          title: 'AERODYNAMIC INNER THIGH SHIELD',
-          price: '$89.00',
-          badge: 'AERODYNAMIC',
-          image: '/images/product_inner_guard.png',
-          mediaType: 'image',
-          desc: 'Contoured low-profile inner protector ensuring zero restriction during quick singles.'
-        },
-        {
-          id: 'p4',
-          title: 'YOUTH ACADEMY ARMOUR SHIELD',
-          price: '$79.00',
-          badge: 'YOUTH SPECIAL',
-          image: '/images/product_youth_guard.png',
-          mediaType: 'image',
-          desc: 'Tournament certified junior protection designed for emerging academy batsmen.'
-        }
+      subheading: 'Elite-level protection for competitive cricket.',
+      features: [
+        { title: 'Sialkot Crafted', desc: 'Handmade with Premium Materials.', icon: 'Hammer' },
+        { title: '140+ KM/H Ready', desc: 'Tested Against Hard Season Leather Balls.', icon: 'Zap' },
+        { title: '500+ Matches Trusted', desc: 'Used by Club & Academy Cricketers.', icon: 'ShieldCheck' },
+        { title: 'Zero Shift Fit', desc: 'Double-Strap Lock for Fast Running.', icon: 'Lock' }
       ]
     },
     advantage: {
-      heading: 'THE ARMOURCRAFT ADVANTAGE',
-      subheading: 'Engineered with Multi-Density EVA and Carbon Matrix technology.',
-      cards: [
-        {
-          id: 'adv1',
-          title: '160+ KM/H BALLISTIC ABSORPTION',
-          desc: 'Multi-layer composite structure disperses lethal impact energy across 240 square centimeters.',
-          image: '/images/what_we_are_lab_testing.jpg',
-          mediaType: 'image'
-        },
-        {
-          id: 'adv2',
-          title: 'DUAL-STRAP ERGONOMIC LOCK',
-          desc: 'Custom medical-grade elastic webbing prevents slipping during explosive sprint changes of direction.',
-          image: '/images/blog_thigh_strapping.jpg',
-          mediaType: 'image'
-        },
-        {
-          id: 'adv3',
-          title: 'FEATHERWEIGHT 185G FORM FACTOR',
-          desc: 'Eliminates bulky traditional padding while multiplying front-quad safety by 3.4x.',
-          image: '/images/what_we_are_carbon_grid.jpg',
-          mediaType: 'image'
-        }
-      ]
+      tag: 'THE ARMOURCRAFT ADVANTAGE',
+      heading: 'Mastery in Impact Protection',
+      desc1: 'Designed for elite performance. Our guards combine advanced, light-weight composite materials with high-density impact absorption foam, ensuring unparalleled thigh protection without compromising mobility on the field.',
+      desc2: 'Every guard is meticulously crafted, integrating carbon-fiber weave for rigid strength and dynamic ergonomic contours that flex with your movements, so you can focus entirely on your stance and scoring runs.',
+      image1: '/images/advantage_carbon.png',
+      image2: '/images/advantage_thigh_guard.png'
     },
     customSquad: {
-      heading: 'CUSTOM SQUAD GEAR & SPONSOR LOGOS',
-      subheading: 'Outfit your entire academy or club squad with bespoke color palettes and squad numbering.',
-      ctaText: 'Request Custom Squad Quote →',
+      heading: 'CUSTOM TEAM GEAR & JERSEY MATCHING',
+      subheading: "Elevate your team's look. Professional-grade printing of names, numbers, and club logos directly onto your guards. Matches any team colors.",
+      ctaText: 'GET CUSTOM TEAM QUOTE',
       ctaLink: '/contact',
-      image: '/images/custom_guard_team_logo.jpg',
+      image: '/images/custom_pads.png',
       mediaType: 'image'
     },
     comparison: {
-      heading: 'SMARTTHIGHS VS TRADITIONAL GEAR',
-      subheading: 'Discover why modern international players are abandoning bulky cotton pads.'
+      heading: 'SmartThighs vs. The Others',
+      subheading: 'Discover why modern cricketers are abandoning bulky traditional pads.'
     },
     showcase: {
-      heading: 'BROWSE THE SMART ARMOUR COLLECTION',
-      subheading: 'Handcrafted protection tuned for the demanding speeds of modern T20 and Test cricket.'
+      heading: 'BROWSE THE SMART COLLECTION',
+      subheading: 'High impact protection designed for modern cricket.'
     },
     testimonials: {
-      heading: 'TRUSTED BY 10,000+ BATSMEN GLOBALLY',
-      subheading: 'Verified match reviews from professional county and premier league cricketers.'
+      heading: 'TRUSTED BY 10,000+ BATSMEN',
+      subheading: 'Verified match reviews from professional and club cricketers.'
     },
     faq: {
-      heading: 'FREQUENTLY ASKED QUESTIONS',
+      heading: 'Frequently Asked Questions',
       subheading: 'Everything you need to know about sizing, ballistic testing, and shipping.'
     },
     footer: {
@@ -132,23 +83,25 @@ export const DEFAULT_CMS_DATA = {
     }
   },
   shop: {
-    heading: 'SHOP PRO CRICKET PROTECTION',
-    subheading: 'Handcrafted ergonomic cricket armours engineered for batsmen facing 150+ km/h deliveries.',
+    heading: 'ALL PROTECTION GEAR',
+    subheading: 'Simple, lightweight, and pro-tested cricket pads engineered for maximum comfort and elite performance.',
     bannerImage: '/images/batsman_hero.jpg'
   },
   whatWeAre: {
-    heading: 'CRICKET PROTECTION LAB',
-    subheading: 'Centuries of Sialkot craftsmanship fused with modern ballistic engineering.',
+    tag: 'WHAT WE ARE',
+    heading: 'CRAFTED FOR IMPACT. ENGINEERED FOR SPEED.',
+    subheading: 'ArmourCraft is not just an equipment brand. We are a cricket protection lab dedicated to eliminating bulk and maximizing batsman mobility.',
     heroImage: '/images/what_we_are_craftsmanship.jpg'
   },
   blog: {
     heading: 'CRICKET ENGINEERING INSIGHTS',
     subheading: 'Expert research, ballistics impact testing, and cricket protection lab reports.',
+    latestInsightsHeading: 'LATEST INSIGHTS',
     heroImage: '/images/blog_ballistic_test.jpg'
   },
   contact: {
-    heading: 'CUSTOM GEAR & SQUAD INQUIRIES',
-    subheading: 'Request bespoke team thigh guards, personalized player numbers, and academy gear.',
+    heading: "WE'RE HERE TO KEEP YOU PROTECTED.",
+    subheading: 'Have a question about sizing, order tracking, or custom team printing? Reach out to us—we usually reply within a few hours.',
     bannerImage: '/images/custom_guard_number_07.jpg'
   }
 }
@@ -187,6 +140,22 @@ export function getCmsData() {
             ...DEFAULT_CMS_DATA.home.footer,
             ...(parsed.home?.footer || {})
           }
+        },
+        shop: {
+          ...DEFAULT_CMS_DATA.shop,
+          ...(parsed.shop || {})
+        },
+        whatWeAre: {
+          ...DEFAULT_CMS_DATA.whatWeAre,
+          ...(parsed.whatWeAre || {})
+        },
+        blog: {
+          ...DEFAULT_CMS_DATA.blog,
+          ...(parsed.blog || {})
+        },
+        contact: {
+          ...DEFAULT_CMS_DATA.contact,
+          ...(parsed.contact || {})
         }
       }
     }
@@ -194,6 +163,35 @@ export function getCmsData() {
     console.warn('Error reading CMS data from localStorage:', e)
   }
   return DEFAULT_CMS_DATA
+}
+
+export function updateCmsField(path, value) {
+  if (typeof window === 'undefined') return DEFAULT_CMS_DATA
+  const current = getCmsData()
+  if (!path) return current
+  const keys = path.split('.')
+  let target = current
+  for (let i = 0; i < keys.length - 1; i++) {
+    const k = keys[i]
+    if (!target[k] || typeof target[k] !== 'object') {
+      target[k] = {}
+    }
+    target = target[k]
+  }
+  target[keys[keys.length - 1]] = value
+  saveCmsData(current)
+  return current
+}
+
+export function getPublishedCmsData() {
+  if (typeof window === 'undefined') return DEFAULT_CMS_DATA
+  try {
+    const pub = localStorage.getItem('armourcraft_cms_published')
+    if (pub) {
+      return JSON.parse(pub)
+    }
+  } catch {}
+  return getCmsData()
 }
 
 export function saveCmsData(data) {
@@ -207,11 +205,12 @@ export function saveCmsData(data) {
 }
 
 export function publishCmsData(data) {
-  saveCmsData(data)
+  const toSave = data || getCmsData()
+  saveCmsData(toSave)
   if (typeof window !== 'undefined') {
     try {
-      localStorage.setItem('armourcraft_cms_published', JSON.stringify(data))
-      window.dispatchEvent(new CustomEvent('armourcraft_cms_published', { detail: data }))
+      localStorage.setItem('armourcraft_cms_published', JSON.stringify(toSave))
+      window.dispatchEvent(new CustomEvent('armourcraft_cms_published', { detail: toSave }))
     } catch (e) {}
   }
   return true
@@ -227,3 +226,48 @@ export function resetCmsData() {
   }
   return DEFAULT_CMS_DATA
 }
+
+// Custom React hook for live real-time CMS content sync
+export function useCmsContent(path, defaultValue) {
+  const [value, setValue] = useState(() => {
+    const data = getCmsData()
+    if (!path) return data
+    const keys = path.split('.')
+    let current = data
+    for (const k of keys) {
+      if (current === undefined || current === null) return defaultValue
+      current = current[k]
+    }
+    return current !== undefined ? current : defaultValue
+  })
+
+  useEffect(() => {
+    const handleUpdate = () => {
+      const data = getCmsData()
+      if (!path) {
+        setValue(data)
+        return
+      }
+      const keys = path.split('.')
+      let current = data
+      for (const k of keys) {
+        if (current === undefined || current === null) {
+          setValue(defaultValue)
+          return
+        }
+        current = current[k]
+      }
+      setValue(current !== undefined ? current : defaultValue)
+    }
+
+    window.addEventListener('armourcraft_cms_updated', handleUpdate)
+    window.addEventListener('armourcraft_cms_published', handleUpdate)
+    return () => {
+      window.removeEventListener('armourcraft_cms_updated', handleUpdate)
+      window.removeEventListener('armourcraft_cms_published', handleUpdate)
+    }
+  }, [path, defaultValue])
+
+  return value
+}
+

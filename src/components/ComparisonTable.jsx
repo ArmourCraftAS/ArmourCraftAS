@@ -1,6 +1,8 @@
 import React from 'react'
+import { useCmsContent } from '../admin/cmsStore'
 
 export default function ComparisonTable() {
+  const heading = useCmsContent('home.comparison.heading', 'SmartThighs vs. The Others')
   const rows = [
     {
       feature: 'Running Between Wickets',
@@ -38,8 +40,12 @@ export default function ComparisonTable() {
       <div className="max-w-5xl mx-auto relative z-10">
         
         {/* Section Heading */}
-        <h2 className="text-3xl sm:text-4xl md:text-5xl font-black text-white text-center tracking-tight mb-12 sm:mb-16">
-          SmartThighs vs. The Others
+        <h2
+          data-cms-path="home.comparison.heading"
+          data-cms-label="Comparison Table Heading"
+          className="text-3xl sm:text-4xl md:text-5xl font-black text-white text-center tracking-tight mb-12 sm:mb-16"
+        >
+          {heading}
         </h2>
 
         {/* Comparison Table Container */}

@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import TopBarHeader from '../dashboard/TopBarHeader'
 import CanvasPreview from '../dashboard/CanvasPreview'
+import ElementInspectorSidebar from '../dashboard/ElementInspectorSidebar'
 import AdminProductsPage from './AdminProductsPage'
 import AdminBlogsPage from './AdminBlogsPage'
 import AdminFaqsPage from './AdminFaqsPage'
@@ -9,6 +10,7 @@ import { initialAdminProducts } from '../data/initialProducts'
 import { initialBlogs } from '../../data/blogsData'
 import { initialFaqs } from '../../data/faqsData'
 import { supabase } from '../../../lib/supabaseClient'
+import { getCmsData, updateCmsField, resetCmsData, publishCmsData } from '../cmsStore'
 
 export default function AdminDashboardPage({ onNavigate }) {
   // 1. Landing Page Selector State strictly configured for CanvasPreview:
@@ -17,11 +19,15 @@ export default function AdminDashboardPage({ onNavigate }) {
   // 2. Admin Management Dashboard Tabs (exclusively: 'product' | 'Blog' | 'FAQs' | null for preview)
   const [activeTab, setActiveTab] = useState(null)
 
-  // 2. Page Navigation History Stack for Undo/Redo
+  // 3. Visual Element Inspector State
+  const [selectedElement, setSelectedElement] = useState(null)
+  const [cmsData, setCmsData] = useState(() => getCmsData())
+
+  // 4. Page Navigation History Stack for Undo/Redo
   const [history, setHistory] = useState(['Home'])
   const [historyIndex, setHistoryIndex] = useState(0)
 
-  // 3. UI Modes & Feedback
+  // 5. UI Modes & Feedback
   const [isPreviewMode, setIsPreviewMode] = useState(false)
   const [toastMessage, setToastMessage] = useState(null)
   const [isPublishing, setIsPublishing] = useState(false)
@@ -74,10 +80,63 @@ export default function AdminDashboardPage({ onNavigate }) {
       ? 'Contact Us'
       : activePage
 
-  // Comprehensive Supabase Publish Engine
+  // 6. Visual Element Inspector Handlers
+  const handleUpdateElement = (updatedElem) => {
+    setSelectedElement(updatedElem)
+    if (updatedElem.path) {
+      if (updatedElem.type === 'text') {
+        updateCmsField(updatedElem.path, updatedElem.value)
+        if (updatedElem.fontStyle) {
+          updateCmsField(updatedElem.path + 'Style', updatedElem.fontStyle)
+        }
+      } else if (updatedElem.type === 'media') {
+        updateCmsField(updatedElem.path, updatedElem.value)
+        if (updatedElem.mediaProps) {
+          updateCmsField(updatedElem.path + 'Props', updatedElem.mediaProps)
+        }
+      } else if (updatedElem.type === 'icon') {
+        updateCmsField(updatedElem.path, updatedElem.value)
+        if (updatedElem.iconProps) {
+          updateCmsField(updatedElem.path + 'Props', updatedElem.iconProps)
+        }
+      }
+    } else if (updatedElem.id) {
+      updateCmsField(`custom.${updatedElem.id}`, {
+        value: updatedElem.value,
+        fontStyle: updatedElem.fontStyle,
+        mediaProps: updatedElem.mediaProps,
+        iconProps: updatedElem.iconProps
+      })
+    }
+    setCmsData(getCmsData())
+  }
+
+  const handleResetElement = (elem) => {
+    if (elem.originalValue !== undefined) {
+      handleUpdateElement({
+        ...elem,
+        value: elem.originalValue,
+        fontStyle: elem.originalFontStyle || {},
+        mediaProps: elem.originalMediaProps || {},
+        iconProps: elem.originalIconProps || {}
+      })
+      showToast(`Reset "${elem.label}" to original content`, 'info')
+    } else {
+      resetCmsData()
+      setCmsData(getCmsData())
+      setSelectedElement(null)
+      showToast('Reset all landing content to defaults', 'info')
+    }
+  }
+
+  // Comprehensive Supabase & CMS Publish Engine
   const handlePublish = async () => {
     setIsPublishing(true)
     try {
+      // 0. Commit Visual CMS store to published state
+      const currentCms = getCmsData()
+      publishCmsData(currentCms)
+
       // 1. Gather all current products
       let currentProducts = []
       try {
@@ -104,6 +163,19 @@ export default function AdminDashboardPage({ onNavigate }) {
 
       // 4. Batch commit to Supabase tables
       if (supabase && typeof supabase.from === 'function') {
+        // Upsert CMS content
+        try {
+          await supabase.from('cms_content').upsert([
+            {
+              key: 'landing_cms_data',
+              data: currentCms,
+              updated_at: new Date().toISOString()
+            }
+          ], { onConflict: 'key' })
+        } catch (cErr) {
+          console.info('Supabase CMS table sync notice:', cErr?.message || cErr)
+        }
+
         // Upsert products
         try {
           const formattedProducts = currentProducts.map((p) => ({
@@ -177,7 +249,7 @@ export default function AdminDashboardPage({ onNavigate }) {
       window.dispatchEvent(new CustomEvent('armourcraft:blogs-updated', { detail: currentBlogs }))
       window.dispatchEvent(new CustomEvent('armourcraft:faqs-updated', { detail: currentFaqs }))
 
-      showToast('All changes (Products, Blogs, FAQs) published live to production!')
+      showToast('All changes (Visual Landing Content, Products, Blogs, FAQs) published live to production!')
     } catch (err) {
       console.error('Publish error:', err)
       showToast('Published draft state locally with cloud sync fallback.', 'info')
@@ -199,13 +271,19 @@ export default function AdminDashboardPage({ onNavigate }) {
           activePage={activePage}
           onSelectPage={handleSelectPage}
           activeTab={activeTab}
-          setActiveTab={setActiveTab}
+          setActiveTab={(tab) => {
+            setSelectedElement(null)
+            setActiveTab(tab)
+          }}
           canUndo={historyIndex > 0}
           canRedo={historyIndex < history.length - 1}
           onUndo={handleUndo}
           onRedo={handleRedo}
           isPreviewMode={isPreviewMode}
-          onTogglePreview={() => setIsPreviewMode((prev) => !prev)}
+          onTogglePreview={() => {
+            setSelectedElement(null)
+            setIsPreviewMode((prev) => !prev)
+          }}
           onPublish={handlePublish}
           onNavigate={onNavigate}
           isPublishing={isPublishing}
@@ -214,12 +292,11 @@ export default function AdminDashboardPage({ onNavigate }) {
       </div>
 
       {/* ========================================================================= */}
-      {/* 2. SINGLE 100% FULL-WIDTH LANDING PAGE CANVAS                             */}
-      {/* With Context-Aware Preview Toggle Mode (Shop, Blog, Contact, or Home)    */}
+      {/* 2. MAIN WORKSPACE: CANVAS + DOCKED CONTEXT-AWARE INSPECTOR SIDEBAR        */}
       {/* ========================================================================= */}
-      <main className="w-full flex-1 h-[calc(100vh-4rem)] overflow-y-auto overflow-x-hidden relative z-0 scroll-smooth custom-scrollbar">
+      <main className="w-full flex-1 h-[calc(100vh-4rem)] overflow-hidden relative z-0">
         {isPreviewMode ? (
-          <div className="w-full min-h-full flex flex-col relative">
+          <div className="w-full h-full flex flex-col relative overflow-y-auto custom-scrollbar">
             {/* Ambient Preview Status Banner */}
             <div className="sticky top-0 z-40 bg-gradient-to-r from-[#0b1730]/95 via-[#081022]/95 to-[#0b1730]/95 backdrop-blur-md border-b border-blue-500/30 px-4 py-2.5 flex items-center justify-between shadow-2xl text-xs select-none">
               <div className="flex items-center gap-2.5">
@@ -228,7 +305,7 @@ export default function AdminDashboardPage({ onNavigate }) {
                   Live Storefront Preview
                 </span>
                 <span className="text-blue-300/80 font-medium hidden sm:inline">
-                  • Viewing “{contextAwarePreviewPage}” with active draft modifications
+                  • Viewing “{contextAwarePreviewPage}” with uncommitted visual edits
                 </span>
               </div>
               <div className="flex items-center gap-2">
@@ -250,19 +327,57 @@ export default function AdminDashboardPage({ onNavigate }) {
               </div>
             </div>
             <div className="w-full flex-1">
-              <CanvasPreview activePage={contextAwarePreviewPage} />
+              <CanvasPreview
+                activePage={contextAwarePreviewPage}
+                isInspectorMode={false}
+                cmsData={cmsData}
+              />
             </div>
           </div>
         ) : activeTab === 'product' ? (
-          <AdminProductsPage onNavigate={onNavigate} />
+          <div className="w-full h-full overflow-y-auto custom-scrollbar">
+            <AdminProductsPage onNavigate={onNavigate} />
+          </div>
         ) : (activeTab === 'Blog' || activeTab === 'blog') ? (
-          <AdminBlogsPage onNavigate={onNavigate} />
+          <div className="w-full h-full overflow-y-auto custom-scrollbar">
+            <AdminBlogsPage onNavigate={onNavigate} />
+          </div>
         ) : (activeTab === 'FAQs' || activeTab === 'faqs') ? (
-          <AdminFaqsPage onNavigate={onNavigate} />
+          <div className="w-full h-full overflow-y-auto custom-scrollbar">
+            <AdminFaqsPage onNavigate={onNavigate} />
+          </div>
         ) : (
-          <CanvasPreview
-            activePage={activePage}
-          />
+          /* Landing Page Canvas with Docked Context-Aware Inspector Sidebar */
+          <div className="w-full h-full flex flex-row overflow-hidden relative">
+            <div className="flex-1 h-full overflow-y-auto overflow-x-hidden relative custom-scrollbar">
+              <CanvasPreview
+                activePage={activePage}
+                selectedElement={selectedElement}
+                onSelectElement={setSelectedElement}
+                cmsData={cmsData}
+                isInspectorMode={true}
+                onSwitchTab={(tab) => {
+                  setSelectedElement(null)
+                  setActiveTab(tab)
+                }}
+                onNavigate={onNavigate}
+              />
+            </div>
+
+            {/* Element Inspector Sidebar */}
+            {selectedElement && (
+              <ElementInspectorSidebar
+                selectedElement={selectedElement}
+                onClose={() => setSelectedElement(null)}
+                onUpdateElement={handleUpdateElement}
+                onResetElement={handleResetElement}
+                onSwitchTab={(tab) => {
+                  setSelectedElement(null)
+                  setActiveTab(tab)
+                }}
+              />
+            )}
+          </div>
         )}
       </main>
 
