@@ -90,7 +90,19 @@ export default function AdminDashboardPage({ onNavigate }) {
       if (cms.home.hero.isItalic !== undefined) fontStyle.isItalic = cms.home.hero.isItalic
     }
 
-    const mediaProps = { ...(element.mediaProps || {}), ...(cms[element.path + 'Props'] || {}) }
+    // Check both flat cms[element.path + 'Props'] and nested parent[fieldName + 'Props']
+    let nestedProps = null
+    if (parts.length > 1) {
+      let parent = cms
+      for (let i = 0; i < parts.length - 1; i++) {
+        if (parent) parent = parent[parts[i]]
+      }
+      if (parent) {
+        nestedProps = parent[parts[parts.length - 1] + 'Props']
+      }
+    }
+
+    const mediaProps = { ...(element.mediaProps || {}), ...(cms[element.path + 'Props'] || {}), ...(nestedProps || {}) }
     if (element.path.includes('.hero.') && cms.home?.hero) {
       if (cms.home.hero.mediaType) mediaProps.mediaType = cms.home.hero.mediaType
       if (cms.home.hero.imageSrc) mediaProps.src = cms.home.hero.imageSrc
@@ -263,25 +275,41 @@ export default function AdminDashboardPage({ onNavigate }) {
       } else if (updatedElem.type === 'media') {
         const fieldsToUpdate = {}
         const isVideo = updatedElem.mediaProps?.mediaType === 'video'
+        const mediaSourceUrl = isVideo ? (updatedElem.mediaProps?.videoSrc || updatedElem.value) : updatedElem.value
         
-        if (!isVideo && updatedElem.value) {
-          fieldsToUpdate[updatedElem.path] = updatedElem.value
+        // Always store valid source URL directly into primary path key!
+        if (mediaSourceUrl) {
+          fieldsToUpdate[updatedElem.path] = mediaSourceUrl
+        }
+        
+        // Store videoUrl key if video
+        if (isVideo && mediaSourceUrl) {
+          fieldsToUpdate[updatedElem.path + 'VideoUrl'] = mediaSourceUrl
         }
         
         if (updatedElem.mediaProps) {
-          fieldsToUpdate[updatedElem.path + 'Props'] = updatedElem.mediaProps
+          // Sanitize poster so heavy video base64 is never stored in poster
+          const sanitizedMediaProps = { ...updatedElem.mediaProps }
+          if (typeof sanitizedMediaProps.poster === 'string' && (sanitizedMediaProps.poster.startsWith('data:video/') || sanitizedMediaProps.poster.length > 50000)) {
+            sanitizedMediaProps.poster = ''
+          }
+          if (isVideo && !sanitizedMediaProps.videoSrc && mediaSourceUrl) {
+            sanitizedMediaProps.videoSrc = mediaSourceUrl
+          }
+          fieldsToUpdate[updatedElem.path + 'Props'] = sanitizedMediaProps
+
           if (updatedElem.path.includes('.hero.')) {
-            if (updatedElem.mediaProps.mediaType) fieldsToUpdate['home.hero.mediaType'] = updatedElem.mediaProps.mediaType
-            if (updatedElem.mediaProps.videoSrc !== undefined) fieldsToUpdate['home.hero.videoSrc'] = updatedElem.mediaProps.videoSrc
-            if (updatedElem.mediaProps.videoAssetId !== undefined) fieldsToUpdate['home.hero.videoAssetId'] = updatedElem.mediaProps.videoAssetId
-            if (updatedElem.mediaProps.fileName !== undefined) fieldsToUpdate['home.hero.videoFileName'] = updatedElem.mediaProps.fileName
-            if (updatedElem.mediaProps.poster !== undefined) fieldsToUpdate['home.hero.videoPoster'] = updatedElem.mediaProps.poster
-            if (updatedElem.mediaProps.autoplay !== undefined) fieldsToUpdate['home.hero.videoAutoplay'] = updatedElem.mediaProps.autoplay
-            if (updatedElem.mediaProps.loop !== undefined) fieldsToUpdate['home.hero.videoLoop'] = updatedElem.mediaProps.loop
-            if (updatedElem.mediaProps.muted !== undefined) fieldsToUpdate['home.hero.videoMute'] = updatedElem.mediaProps.muted
-            if (updatedElem.mediaProps.controls !== undefined) fieldsToUpdate['home.hero.videoControls'] = updatedElem.mediaProps.controls
-            if (updatedElem.mediaProps.opacity !== undefined) fieldsToUpdate['home.hero.imageOpacity'] = updatedElem.mediaProps.opacity
-            if (updatedElem.mediaProps.src && !isVideo) fieldsToUpdate['home.hero.imageSrc'] = updatedElem.mediaProps.src
+            if (sanitizedMediaProps.mediaType) fieldsToUpdate['home.hero.mediaType'] = sanitizedMediaProps.mediaType
+            if (sanitizedMediaProps.videoSrc !== undefined) fieldsToUpdate['home.hero.videoSrc'] = sanitizedMediaProps.videoSrc
+            if (sanitizedMediaProps.videoAssetId !== undefined) fieldsToUpdate['home.hero.videoAssetId'] = sanitizedMediaProps.videoAssetId
+            if (sanitizedMediaProps.fileName !== undefined) fieldsToUpdate['home.hero.videoFileName'] = sanitizedMediaProps.fileName
+            if (sanitizedMediaProps.poster !== undefined) fieldsToUpdate['home.hero.videoPoster'] = sanitizedMediaProps.poster
+            if (sanitizedMediaProps.autoplay !== undefined) fieldsToUpdate['home.hero.videoAutoplay'] = sanitizedMediaProps.autoplay
+            if (sanitizedMediaProps.loop !== undefined) fieldsToUpdate['home.hero.videoLoop'] = sanitizedMediaProps.loop
+            if (sanitizedMediaProps.muted !== undefined) fieldsToUpdate['home.hero.videoMute'] = sanitizedMediaProps.muted
+            if (sanitizedMediaProps.controls !== undefined) fieldsToUpdate['home.hero.videoControls'] = sanitizedMediaProps.controls
+            if (sanitizedMediaProps.opacity !== undefined) fieldsToUpdate['home.hero.imageOpacity'] = sanitizedMediaProps.opacity
+            if (sanitizedMediaProps.src && !isVideo) fieldsToUpdate['home.hero.imageSrc'] = sanitizedMediaProps.src
           }
         }
         updateCmsFields(fieldsToUpdate)

@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react'
 import { CmsProvider, getDraftCmsData } from '../cmsStore'
+import { isVideoAsset } from '../../components/CmsMedia'
 
 // Import live portal components for full landing page rendering
 import Navbar from '../../components/Navbar'
@@ -54,32 +55,49 @@ export default function CanvasPreview({
     }
     const fieldName = parts[parts.length - 1]
     const val = targetData ? targetData[fieldName] : ''
-    const isVideo = targetData?.mediaType === 'video'
+    
+    // Check if there are pathProps, e.g., targetData[fieldName + 'Props'] or cms[path + 'Props']
+    const savedProps = targetData?.[fieldName + 'Props'] || cms[path + 'Props'] || {}
+    const isVideo = savedProps?.mediaType === 'video' ||
+                    targetData?.mediaType === 'video' ||
+                    isVideoAsset(val, savedProps?.mediaType) ||
+                    isVideoAsset(savedProps?.videoSrc, savedProps?.mediaType)
+
     const defaultVideo = '/videos/batsman_hero.mp4'
-    const activeVideo = targetData?.videoSrc || (isVideo ? defaultVideo : '')
-    const mediaSrc = isVideo ? activeVideo : (val || targetData?.imageSrc || '/images/batsman_hero.jpg')
+    const activeVideo = savedProps?.videoSrc || (isVideo ? (val || defaultVideo) : '')
+    
+    const fallbackImage = path.includes('advantage')
+      ? (fieldName === 'image1' ? '/images/advantage_carbon.png' : '/images/advantage_thigh_guard.png')
+      : path.includes('customSquad')
+      ? '/images/custom_pads.png'
+      : path.includes('whatWeAre')
+      ? '/images/what_we_are_craftsmanship.jpg'
+      : '/images/batsman_hero.jpg'
+
+    const activeImage = savedProps?.src || (val && !isVideoAsset(val) ? val : fallbackImage)
+    const mediaSrc = isVideo ? (activeVideo || val) : activeImage
 
     onSelectElement({
       id: path,
       type: 'media',
-      label: isVideo ? 'Hero Background Video' : labelFallback,
+      label: isVideo ? labelFallback.replace('Image', 'Video') : labelFallback,
       path: path,
       value: mediaSrc,
       originalValue: mediaSrc,
       mediaProps: {
-        mediaType: targetData?.mediaType || (isVideo ? 'video' : 'image'),
-        src: targetData?.imageSrc || val || '/images/batsman_hero.jpg',
-        imageSrc: targetData?.imageSrc || val || '/images/batsman_hero.jpg',
+        mediaType: isVideo ? 'video' : 'image',
+        src: activeImage,
+        imageSrc: activeImage,
         videoSrc: activeVideo,
-        videoAssetId: targetData?.videoAssetId || '',
-        fileName: targetData?.videoFileName || '',
-        poster: targetData?.videoPoster || targetData?.imageSrc || val || '/images/batsman_hero.jpg',
-        videoPoster: targetData?.videoPoster || targetData?.imageSrc || val || '/images/batsman_hero.jpg',
-        opacity: targetData?.imageOpacity !== undefined ? targetData.imageOpacity : (targetData?.opacity || 100),
-        autoplay: targetData?.videoAutoplay !== false,
-        loop: targetData?.videoLoop !== false,
-        muted: targetData?.videoMute !== false,
-        controls: targetData?.videoControls === true
+        videoAssetId: savedProps?.videoAssetId || targetData?.videoAssetId || '',
+        fileName: savedProps?.fileName || targetData?.videoFileName || '',
+        poster: savedProps?.poster || targetData?.videoPoster || activeImage,
+        videoPoster: savedProps?.poster || targetData?.videoPoster || activeImage,
+        opacity: savedProps?.opacity !== undefined ? savedProps.opacity : (targetData?.imageOpacity !== undefined ? targetData.imageOpacity : 100),
+        autoplay: savedProps?.autoplay !== undefined ? savedProps.autoplay : (targetData?.videoAutoplay !== false),
+        loop: savedProps?.loop !== undefined ? savedProps.loop : (targetData?.videoLoop !== false),
+        muted: savedProps?.muted !== undefined ? savedProps.muted : (targetData?.videoMute !== false),
+        controls: savedProps?.controls !== undefined ? savedProps.controls : (targetData?.videoControls === true)
       }
     })
   }

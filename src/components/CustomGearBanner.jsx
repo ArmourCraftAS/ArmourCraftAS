@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import { ArrowRight } from 'lucide-react'
 import CustomQuoteModal from './CustomQuoteModal'
 import { useCmsContent } from '../admin/cmsStore'
+import CmsMedia, { isVideoAsset } from './CmsMedia'
 
 export default function CustomGearBanner() {
   const [isQuoteModalOpen, setIsQuoteModalOpen] = useState(false)
@@ -9,6 +10,11 @@ export default function CustomGearBanner() {
   const subheading = useCmsContent('home.customSquad.subheading', "Elevate your team's look. Professional-grade printing of names, numbers, and club logos directly onto your guards. Matches any team colors.")
   const ctaText = useCmsContent('home.customSquad.ctaText', 'GET CUSTOM TEAM QUOTE')
   const image = useCmsContent('home.customSquad.image', '/images/custom_pads.png')
+  const imageProps = useCmsContent('home.customSquad.imageProps', null)
+
+  const isVideo = imageProps?.mediaType === 'video' || isVideoAsset(image, imageProps?.mediaType) || isVideoAsset(imageProps?.videoSrc, imageProps?.mediaType)
+  const activeVideo = imageProps?.videoSrc || (isVideo ? (typeof image === 'string' ? image : '') : '')
+  const activeImg = (typeof image === 'string' && !isVideoAsset(image)) ? image : (imageProps?.src || '/images/custom_pads.png')
 
   return (
     <section className="relative w-full bg-black border-y border-slate-900 overflow-hidden text-white">
@@ -19,12 +25,19 @@ export default function CustomGearBanner() {
           
           {/* Right Image */}
           <div className="w-full lg:w-[58%] h-full relative">
-            <img
-              src={image}
+            <CmsMedia
+              src={activeImg}
+              videoSrc={activeVideo}
+              videoAssetId={imageProps?.videoAssetId}
+              mediaType={isVideo ? 'video' : 'image'}
               alt="Custom Team Cricket Guards with Initials and Numbers"
-              data-cms-path="home.customSquad.image"
-              data-cms-label="Custom Gear Banner Image"
-              data-cms-type="media"
+              poster={imageProps?.poster || activeImg}
+              autoPlay={imageProps?.autoplay !== false}
+              loop={imageProps?.loop !== false}
+              muted={imageProps?.muted !== false}
+              controls={imageProps?.controls !== undefined ? imageProps?.controls : true}
+              cmsPath="home.customSquad.image"
+              cmsLabel="Custom Gear Banner Image"
               className="w-full h-full object-cover object-center lg:object-right select-none opacity-85 lg:opacity-100"
             />
             {/* Seamless Left Gradient to Black */}

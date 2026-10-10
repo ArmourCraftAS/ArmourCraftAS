@@ -2,12 +2,18 @@ import React from 'react'
 import { Shield, Zap, Gem } from 'lucide-react'
 import NextGenFeatureBanner from '../components/NextGenFeatureBanner'
 import { useCmsContent } from '../admin/cmsStore'
+import CmsMedia, { isVideoAsset } from '../components/CmsMedia'
 
 export default function WhatWeArePage({ onNavigate }) {
   const tag = useCmsContent('whatWeAre.tag', 'WHAT WE ARE')
   const heading = useCmsContent('whatWeAre.heading', 'CRAFTED FOR IMPACT. ENGINEERED FOR SPEED.')
   const subheading = useCmsContent('whatWeAre.subheading', 'ArmourCraft is not just an equipment brand. We are a cricket protection lab dedicated to eliminating bulk and maximizing batsman mobility.')
   const heroImage = useCmsContent('whatWeAre.heroImage', '/images/what_we_are_craftsmanship.jpg')
+  const heroImageProps = useCmsContent('whatWeAre.heroImageProps', null)
+
+  const isVideo = heroImageProps?.mediaType === 'video' || isVideoAsset(heroImage, heroImageProps?.mediaType) || isVideoAsset(heroImageProps?.videoSrc, heroImageProps?.mediaType)
+  const activeVideo = heroImageProps?.videoSrc || (isVideo ? (typeof heroImage === 'string' ? heroImage : '') : '')
+  const activeImg = (typeof heroImage === 'string' && !isVideoAsset(heroImage)) ? heroImage : (heroImageProps?.src || '/images/what_we_are_craftsmanship.jpg')
 
   return (
     <>
@@ -62,12 +68,19 @@ export default function WhatWeArePage({ onNavigate }) {
               
               {/* Tall Vertical Image (Textured Carbon/Foam Craftsmanship) */}
               <div className="relative rounded-2xl overflow-hidden bg-[#090f1e] border border-slate-800/80 shadow-2xl group transition-all duration-300 hover:border-blue-500/40">
-                <img
-                  src={heroImage}
+                <CmsMedia
+                  src={activeImg}
+                  videoSrc={activeVideo}
+                  videoAssetId={heroImageProps?.videoAssetId}
+                  mediaType={isVideo ? 'video' : 'image'}
                   alt="High-density EVA foam and carbon craftsmanship"
-                  data-cms-path="whatWeAre.heroImage"
-                  data-cms-label="What We Are Craftsmanship Image"
-                  data-cms-type="media"
+                  poster={heroImageProps?.poster || activeImg}
+                  autoPlay={heroImageProps?.autoplay !== false}
+                  loop={heroImageProps?.loop !== false}
+                  muted={heroImageProps?.muted !== false}
+                  controls={heroImageProps?.controls !== undefined ? heroImageProps?.controls : true}
+                  cmsPath="whatWeAre.heroImage"
+                  cmsLabel="What We Are Craftsmanship Image"
                   className="w-full h-full min-h-[380px] sm:min-h-[460px] lg:min-h-[500px] object-cover select-none group-hover:scale-105 transition-transform duration-500 ease-out"
                   loading="eager"
                 />

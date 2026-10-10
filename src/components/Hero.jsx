@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect } from 'react'
 import { ArrowRight, ShieldCheck, Sparkles, Activity } from 'lucide-react'
 import Armour3DModal from './Armour3DModal'
 import CustomQuoteModal from './CustomQuoteModal'
+import { isVideoAsset } from './CmsMedia'
 
 import { useCmsContent } from '../admin/cmsStore'
 
@@ -14,8 +15,8 @@ export default function Hero({ onNavigate, onOpenCustomModal }) {
   // Context-aware CMS Hero Content (Draft in Admin/Canvas Preview, Published on Live Storefront)
   const cmsHero = useCmsContent('home.hero', null)
 
-  const isVideo = cmsHero?.mediaType === 'video'
-  const activeVideoSrc = cmsHero?.videoSrc || (isVideo ? '/videos/batsman_hero.mp4' : '')
+  const isVideo = cmsHero?.mediaType === 'video' || isVideoAsset(cmsHero?.videoSrc, cmsHero?.mediaType) || isVideoAsset(cmsHero?.imageSrc, cmsHero?.mediaType)
+  const activeVideoSrc = cmsHero?.videoSrc || (isVideo ? (cmsHero?.imageSrc || '/videos/batsman_hero.mp4') : '')
   const isMuted = cmsHero?.videoMute !== false
   const isAutoplay = cmsHero?.videoAutoplay !== false
 

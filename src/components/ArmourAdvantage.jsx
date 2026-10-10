@@ -1,14 +1,26 @@
 import React from 'react'
 import { Layers } from 'lucide-react'
 import { useCmsContent } from '../admin/cmsStore'
+import CmsMedia, { isVideoAsset } from './CmsMedia'
 
 export default function ArmourAdvantage() {
   const tag = useCmsContent('home.advantage.tag', 'THE ARMOURCRAFT ADVANTAGE')
   const heading = useCmsContent('home.advantage.heading', 'Mastery in Impact Protection')
   const desc1 = useCmsContent('home.advantage.desc1', 'Designed for elite performance. Our guards combine advanced, light-weight composite materials with high-density impact absorption foam, ensuring unparalleled thigh protection without compromising mobility on the field.')
   const desc2 = useCmsContent('home.advantage.desc2', 'Every guard is meticulously crafted, integrating carbon-fiber weave for rigid strength and dynamic ergonomic contours that flex with your movements, so you can focus entirely on your stance and scoring runs.')
+  
   const image1 = useCmsContent('home.advantage.image1', '/images/advantage_carbon.png')
+  const image1Props = useCmsContent('home.advantage.image1Props', null)
   const image2 = useCmsContent('home.advantage.image2', '/images/advantage_thigh_guard.png')
+  const image2Props = useCmsContent('home.advantage.image2Props', null)
+
+  const isVideo1 = image1Props?.mediaType === 'video' || isVideoAsset(image1, image1Props?.mediaType) || isVideoAsset(image1Props?.videoSrc, image1Props?.mediaType)
+  const activeVideo1 = image1Props?.videoSrc || (isVideo1 ? (typeof image1 === 'string' ? image1 : '') : '')
+  const activeImg1 = (typeof image1 === 'string' && !isVideoAsset(image1)) ? image1 : (image1Props?.src || '/images/advantage_carbon.png')
+
+  const isVideo2 = image2Props?.mediaType === 'video' || isVideoAsset(image2, image2Props?.mediaType) || isVideoAsset(image2Props?.videoSrc, image2Props?.mediaType)
+  const activeVideo2 = image2Props?.videoSrc || (isVideo2 ? (typeof image2 === 'string' ? image2 : '') : '')
+  const activeImg2 = (typeof image2 === 'string' && !isVideoAsset(image2)) ? image2 : (image2Props?.src || '/images/advantage_thigh_guard.png')
 
   return (
     <section className="relative w-full bg-[#060a14] py-20 lg:py-28 overflow-hidden text-white border-t border-slate-900/60">
@@ -31,12 +43,21 @@ export default function ArmourAdvantage() {
 
               {/* 1. Background Card (Carbon-fiber/Foam Macro Texture) */}
               <div className="absolute top-0 left-0 w-[58%] sm:w-[60%] h-[74%] sm:h-[76%] rounded-2xl sm:rounded-3xl overflow-hidden border border-slate-700/70 shadow-2xl bg-[#090f1d]">
-                <img
-                  src={image1}
+                <CmsMedia
+                  src={activeImg1}
+                  videoSrc={activeVideo1}
+                  videoAssetId={image1Props?.videoAssetId}
+                  mediaType={isVideo1 ? 'video' : 'image'}
                   alt="High-density Carbon-Fiber Composite Texture"
+                  poster={image1Props?.poster || activeImg1}
+                  autoPlay={image1Props?.autoplay !== false}
+                  loop={image1Props?.loop !== false}
+                  muted={image1Props?.muted !== false}
+                  controls={image1Props?.controls !== undefined ? image1Props?.controls : true}
                   data-cms-path="home.advantage.image1"
                   data-cms-label="Carbon Texture Image"
-                  data-cms-type="media"
+                  cmsPath="home.advantage.image1"
+                  cmsLabel="Carbon Texture Image"
                   className="w-full h-full object-cover select-none"
                   loading="lazy"
                 />
@@ -44,20 +65,29 @@ export default function ArmourAdvantage() {
                 <div className="absolute inset-0 bg-gradient-to-tr from-black/40 via-transparent to-white/[0.04] pointer-events-none" />
                 
                 {/* Material Tag Badge */}
-                <div className="absolute top-3.5 left-3.5 bg-black/60 backdrop-blur-md border border-white/10 px-2.5 py-1 rounded-full text-[10px] font-semibold text-slate-300 tracking-wider uppercase flex items-center gap-1.5">
+                <div className="absolute top-3.5 left-3.5 bg-black/60 backdrop-blur-md border border-white/10 px-2.5 py-1 rounded-full text-[10px] font-semibold text-slate-300 tracking-wider uppercase flex items-center gap-1.5 z-10 pointer-events-none">
                   <Layers className="w-3 h-3 text-blue-400" />
                   <span>Carbon-Foam Matrix</span>
                 </div>
               </div>
 
-              {/* 2. Foreground Floating Card (Static Product Image Display) */}
+              {/* 2. Foreground Floating Card (Dynamic Product Media Display) */}
               <div className="absolute bottom-0 right-0 sm:right-4 w-[65%] sm:w-[66%] h-[74%] sm:h-[76%] rounded-2xl sm:rounded-3xl overflow-hidden border border-slate-700/80 shadow-[0_25px_60px_-15px_rgba(0,0,0,0.9)] bg-[#0a1120]">
-                <img
-                  src={image2}
+                <CmsMedia
+                  src={activeImg2}
+                  videoSrc={activeVideo2}
+                  videoAssetId={image2Props?.videoAssetId}
+                  mediaType={isVideo2 ? 'video' : 'image'}
                   alt="ArmourCraft Ergonomic Blue Thigh Guard"
+                  poster={image2Props?.poster || activeImg2}
+                  autoPlay={image2Props?.autoplay !== false}
+                  loop={image2Props?.loop !== false}
+                  muted={image2Props?.muted !== false}
+                  controls={image2Props?.controls !== undefined ? image2Props?.controls : true}
                   data-cms-path="home.advantage.image2"
                   data-cms-label="Thigh Guard Image"
-                  data-cms-type="media"
+                  cmsPath="home.advantage.image2"
+                  cmsLabel="Thigh Guard Image"
                   className="w-full h-full object-cover select-none"
                   loading="lazy"
                 />

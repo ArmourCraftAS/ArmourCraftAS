@@ -140,6 +140,11 @@ export default function ElementInspectorSidebar({
   const handleFileUpload = (e) => {
     const file = e.target.files?.[0]
     if (!file) return
+    // If user selected a video file in image upload, redirect to instant video processing
+    if (file.type && file.type.startsWith('video/')) {
+      handleVideoFileProcess(file)
+      return
+    }
     const reader = new FileReader()
     reader.onload = () => {
       onUpdateElement({
@@ -174,7 +179,11 @@ export default function ElementInspectorSidebar({
           videoAssetId: asset.id,
           fileName: file.name,
           fileSize: file.size,
-          fileType: file.type
+          fileType: file.type,
+          autoplay: true,
+          loop: true,
+          muted: true,
+          controls: true
         }
       })
       setVideoStatus('success')
@@ -188,7 +197,11 @@ export default function ElementInspectorSidebar({
           ...mediaProps,
           mediaType: 'video',
           videoSrc: objUrl,
-          fileName: file.name
+          fileName: file.name,
+          autoplay: true,
+          loop: true,
+          muted: true,
+          controls: true
         }
       })
       setVideoStatus('success')
@@ -204,6 +217,11 @@ export default function ElementInspectorSidebar({
   const handlePosterUpload = (e) => {
     const file = e.target.files?.[0]
     if (!file) return
+    // Prevent video files from being uploaded as poster image to stop heavy base64 strings
+    if (file.type && file.type.startsWith('video/')) {
+      console.warn('Cannot use video file as poster image')
+      return
+    }
     const reader = new FileReader()
     reader.onload = () => {
       onUpdateElement({
@@ -547,7 +565,10 @@ export default function ElementInspectorSidebar({
                 <button
                   type="button"
                   onClick={() => {
-                    const nextImg = mediaProps.src || mediaProps.imageSrc || value || '/images/batsman_hero.jpg'
+                    const defaultImg = path.includes('advantage')
+                      ? (path.includes('image1') ? '/images/advantage_carbon.png' : '/images/advantage_thigh_guard.png')
+                      : '/images/batsman_hero.jpg'
+                    const nextImg = mediaProps.src || mediaProps.imageSrc || (!value?.endsWith?.('.mp4') && !value?.startsWith?.('blob:') && value ? value : defaultImg)
                     onUpdateElement({
                       ...selectedElement,
                       value: nextImg,
@@ -577,7 +598,11 @@ export default function ElementInspectorSidebar({
                       mediaProps: {
                         ...mediaProps,
                         mediaType: 'video',
-                        videoSrc: nextVid
+                        videoSrc: nextVid,
+                        autoplay: true,
+                        loop: true,
+                        muted: true,
+                        controls: true
                       }
                     })
                   }}
@@ -762,7 +787,11 @@ export default function ElementInspectorSidebar({
                               ...mediaProps,
                               mediaType: 'video',
                               videoSrc: vid.src,
-                              poster: vid.poster || mediaProps.poster
+                              poster: vid.poster || mediaProps.poster,
+                              autoplay: true,
+                              loop: true,
+                              muted: true,
+                              controls: true
                             }
                           })
                         }
@@ -810,7 +839,15 @@ export default function ElementInspectorSidebar({
                       onUpdateElement({
                         ...selectedElement,
                         value: e.target.value,
-                        mediaProps: { ...mediaProps, mediaType: 'video', videoSrc: e.target.value }
+                        mediaProps: {
+                          ...mediaProps,
+                          mediaType: 'video',
+                          videoSrc: e.target.value,
+                          autoplay: true,
+                          loop: true,
+                          muted: true,
+                          controls: true
+                        }
                       })
                     }
                     placeholder="/videos/... or https://.../video.mp4"
