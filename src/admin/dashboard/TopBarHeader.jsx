@@ -283,12 +283,13 @@ export default function TopBarHeader({
           type="button"
           onClick={onUndo}
           disabled={!canUndo}
-          className={`p-2 rounded-lg transition-colors cursor-pointer ${
+          className={`p-2 rounded-lg transition-all duration-150 flex items-center justify-center ${
             canUndo
-              ? 'text-slate-300 hover:text-white hover:bg-slate-800/60'
-              : 'text-slate-600 cursor-not-allowed opacity-50'
+              ? 'text-slate-200 hover:text-white hover:bg-slate-800/80 active:scale-95 cursor-pointer shadow-sm'
+              : 'text-slate-600 cursor-not-allowed opacity-35 pointer-events-none'
           }`}
-          title="Undo (Ctrl+Z)"
+          title={canUndo ? 'Undo (Ctrl+Z)' : 'Undo (No previous actions)'}
+          aria-label="Undo"
         >
           <Undo2 className="w-4 h-4" />
         </button>
@@ -298,12 +299,13 @@ export default function TopBarHeader({
           type="button"
           onClick={onRedo}
           disabled={!canRedo}
-          className={`p-2 rounded-lg transition-colors cursor-pointer ${
+          className={`p-2 rounded-lg transition-all duration-150 flex items-center justify-center ${
             canRedo
-              ? 'text-slate-300 hover:text-white hover:bg-slate-800/60'
-              : 'text-slate-600 cursor-not-allowed opacity-50'
+              ? 'text-slate-200 hover:text-white hover:bg-slate-800/80 active:scale-95 cursor-pointer shadow-sm'
+              : 'text-slate-600 cursor-not-allowed opacity-35 pointer-events-none'
           }`}
-          title="Redo (Ctrl+Y)"
+          title={canRedo ? 'Redo (Ctrl+Y or Ctrl+Shift+Z)' : 'Redo (No forward actions)'}
+          aria-label="Redo"
         >
           <Redo2 className="w-4 h-4" />
         </button>

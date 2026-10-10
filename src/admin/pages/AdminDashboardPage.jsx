@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect, useRef, useCallback } from 'react'
 import TopBarHeader from '../dashboard/TopBarHeader'
 import CanvasPreview from '../dashboard/CanvasPreview'
 import ElementInspectorSidebar from '../dashboard/ElementInspectorSidebar'
@@ -10,7 +10,7 @@ import { initialAdminProducts } from '../data/initialProducts'
 import { initialBlogs } from '../../data/blogsData'
 import { initialFaqs } from '../../data/faqsData'
 import { supabase } from '../../../lib/supabaseClient'
-import { getCmsData, updateCmsField, resetCmsData, publishCmsData } from '../cmsStore'
+import { getDraftCmsData, saveDraftCmsData, getCmsData, updateCmsField, resetCmsData, publishCmsData } from '../cmsStore'
 
 export default function AdminDashboardPage({ onNavigate }) {
   // 1. Landing Page Selector State strictly configured for CanvasPreview:
@@ -21,11 +21,32 @@ export default function AdminDashboardPage({ onNavigate }) {
 
   // 3. Visual Element Inspector State
   const [selectedElement, setSelectedElement] = useState(null)
-  const [cmsData, setCmsData] = useState(() => getCmsData())
+  const [cmsData, setCmsData] = useState(() => getDraftCmsData())
 
-  // 4. Page Navigation History Stack for Undo/Redo
-  const [history, setHistory] = useState(['Home'])
+  // 4. Editing State History Stack for Undo/Redo (Past, Present, Future)
+  const [historyStack, setHistoryStack] = useState(() => [
+    {
+      cms: JSON.parse(JSON.stringify(getDraftCmsData())),
+      page: 'Home',
+      description: 'Initial state'
+    }
+  ])
   const [historyIndex, setHistoryIndex] = useState(0)
+
+  const historyStackRef = useRef(historyStack)
+  historyStackRef.current = historyStack
+
+  const historyIndexRef = useRef(historyIndex)
+  historyIndexRef.current = historyIndex
+
+  const selectedElementRef = useRef(selectedElement)
+  selectedElementRef.current = selectedElement
+
+  const activePageRef = useRef(activePage)
+  activePageRef.current = activePage
+
+  const lastEditTimeRef = useRef(0)
+  const lastEditPathRef = useRef(null)
 
   // 5. UI Modes & Feedback
   const [isPreviewMode, setIsPreviewMode] = useState(false)
@@ -40,35 +61,176 @@ export default function AdminDashboardPage({ onNavigate }) {
     }, 4000)
   }
 
-  // Handle Page Selection with History Tracking
+  // Handle Page Selection
   const handleSelectPage = (pageName) => {
     setActivePage(pageName)
-    setHistory((prev) => {
-      const sliced = prev.slice(0, historyIndex + 1)
-      return [...sliced, pageName]
-    })
-    setHistoryIndex((prev) => prev + 1)
   }
 
-  // Undo Navigation
-  const handleUndo = () => {
-    if (historyIndex > 0) {
-      const nextIdx = historyIndex - 1
-      setHistoryIndex(nextIdx)
-      setActivePage(history[nextIdx])
-      showToast(`Navigated to ${history[nextIdx]}`, 'info')
+  // Helper to re-resolve selected element properties against a CMS snapshot
+  const resolveElementFromCms = (element, cms) => {
+    if (!element || !cms) return element
+    if (!element.path) return element
+
+    const parts = element.path.split('.')
+    let currentVal = cms
+    for (const p of parts) {
+      if (currentVal === undefined || currentVal === null) {
+        currentVal = undefined
+        break
+      }
+      currentVal = currentVal[p]
+    }
+
+    const fontStyle = { ...(element.fontStyle || {}), ...(cms[element.path + 'Style'] || {}) }
+    if (element.path.includes('.hero.') && cms.home?.hero) {
+      if (cms.home.hero.fontSize) fontStyle.fontSize = cms.home.hero.fontSize
+      if (cms.home.hero.textColor) fontStyle.color = cms.home.hero.textColor
+      if (cms.home.hero.alignment) fontStyle.textAlign = cms.home.hero.alignment
+      if (cms.home.hero.isBold !== undefined) fontStyle.isBold = cms.home.hero.isBold
+      if (cms.home.hero.isItalic !== undefined) fontStyle.isItalic = cms.home.hero.isItalic
+    }
+
+    const mediaProps = { ...(element.mediaProps || {}), ...(cms[element.path + 'Props'] || {}) }
+    if (element.path.includes('.hero.') && cms.home?.hero) {
+      if (cms.home.hero.mediaType) mediaProps.mediaType = cms.home.hero.mediaType
+      if (cms.home.hero.imageSrc) mediaProps.src = cms.home.hero.imageSrc
+      if (cms.home.hero.videoSrc !== undefined) mediaProps.videoSrc = cms.home.hero.videoSrc
+      if (cms.home.hero.videoPoster !== undefined) mediaProps.poster = cms.home.hero.videoPoster
+      if (cms.home.hero.videoAutoplay !== undefined) mediaProps.autoplay = cms.home.hero.videoAutoplay
+      if (cms.home.hero.videoLoop !== undefined) mediaProps.loop = cms.home.hero.videoLoop
+      if (cms.home.hero.videoMute !== undefined) mediaProps.muted = cms.home.hero.videoMute
+      if (cms.home.hero.videoControls !== undefined) mediaProps.controls = cms.home.hero.videoControls
+      if (cms.home.hero.imageOpacity !== undefined) mediaProps.opacity = cms.home.hero.imageOpacity
+    }
+
+    const iconProps = { ...(element.iconProps || {}), ...(cms[element.path + 'Props'] || {}) }
+
+    return {
+      ...element,
+      value: currentVal !== undefined ? currentVal : element.value,
+      fontStyle,
+      mediaProps,
+      iconProps
     }
   }
 
-  // Redo Navigation
-  const handleRedo = () => {
-    if (historyIndex < history.length - 1) {
-      const nextIdx = historyIndex + 1
-      setHistoryIndex(nextIdx)
-      setActivePage(history[nextIdx])
-      showToast(`Navigated to ${history[nextIdx]}`, 'info')
+  // Push Snapshot to History Stack
+  const pushHistorySnapshot = (newCms, page, description, isDiscrete = false) => {
+    const now = Date.now()
+    const currentIndex = historyIndexRef.current
+    const isTextEdit = !isDiscrete && lastEditPathRef.current === description && (now - lastEditTimeRef.current < 600)
+
+    lastEditTimeRef.current = now
+    lastEditPathRef.current = description
+
+    if (isTextEdit && currentIndex > 0) {
+      // In-place update for rapid continuous typing
+      setHistoryStack((prev) => {
+        const copy = [...prev]
+        copy[currentIndex] = {
+          cms: JSON.parse(JSON.stringify(newCms)),
+          page,
+          description
+        }
+        return copy
+      })
+    } else {
+      // Discrete action or new typing session: truncate future redo stack and append
+      setHistoryStack((prev) => {
+        const sliced = prev.slice(0, currentIndex + 1)
+        const updated = [
+          ...sliced,
+          {
+            cms: JSON.parse(JSON.stringify(newCms)),
+            page,
+            description
+          }
+        ]
+        if (updated.length > 50) {
+          return updated.slice(updated.length - 50)
+        }
+        return updated
+      })
+      setHistoryIndex((prev) => Math.min(prev + 1, 49))
     }
   }
+
+  // Undo Navigation & State Reversion
+  const handleUndo = useCallback(() => {
+    const currentIndex = historyIndexRef.current
+    const stack = historyStackRef.current
+    if (currentIndex <= 0) return
+
+    const newIndex = currentIndex - 1
+    const targetSnapshot = stack[newIndex]
+    if (!targetSnapshot) return
+
+    setHistoryIndex(newIndex)
+    saveDraftCmsData(targetSnapshot.cms)
+    setCmsData(targetSnapshot.cms)
+
+    if (targetSnapshot.page && targetSnapshot.page !== activePageRef.current) {
+      setActivePage(targetSnapshot.page)
+    }
+
+    if (selectedElementRef.current) {
+      setSelectedElement((prev) => resolveElementFromCms(prev, targetSnapshot.cms))
+    }
+
+    showToast(`Undo: ${targetSnapshot.description || 'Reverted change'}`, 'info')
+  }, [])
+
+  // Redo Navigation & State Re-application
+  const handleRedo = useCallback(() => {
+    const currentIndex = historyIndexRef.current
+    const stack = historyStackRef.current
+    if (currentIndex >= stack.length - 1) return
+
+    const newIndex = currentIndex + 1
+    const targetSnapshot = stack[newIndex]
+    if (!targetSnapshot) return
+
+    setHistoryIndex(newIndex)
+    saveDraftCmsData(targetSnapshot.cms)
+    setCmsData(targetSnapshot.cms)
+
+    if (targetSnapshot.page && targetSnapshot.page !== activePageRef.current) {
+      setActivePage(targetSnapshot.page)
+    }
+
+    if (selectedElementRef.current) {
+      setSelectedElement((prev) => resolveElementFromCms(prev, targetSnapshot.cms))
+    }
+
+    showToast(`Redo: ${targetSnapshot.description || 'Re-applied change'}`, 'info')
+  }, [])
+
+  // Global Keyboard Shortcuts for Undo (Ctrl+Z) and Redo (Ctrl+Y or Ctrl+Shift+Z)
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      const isCtrlOrCmd = e.ctrlKey || e.metaKey
+      if (!isCtrlOrCmd) return
+
+      // Redo: Ctrl + Y or Ctrl + Shift + Z
+      if (
+        (e.key.toLowerCase() === 'z' && e.shiftKey) ||
+        (e.key.toLowerCase() === 'y' && !e.shiftKey)
+      ) {
+        e.preventDefault()
+        e.stopPropagation()
+        handleRedo()
+      }
+      // Undo: Ctrl + Z
+      else if (e.key.toLowerCase() === 'z' && !e.shiftKey) {
+        e.preventDefault()
+        e.stopPropagation()
+        handleUndo()
+      }
+    }
+
+    window.addEventListener('keydown', handleKeyDown, true)
+    return () => window.removeEventListener('keydown', handleKeyDown, true)
+  }, [handleUndo, handleRedo])
 
   // Context-Aware Preview Target Page
   const contextAwarePreviewPage =
@@ -81,7 +243,7 @@ export default function AdminDashboardPage({ onNavigate }) {
       : activePage
 
   // 6. Visual Element Inspector Handlers
-  const handleUpdateElement = (updatedElem) => {
+  const handleUpdateElement = (updatedElem, isExplicitDiscrete = false) => {
     setSelectedElement(updatedElem)
     if (updatedElem.path) {
       if (updatedElem.type === 'text') {
@@ -125,7 +287,14 @@ export default function AdminDashboardPage({ onNavigate }) {
         iconProps: updatedElem.iconProps
       })
     }
-    setCmsData(getCmsData())
+
+    const currentDraft = getDraftCmsData()
+    setCmsData(currentDraft)
+
+    // Push new snapshot to the history stack
+    const desc = `${updatedElem.type === 'text' ? 'Edited' : 'Updated'} ${updatedElem.label || 'element'}`
+    const isDiscrete = isExplicitDiscrete || updatedElem.type !== 'text'
+    pushHistorySnapshot(currentDraft, activePage, desc, isDiscrete)
   }
 
   const handleResetElement = (elem) => {
@@ -136,12 +305,13 @@ export default function AdminDashboardPage({ onNavigate }) {
         fontStyle: elem.originalFontStyle || {},
         mediaProps: elem.originalMediaProps || {},
         iconProps: elem.originalIconProps || {}
-      })
+      }, true)
       showToast(`Reset "${elem.label}" to original content`, 'info')
     } else {
-      resetCmsData()
-      setCmsData(getCmsData())
+      const reset = resetCmsData()
+      setCmsData(reset)
       setSelectedElement(null)
+      pushHistorySnapshot(reset, activePage, 'Reset all content to defaults', true)
       showToast('Reset all landing content to defaults', 'info')
     }
   }
@@ -293,7 +463,7 @@ export default function AdminDashboardPage({ onNavigate }) {
             setActiveTab(tab)
           }}
           canUndo={historyIndex > 0}
-          canRedo={historyIndex < history.length - 1}
+          canRedo={historyIndex < historyStack.length - 1}
           onUndo={handleUndo}
           onRedo={handleRedo}
           isPreviewMode={isPreviewMode}
