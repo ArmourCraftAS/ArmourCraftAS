@@ -66,14 +66,14 @@ export default function ProMatchEssentials({ onAddToCart, onNavigate }) {
     <section id="shop" className="relative w-full bg-[#080d19] text-white">
       
       {/* 1. Feature Highlights Bar (Top 4-Column Bar) */}
-      <div className="w-full bg-[#0a152d] border-y border-blue-900/30 py-6 px-4 sm:px-6 lg:px-8 shadow-inner">
+      <div className="w-full bg-[#0a152d] border-y border-blue-900/30 py-6 px-4 sm:px-6 lg:px-8 shadow-inner animate-fade-in">
         <StaggerContainer
           staggerDelay={0.08}
           className="max-w-7xl mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-8"
         >
           {featureHighlights.map((feature, idx) => (
             <StaggerItem key={idx}>
-              <div className="flex items-center gap-3.5 group">
+              <div className="flex items-center gap-3.5 group animate-slide-up stagger-fade">
                 {/* Rounded Square Icon Badge */}
                 <div className="w-11 h-11 rounded-xl bg-[#0f2554] border border-blue-500/25 flex items-center justify-center shrink-0 shadow-sm shadow-blue-500/20 group-hover:scale-110 group-hover:border-blue-400/50 transition-all duration-300">
                   {feature.icon}
@@ -139,7 +139,7 @@ export default function ProMatchEssentials({ onAddToCart, onNavigate }) {
                 data-dynamic-type="product"
                 data-dynamic-id={product.id}
                 data-dynamic-title={product.title}
-                className="bg-[#0b1222] border border-slate-800/90 rounded-2xl p-5 flex flex-col justify-between card-elevate group h-full"
+                className="bg-[#0b1222] border border-slate-800/90 rounded-2xl p-5 flex flex-col justify-between card-elevate card-hover animate-slide-up group h-full"
               >
                 {/* Product Image Frame */}
                 <div className="relative w-full aspect-square bg-[#050811] rounded-xl border border-slate-800/60 overflow-hidden flex items-center justify-center p-4 mb-5">
@@ -167,7 +167,7 @@ export default function ProMatchEssentials({ onAddToCart, onNavigate }) {
                 <button
                   type="button"
                   onClick={() => handleAddToCart(product)}
-                  className="w-full py-3.5 px-5 rounded-xl font-bold text-xs uppercase tracking-wider flex items-center justify-between transition-all duration-200 shadow-md bg-[#1762f0] hover:bg-[#1354d4] text-white shadow-blue-600/30 hover:shadow-blue-500/50 btn-elevate cursor-pointer mt-auto"
+                  className="w-full py-3.5 px-5 rounded-xl font-bold text-xs uppercase tracking-wider flex items-center justify-between transition-all duration-200 shadow-md bg-[#1762f0] hover:bg-[#1354d4] text-white shadow-blue-600/30 hover:shadow-blue-500/50 btn-elevate btn-hover cursor-pointer mt-auto"
                 >
                   <span className="font-extrabold tracking-widest">
                     ADD TO CART

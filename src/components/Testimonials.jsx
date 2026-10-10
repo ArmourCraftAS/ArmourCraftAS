@@ -52,7 +52,7 @@ export default function Testimonials() {
         <StaggerContainer staggerDelay={0.12} className="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8">
           {testimonials.map((item) => (
             <StaggerItem key={item.id}>
-              <div className="bg-[#0b1222] border border-slate-800/80 rounded-2xl p-6 sm:p-7 flex flex-col justify-between card-elevate group h-full">
+              <div className="bg-[#0b1222] border border-slate-800/80 rounded-2xl p-6 sm:p-7 flex flex-col justify-between card-elevate card-hover animate-slide-up group h-full">
                 {/* Header with Avatar, Name, Verified Badge */}
                 <div className="flex items-center gap-4 mb-5">
                   <div className="relative w-14 h-14 sm:w-16 sm:h-16 rounded-full overflow-hidden border-4 border-[#007bff] bg-slate-900 flex-shrink-0 shadow-[0_0_16px_rgba(0,123,255,0.45)] user-avatar-circle">

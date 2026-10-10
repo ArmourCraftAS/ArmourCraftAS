@@ -114,7 +114,7 @@ export default function SmartCollection({ onAddToCart }) {
                 <button
                   key={tab}
                   onClick={() => setActiveTab(tab)}
-                  className={`px-5 sm:px-6 py-2 rounded-full text-xs font-bold tracking-wider uppercase transition-all duration-200 cursor-pointer ${
+                  className={`px-5 sm:px-6 py-2 rounded-full text-xs font-bold tracking-wider uppercase transition-all duration-200 cursor-pointer btn-hover ${
                     isActive
                       ? 'bg-[#1762f0] text-white shadow-lg shadow-blue-600/35 scale-[1.02]'
                       : 'bg-[#0d1627] hover:bg-[#121f36] text-slate-400 hover:text-white border border-slate-800'
@@ -135,7 +135,7 @@ export default function SmartCollection({ onAddToCart }) {
                 data-dynamic-type="product"
                 data-dynamic-id={product.id}
                 data-dynamic-title={product.title}
-                className="bg-[#0b1222] border border-slate-800/80 rounded-2xl p-4 sm:p-5 flex flex-col justify-between card-elevate group h-full"
+                className="bg-[#0b1222] border border-slate-800/80 rounded-2xl p-4 sm:p-5 flex flex-col justify-between card-elevate card-hover animate-slide-up group h-full"
               >
                 {/* Product Image Frame */}
                 <div className="w-full aspect-square rounded-xl bg-[#060a14] border border-slate-800/60 overflow-hidden flex items-center justify-center p-3 mb-4">
@@ -167,7 +167,7 @@ export default function SmartCollection({ onAddToCart }) {
                 <button
                   type="button"
                   onClick={() => handleAdd(product)}
-                  className="w-full py-2.5 px-4 rounded-xl font-bold text-xs uppercase tracking-wider transition-all duration-200 flex items-center justify-center gap-2 border bg-[#090e1a] hover:bg-[#1762f0] text-slate-300 hover:text-white border-slate-800 hover:border-blue-500 btn-elevate cursor-pointer mt-auto"
+                  className="w-full py-2.5 px-4 rounded-xl font-bold text-xs uppercase tracking-wider transition-all duration-200 flex items-center justify-center gap-2 border bg-[#090e1a] hover:bg-[#1762f0] text-slate-300 hover:text-white border-slate-800 hover:border-blue-500 btn-elevate btn-hover cursor-pointer mt-auto"
                 >
                   <span>ADD TO CART</span>
                   <ShoppingCart className="w-3.5 h-3.5" />

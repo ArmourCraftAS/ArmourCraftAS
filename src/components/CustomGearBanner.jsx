@@ -54,7 +54,7 @@ export default function CustomGearBanner() {
       {/* Main Container Content */}
       <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-20 lg:py-24">
         <FadeIn direction="up" distance={25}>
-          <div className="max-w-xl lg:max-w-2xl">
+          <div className="max-w-xl lg:max-w-2xl animate-slide-up">
             
             {/* Main Heading */}
             <h2
@@ -80,7 +80,7 @@ export default function CustomGearBanner() {
                 onClick={() => setIsQuoteModalOpen(true)}
                 data-cms-path="home.customSquad.ctaText"
                 data-cms-label="Custom Gear Banner CTA"
-                className="inline-flex items-center justify-center bg-white hover:bg-slate-200 text-black font-black text-xs sm:text-sm uppercase tracking-widest px-8 py-4 rounded-none sm:rounded-md transition-all duration-200 shadow-xl shadow-white/10 hover:shadow-white/20 active:scale-[0.98] btn-elevate group cursor-pointer"
+                className="inline-flex items-center justify-center bg-white hover:bg-slate-200 text-black font-black text-xs sm:text-sm uppercase tracking-widest px-8 py-4 rounded-none sm:rounded-md transition-all duration-200 shadow-xl shadow-white/10 hover:shadow-white/20 active:scale-[0.98] btn-elevate btn-hover group cursor-pointer"
               >
                 <span>{ctaText}</span>
                 <ArrowRight className="w-4 h-4 ml-2 transition-transform duration-200 group-hover:translate-x-1 text-black" />

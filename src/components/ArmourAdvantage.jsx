@@ -44,7 +44,7 @@ export default function ArmourAdvantage() {
                 <div className="absolute -bottom-4 -left-4 sm:-bottom-6 sm:-left-6 w-32 sm:w-40 h-32 sm:h-40 border-l-2 border-b-2 border-blue-500/25 rounded-bl-2xl pointer-events-none" />
 
                 {/* 1. Background Card (Carbon-fiber/Foam Macro Texture) */}
-                <div className="absolute top-0 left-0 w-[58%] sm:w-[60%] h-[74%] sm:h-[76%] rounded-2xl sm:rounded-3xl overflow-hidden border border-slate-700/70 shadow-2xl bg-[#090f1d]">
+                <div className="absolute top-0 left-0 w-[58%] sm:w-[60%] h-[74%] sm:h-[76%] rounded-2xl sm:rounded-3xl overflow-hidden border border-slate-700/70 shadow-2xl bg-[#090f1d] card-hover">
                   <CmsMedia
                     src={activeImg1}
                     videoSrc={activeVideo1}
@@ -75,7 +75,7 @@ export default function ArmourAdvantage() {
 
                 {/* 2. Foreground Floating Card (Dynamic Product Media Display) */}
                 <FloatingElement distance={6} duration={5} className="absolute bottom-0 right-0 sm:right-4 w-[65%] sm:w-[66%] h-[74%] sm:h-[76%]">
-                  <div className="w-full h-full rounded-2xl sm:rounded-3xl overflow-hidden border border-slate-700/80 shadow-[0_25px_60px_-15px_rgba(0,0,0,0.9)] bg-[#0a1120]">
+                  <div className="w-full h-full rounded-2xl sm:rounded-3xl overflow-hidden border border-slate-700/80 shadow-[0_25px_60px_-15px_rgba(0,0,0,0.9)] bg-[#0a1120] card-hover">
                     <CmsMedia
                       src={activeImg2}
                       videoSrc={activeVideo2}
@@ -104,7 +104,7 @@ export default function ArmourAdvantage() {
           {/* RIGHT SIDE: Content Card */}
           <div className="lg:col-span-6">
             <FadeIn direction="left" distance={30} delay={0.2}>
-              <div className="relative rounded-3xl p-8 sm:p-12 md:p-14 bg-gradient-to-br from-[#0c1426] via-[#090f1e] to-[#060a14] border border-slate-800/90 shadow-2xl shadow-blue-950/20 overflow-hidden">
+              <div className="relative rounded-3xl p-8 sm:p-12 md:p-14 bg-gradient-to-br from-[#0c1426] via-[#090f1e] to-[#060a14] border border-slate-800/90 shadow-2xl shadow-blue-950/20 overflow-hidden card-hover">
               
               {/* Corner soft light reflection */}
               <div className="absolute top-0 right-0 w-64 h-64 bg-blue-500/5 blur-3xl pointer-events-none rounded-full" />

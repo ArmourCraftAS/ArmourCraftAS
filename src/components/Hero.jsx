@@ -4,7 +4,6 @@ import Armour3DModal from './Armour3DModal'
 import CustomQuoteModal from './CustomQuoteModal'
 import { isVideoAsset } from './CmsMedia'
 import { FadeIn, FloatingElement, TextReveal, useStorefrontMotion } from './StorefrontMotion'
-import { motion } from 'framer-motion'
 
 import { useCmsContent } from '../admin/cmsStore'
 
@@ -71,11 +70,8 @@ export default function Hero({ onNavigate, onOpenCustomModal }) {
         data-background-media-target="home.hero.imageSrc"
         className="absolute inset-0 z-0"
       >
-        <motion.div
-          initial={enableMotion ? { scale: 1.08, opacity: 0 } : false}
-          animate={enableMotion ? { scale: 1, opacity: 1 } : false}
-          transition={{ duration: 1.2, ease: [0.22, 1, 0.36, 1] }}
-          className="relative w-full h-full"
+        <div
+          className={`relative w-full h-full ${enableMotion ? 'animate-scale-in' : ''}`}
         >
           {isVideo ? (
             <video
@@ -116,8 +112,8 @@ export default function Hero({ onNavigate, onOpenCustomModal }) {
           <div className="absolute top-0 inset-x-0 h-24 bg-gradient-to-b from-[#060a12] to-transparent pointer-events-none" />
           
           {/* Subtle Atmospheric Blue Radial Glow with Parallax Floating */}
-          <FloatingElement distance={14} duration={7} className="absolute top-1/4 left-1/4 -translate-x-1/2 -translate-y-1/2 w-[550px] h-[550px] bg-blue-600/10 blur-[130px] rounded-full pointer-events-none" />
-        </motion.div>
+          <div className={`absolute top-1/4 left-1/4 -translate-x-1/2 -translate-y-1/2 w-[550px] h-[550px] bg-blue-600/10 blur-[130px] rounded-full pointer-events-none ${enableMotion ? 'animate-float' : ''}`} />
+        </div>
       </div>
 
       {/* Main Content (Left Column) */}
@@ -210,7 +206,7 @@ export default function Hero({ onNavigate, onOpenCustomModal }) {
                     onNavigate('/shop')
                   }
                 }}
-                className="inline-flex items-center justify-center gap-2.5 bg-[#1762f0] hover:bg-[#1354d4] text-white px-8 py-4 rounded-xl font-bold text-sm sm:text-base tracking-wide transition-all duration-200 shadow-lg shadow-blue-600/35 hover:shadow-blue-500/50 btn-elevate btn-ripple group cursor-pointer"
+                className="inline-flex items-center justify-center gap-2.5 bg-[#1762f0] hover:bg-[#1354d4] text-white px-8 py-4 rounded-xl font-bold text-sm sm:text-base tracking-wide transition-all duration-200 shadow-lg shadow-blue-600/35 hover:shadow-blue-500/50 btn-elevate btn-hover btn-ripple group cursor-pointer"
               >
                 <span>{cmsHero?.ctaText || 'Explore Collection'}</span>
                 <ArrowRight className="w-4 h-4 transition-transform duration-200 group-hover:translate-x-1" />
@@ -228,7 +224,7 @@ export default function Hero({ onNavigate, onOpenCustomModal }) {
                     setIsCustomizationModalOpen(true)
                   }
                 }}
-                className="inline-flex items-center justify-center gap-2.5 bg-[#0a1120]/80 hover:bg-[#111c33] border border-slate-700/80 hover:border-slate-500 text-white px-8 py-4 rounded-xl font-bold text-sm sm:text-base tracking-wide transition-all duration-200 backdrop-blur-sm btn-elevate btn-ripple cursor-pointer"
+                className="inline-flex items-center justify-center gap-2.5 bg-[#0a1120]/80 hover:bg-[#111c33] border border-slate-700/80 hover:border-slate-500 text-white px-8 py-4 rounded-xl font-bold text-sm sm:text-base tracking-wide transition-all duration-200 backdrop-blur-sm btn-elevate btn-hover btn-ripple cursor-pointer"
               >
                 <span>{cmsHero?.secondaryCtaText || 'Customize Your Stance'}</span>
               </button>

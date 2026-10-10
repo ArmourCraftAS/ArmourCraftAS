@@ -82,8 +82,10 @@ function AdminRouter({ currentPath, onNavigate }) {
 
 export default function AdminRoot({ currentPath, onNavigate }) {
   return (
-    <AdminAuthProvider>
-      <AdminRouter currentPath={currentPath} onNavigate={onNavigate} />
-    </AdminAuthProvider>
+    <div data-admin-root="true" className="admin-workspace">
+      <AdminAuthProvider>
+        <AdminRouter currentPath={currentPath} onNavigate={onNavigate} />
+      </AdminAuthProvider>
+    </div>
   )
 }

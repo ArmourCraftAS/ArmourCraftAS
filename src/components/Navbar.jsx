@@ -51,9 +51,8 @@ export default function Navbar({ cartCount = 0, currentPath = '/', onNavigate, o
     : {}
 
   return (
-    <HeaderTag
-      {...headerMotionProps}
-      className="sticky top-0 z-50 w-full bg-[#060a12]/95 backdrop-blur-md border-b border-white/[0.06]"
+    <header
+      className="sticky top-0 z-50 w-full bg-[#060a12]/95 backdrop-blur-md border-b border-white/[0.06] animate-slide-down"
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
         
@@ -109,29 +108,15 @@ export default function Navbar({ cartCount = 0, currentPath = '/', onNavigate, o
 
         {/* Right Action: Dynamic Cart Button with Micro-interactions */}
         <div className="hidden md:flex items-center">
-          {isMotionEnabled ? (
-            <motion.button
-              type="button"
-              whileHover={{ scale: 1.03, y: -1 }}
-              whileTap={{ scale: 0.97, y: 0 }}
-              onClick={onOpenCart}
-              aria-label={`View Cart, currently ${cartCount} items`}
-              className="flex items-center gap-2.5 bg-[#1762f0] hover:bg-[#1354d4] text-white px-5 py-2.5 rounded-full text-xs font-bold tracking-wider transition-colors duration-200 shadow-md shadow-blue-600/30 hover:shadow-blue-500/50 cursor-pointer"
-            >
-              <ShoppingBag className="w-3.5 h-3.5 stroke-[2.5]" />
-              <span>CART ({cartCount})</span>
-            </motion.button>
-          ) : (
-            <button
-              type="button"
-              onClick={onOpenCart}
-              aria-label={`View Cart, currently ${cartCount} items`}
-              className="flex items-center gap-2.5 bg-[#1762f0] hover:bg-[#1354d4] text-white px-5 py-2.5 rounded-full text-xs font-bold tracking-wider transition-all duration-200 shadow-md shadow-blue-600/30 hover:shadow-blue-500/50 cursor-pointer"
-            >
-              <ShoppingBag className="w-3.5 h-3.5 stroke-[2.5]" />
-              <span>CART ({cartCount})</span>
-            </button>
-          )}
+          <button
+            type="button"
+            onClick={onOpenCart}
+            aria-label={`View Cart, currently ${cartCount} items`}
+            className="flex items-center gap-2.5 bg-[#1762f0] hover:bg-[#1354d4] text-white px-5 py-2.5 rounded-full text-xs font-bold tracking-wider transition-colors duration-200 shadow-md shadow-blue-600/30 hover:shadow-blue-500/50 cursor-pointer btn-hover"
+          >
+            <ShoppingBag className="w-3.5 h-3.5 stroke-[2.5]" />
+            <span>CART ({cartCount})</span>
+          </button>
         </div>
 
         {/* Mobile Menu Button */}
@@ -140,7 +125,7 @@ export default function Navbar({ cartCount = 0, currentPath = '/', onNavigate, o
             type="button"
             onClick={onOpenCart}
             aria-label={`View Cart, currently ${cartCount} items`}
-            className="flex items-center gap-1.5 bg-[#1762f0] text-white px-3 py-1.5 rounded-full text-xs font-bold cursor-pointer transition-transform active:scale-95"
+            className="flex items-center gap-1.5 bg-[#1762f0] text-white px-3 py-1.5 rounded-full text-xs font-bold cursor-pointer transition-transform active:scale-95 btn-hover"
           >
             <ShoppingBag className="w-3.5 h-3.5" />
             <span>({cartCount})</span>
@@ -184,7 +169,7 @@ export default function Navbar({ cartCount = 0, currentPath = '/', onNavigate, o
           </motion.div>
         )}
       </AnimatePresence>
-    </HeaderTag>
+    </header>
   )
 }
 

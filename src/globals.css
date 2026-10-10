@@ -1,85 +1,8 @@
 @import "tailwindcss";
 
-@layer base {
-  body {
-    font-family: 'Plus Jakarta Sans', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-    background-color: #060a12;
-    color: #f8fafc;
-  }
-}
-
-/* Custom glow and glassmorphism helpers */
-.glass-nav {
-  background: rgba(6, 10, 18, 0.85);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-}
-
-.blue-glow {
-  box-shadow: 0 0 35px -5px rgba(37, 99, 235, 0.45);
-}
-
-.text-glow {
-  text-shadow: 0 0 20px rgba(59, 130, 246, 0.5);
-}
-
-/* Global User Avatar Styling */
-.user-avatar,
-.user-avatar-circle,
-.avatar-circular-frame {
-  border-radius: 50% !important;
-  border: 4px solid #007bff !important;
-  box-shadow: 0 0 16px rgba(0, 123, 255, 0.45);
-  overflow: hidden;
-  display: inline-block;
-  flex-shrink: 0;
-}
-
-.user-avatar img,
-.user-avatar-circle img,
-.avatar-circular-frame img,
-img.user-avatar-img,
-img.avatar-circle {
-  border-radius: 50% !important;
-  width: 100% !important;
-  height: 100% !important;
-  object-fit: cover !important;
-  object-position: center !important;
-  display: block;
-}
-
-/* Premium Storefront Micro-interactions & Glow Effects */
-.nav-link-glow {
-  position: relative;
-  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
-}
-.nav-link-glow:hover {
-  text-shadow: 0 0 14px rgba(59, 130, 246, 0.75);
-}
-
-.card-elevate {
-  transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.35s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.35s ease;
-}
-.card-elevate:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.9), 0 0 24px -4px rgba(37, 99, 235, 0.35);
-  border-color: rgba(59, 130, 246, 0.45);
-}
-
-.btn-elevate {
-  transition: transform 0.22s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.22s cubic-bezier(0.16, 1, 0.3, 1);
-}
-.btn-elevate:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 12px 28px -6px rgba(23, 98, 240, 0.5);
-}
-.btn-elevate:active {
-  transform: translateY(0px) scale(0.98);
-}
-
 /* ========================================================================= */
 /* GUARANTEED NATIVE STOREFRONT CSS KEYFRAME ANIMATIONS                      */
+/* Injected directly into globals.css for 100% reliable storefront rendering */
 /* ========================================================================= */
 
 @keyframes storefrontFadeIn {
@@ -248,7 +171,7 @@ img.avatar-circle {
   transform: translateY(0px) scale(0.97) !important;
 }
 
-/* STRICT ADMIN CMS EXCLUSION CHECK */
+/* STRICT ADMIN CMS EXCLUSION CHECK: Dashboard completely static */
 body[data-admin="true"] *,
 .admin-workspace,
 .admin-workspace *,
@@ -257,4 +180,3 @@ body[data-admin="true"] *,
   animation: none !important;
   transition: none !important;
 }
-

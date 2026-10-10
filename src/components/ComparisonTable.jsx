@@ -45,7 +45,7 @@ export default function ComparisonTable() {
           <h2
             data-cms-path="home.comparison.heading"
             data-cms-label="Comparison Table Heading"
-            className="text-3xl sm:text-4xl md:text-5xl font-black text-white text-center tracking-tight mb-12 sm:mb-16"
+            className="text-3xl sm:text-4xl md:text-5xl font-black text-white text-center tracking-tight mb-12 sm:mb-16 animate-slide-up"
           >
             {heading}
           </h2>
@@ -53,7 +53,7 @@ export default function ComparisonTable() {
 
         {/* Comparison Table Container */}
         <FadeIn direction="up" distance={25} delay={0.15}>
-          <div className="rounded-2xl sm:rounded-3xl bg-[#091122]/95 border border-slate-800/90 shadow-2xl overflow-hidden backdrop-blur-md card-elevate">
+          <div className="rounded-2xl sm:rounded-3xl bg-[#091122]/95 border border-slate-800/90 shadow-2xl overflow-hidden backdrop-blur-md card-elevate card-hover animate-slide-up">
           
           {/* Table Header */}
           <div className="grid grid-cols-12 items-center text-xs sm:text-sm font-bold tracking-wider uppercase border-b border-slate-800/80">

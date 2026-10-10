@@ -74,7 +74,7 @@ export default function FAQ() {
                   data-dynamic-type="faq"
                   data-dynamic-id={item.id}
                   data-dynamic-title={item.question}
-                  className="bg-[#091734] border border-blue-900/40 rounded-xl sm:rounded-2xl transition-all duration-200 overflow-hidden hover:border-blue-700/50 card-elevate"
+                  className="bg-[#091734] border border-blue-900/40 rounded-xl sm:rounded-2xl transition-all duration-200 overflow-hidden hover:border-blue-700/50 card-elevate card-hover animate-slide-up"
                 >
                 {/* Accordion Header Button */}
                 <button
