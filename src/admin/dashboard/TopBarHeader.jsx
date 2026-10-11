@@ -283,7 +283,7 @@ export default function TopBarHeader({
           type="button"
           onClick={onUndo}
           disabled={!canUndo}
-          className={`p-2 rounded-lg transition-all duration-150 flex items-center justify-center ${
+          className={`p-1.5 sm:p-2 rounded-lg transition-all duration-150 items-center justify-center hidden xs:flex ${
             canUndo
               ? 'text-slate-200 hover:text-white hover:bg-slate-800/80 active:scale-95 cursor-pointer shadow-sm'
               : 'text-slate-600 cursor-not-allowed opacity-35 pointer-events-none'
@@ -299,7 +299,7 @@ export default function TopBarHeader({
           type="button"
           onClick={onRedo}
           disabled={!canRedo}
-          className={`p-2 rounded-lg transition-all duration-150 flex items-center justify-center ${
+          className={`p-1.5 sm:p-2 rounded-lg transition-all duration-150 items-center justify-center hidden xs:flex ${
             canRedo
               ? 'text-slate-200 hover:text-white hover:bg-slate-800/80 active:scale-95 cursor-pointer shadow-sm'
               : 'text-slate-600 cursor-not-allowed opacity-35 pointer-events-none'
@@ -314,7 +314,7 @@ export default function TopBarHeader({
         <button
           type="button"
           onClick={onTogglePreview}
-          className={`px-3.5 py-1.5 rounded-lg text-xs font-semibold border transition-all duration-150 flex items-center gap-1.5 cursor-pointer ${
+          className={`px-2.5 sm:px-3.5 py-1.5 rounded-lg text-xs font-semibold border transition-all duration-150 flex items-center gap-1.5 cursor-pointer ${
             isPreviewMode
               ? 'bg-blue-600/30 border-blue-400 text-blue-200 shadow-md shadow-blue-500/20 font-bold'
               : 'border-slate-700/80 hover:border-slate-600 text-slate-300 hover:text-white bg-[#0e1526]/50'
@@ -332,7 +332,7 @@ export default function TopBarHeader({
           }
         >
           {isPreviewMode ? <EyeOff className="w-3.5 h-3.5 text-blue-300" /> : <Eye className="w-3.5 h-3.5" />}
-          <span>{isPreviewMode ? 'Exit Preview' : 'Preview'}</span>
+          <span className="hidden sm:inline">{isPreviewMode ? 'Exit Preview' : 'Preview'}</span>
         </button>
 
         {/* Primary PUBLISH Button */}
@@ -340,7 +340,7 @@ export default function TopBarHeader({
           type="button"
           onClick={onPublish}
           disabled={isPublishing}
-          className="px-4 sm:px-5 py-1.5 rounded-lg text-xs font-black uppercase tracking-wider text-white bg-[#1d63ed] hover:bg-[#1554d1] active:scale-95 transition-all duration-150 shadow-md shadow-blue-600/30 flex items-center gap-1.5 cursor-pointer disabled:opacity-60"
+          className="px-3 sm:px-5 py-1.5 rounded-lg text-[11px] sm:text-xs font-black uppercase tracking-wider text-white bg-[#1d63ed] hover:bg-[#1554d1] active:scale-95 transition-all duration-150 shadow-md shadow-blue-600/30 flex items-center gap-1.5 cursor-pointer disabled:opacity-60"
           title="Publish live to storefront"
         >
           <Sparkles className="w-3.5 h-3.5 text-blue-200" />
@@ -351,7 +351,7 @@ export default function TopBarHeader({
         <button
           type="button"
           onClick={handleLogoutClick}
-          className="p-2 text-rose-400 hover:text-rose-300 hover:bg-rose-500/10 rounded-lg transition-colors cursor-pointer ml-1"
+          className="p-1.5 sm:p-2 text-rose-400 hover:text-rose-300 hover:bg-rose-500/10 rounded-lg transition-colors cursor-pointer ml-0.5 sm:ml-1"
           title="Sign Out of Admin Console"
         >
           <LogOut className="w-4 h-4" />

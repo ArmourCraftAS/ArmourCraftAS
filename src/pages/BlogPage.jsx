@@ -70,8 +70,8 @@ export default function BlogPage({ onNavigate }) {
   }
 
   return (
-    <div className="w-full bg-[#060a12] text-white min-h-[calc(100vh-80px)] py-10 sm:py-14 lg:py-16 px-4 sm:px-6 lg:px-8 selection:bg-blue-600 selection:text-white">
-      <div className="max-w-7xl mx-auto space-y-12 sm:space-y-16">
+    <div className="w-full bg-[#060a12] text-white min-h-[calc(100vh-80px)] py-8 sm:py-14 lg:py-16 px-4 sm:px-6 lg:px-8 selection:bg-blue-600 selection:text-white">
+      <div className="max-w-7xl mx-auto space-y-10 sm:space-y-16">
         
         {/* ========================================================================= */}
         {/* 1. FEATURED / MOST RECENT BLOG BANNER (TOP SECTION)                       */}
@@ -83,19 +83,19 @@ export default function BlogPage({ onNavigate }) {
               data-dynamic-type="blog"
               data-dynamic-id={featuredBlog.id}
               data-dynamic-title={featuredBlog.title}
-              className="relative w-full rounded-2xl sm:rounded-3xl bg-[#0c1527] border border-slate-800/80 p-5 sm:p-7 lg:p-9 shadow-2xl backdrop-blur-md overflow-hidden card-elevate"
+              className="relative w-full rounded-2xl sm:rounded-3xl bg-[#0c1527] border border-slate-800/80 p-4 sm:p-7 lg:p-9 shadow-2xl backdrop-blur-md overflow-hidden card-elevate"
             >
               {/* Subtle atmospheric ambient glow */}
               <div className="absolute top-0 right-1/4 w-96 h-96 bg-blue-600/5 blur-3xl pointer-events-none rounded-full" />
               <div className="absolute bottom-0 left-10 w-72 h-72 bg-blue-500/5 blur-3xl pointer-events-none rounded-full" />
 
-              <div className="relative z-10 grid grid-cols-1 lg:grid-cols-12 gap-6 sm:gap-8 lg:gap-10 items-stretch">
+              <div className="relative z-10 grid grid-cols-1 lg:grid-cols-12 gap-5 sm:gap-8 lg:gap-10 items-stretch">
                 
                 {/* Left Side: High-Resolution Featured Image */}
                 <div className="lg:col-span-6 flex items-center justify-center">
                   <div
                     onClick={() => handleOpenBlog(featuredBlog)}
-                    className="w-full h-full min-h-[280px] sm:min-h-[360px] lg:min-h-[420px] rounded-xl sm:rounded-2xl overflow-hidden bg-[#070b14] border border-slate-800/80 shadow-2xl group cursor-pointer relative"
+                    className="w-full h-full min-h-[220px] sm:min-h-[360px] lg:min-h-[420px] rounded-xl sm:rounded-2xl overflow-hidden bg-[#070b14] border border-slate-800/80 shadow-2xl group cursor-pointer relative"
                   >
                     <img
                       src={featuredBlog.image}
@@ -111,7 +111,7 @@ export default function BlogPage({ onNavigate }) {
                 <div className="lg:col-span-6 flex flex-col justify-center py-2 sm:py-4">
                   
                   {/* Category Pill / Date */}
-                  <div className="flex items-center gap-3 mb-4">
+                  <div className="flex items-center gap-3 mb-3 sm:mb-4">
                     <span className="px-3 py-1 rounded-full text-[11px] font-bold tracking-wider uppercase bg-blue-500/10 text-blue-400 border border-blue-500/20">
                       {featuredBlog.category}
                     </span>
@@ -124,13 +124,13 @@ export default function BlogPage({ onNavigate }) {
                   {/* Main Heading */}
                   <h1
                     onClick={() => handleOpenBlog(featuredBlog)}
-                    className="text-2xl sm:text-3xl lg:text-[38px] font-black text-white leading-[1.18] tracking-tight mb-5 hover:text-blue-400 transition-colors cursor-pointer"
+                    className="text-xl sm:text-3xl lg:text-[38px] font-black text-white leading-[1.2] sm:leading-[1.18] tracking-tight mb-3 sm:mb-5 hover:text-blue-400 transition-colors cursor-pointer"
                   >
                     {featuredBlog.title}
                   </h1>
 
                   {/* Excerpt */}
-                  <p className="text-slate-400 text-sm sm:text-base leading-relaxed mb-8 font-normal max-w-xl">
+                  <p className="text-slate-400 text-xs sm:text-base leading-relaxed mb-6 sm:mb-8 font-normal max-w-xl">
                     {featuredBlog.excerpt}
                   </p>
 
@@ -139,7 +139,7 @@ export default function BlogPage({ onNavigate }) {
                     <button
                       type="button"
                       onClick={() => handleOpenBlog(featuredBlog)}
-                      className="inline-flex items-center gap-2.5 px-6 py-3.5 rounded-lg bg-[#1462ea] hover:bg-[#1a6df6] active:bg-blue-700 text-white font-bold text-xs sm:text-sm tracking-wider uppercase btn-elevate cursor-pointer shadow-lg shadow-blue-600/30"
+                      className="w-full sm:w-auto inline-flex items-center justify-center gap-2.5 px-6 py-3.5 rounded-xl bg-[#1462ea] hover:bg-[#1a6df6] active:bg-blue-700 text-white font-bold text-xs sm:text-sm tracking-wider uppercase btn-elevate cursor-pointer shadow-lg shadow-blue-600/30 min-h-[44px]"
                     >
                       <span>READ FULL GUIDE</span>
                       <ArrowRight className="w-4 h-4 stroke-[2.5]" />
@@ -159,11 +159,11 @@ export default function BlogPage({ onNavigate }) {
         <ScrollReveal as="section" aria-label="Latest Insights" y={50} amount={0.2} className="w-full">
           
           {/* Header Row: Title on Left, Horizontal Line, and VIEW ALL > on Right */}
-          <FadeIn direction="up" className="flex items-center justify-between mb-8 sm:mb-10">
+          <FadeIn direction="up" className="flex items-center justify-between mb-6 sm:mb-10">
             <h2
               data-cms-path="blog.latestInsightsHeading"
               data-cms-label="Latest Insights Heading"
-              className="text-lg sm:text-xl font-black text-white uppercase tracking-wider shrink-0"
+              className="text-base sm:text-xl font-black text-white uppercase tracking-wider shrink-0"
             >
               {latestInsightsHeading}
             </h2>
@@ -183,7 +183,7 @@ export default function BlogPage({ onNavigate }) {
           </FadeIn>
 
           {/* 3-Column Grid Layout */}
-          <StaggerContainer staggerDelay={0.08} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8 items-stretch">
+          <StaggerContainer staggerDelay={0.08} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 lg:gap-8 items-stretch">
             {displayedGridBlogs.map((blog) => (
               <StaggerItem
                 key={blog.id}
@@ -209,7 +209,7 @@ export default function BlogPage({ onNavigate }) {
                 </div>
 
                 {/* Card Content Container */}
-                <div className="p-6 flex flex-col flex-1 justify-between">
+                <div className="p-4 sm:p-6 flex flex-col flex-1 justify-between">
                   <div>
                     {/* Card Title */}
                     <h3 className="text-base sm:text-lg font-bold text-white leading-snug mb-3 group-hover:text-blue-400 transition-colors">

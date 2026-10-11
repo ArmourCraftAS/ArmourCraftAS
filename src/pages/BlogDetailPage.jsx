@@ -54,15 +54,15 @@ export default function BlogDetailPage({ slug, onNavigate }) {
         {/* 2. ARTICLE HEADER SECTION                                                 */}
         {/* ========================================================================= */}
         <ScrollReveal y={50} amount={0.2}>
-          <header className="mb-8 sm:mb-10">
+          <header className="mb-6 sm:mb-10">
             
             {/* Main Title */}
-            <h1 className="text-3xl sm:text-4xl lg:text-[44px] font-black text-white leading-[1.16] tracking-tight mb-4 max-w-4xl">
+            <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-[44px] font-black text-white leading-[1.2] sm:leading-[1.16] tracking-tight mb-3 sm:mb-4 max-w-4xl">
               {blog.title}
             </h1>
 
             {/* Subtitle / Excerpt */}
-            <p className="text-slate-400 text-base sm:text-lg leading-relaxed max-w-3xl font-normal mb-6">
+            <p className="text-slate-400 text-sm sm:text-lg leading-relaxed max-w-3xl font-normal mb-5 sm:mb-6">
               {blog.subtitle || blog.excerpt}
             </p>
 

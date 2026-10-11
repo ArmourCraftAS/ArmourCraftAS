@@ -47,11 +47,11 @@ export default function Footer({ onNavigate, currentPath, isAdminContext }) {
       as="footer"
       y={50}
       amount={0.2}
-      className="w-full bg-[#04070e] text-slate-400 border-t border-slate-900/90 pt-16 pb-12 px-4 sm:px-6 lg:px-8 overflow-hidden"
+      className="w-full bg-[#04070e] text-slate-400 border-t border-slate-900/90 pt-12 sm:pt-16 pb-10 sm:pb-12 px-4 sm:px-6 lg:px-8 overflow-hidden"
     >
       <FadeIn direction="up" distance={35} threshold={0.05} className="max-w-7xl mx-auto">
         {/* Top 4-Column Grid */}
-        <StaggerContainer staggerDelay={0.1} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10 lg:gap-12 mb-14">
+        <StaggerContainer staggerDelay={0.1} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 sm:gap-10 lg:gap-12 mb-10 sm:mb-14">
           
           {/* Column 1: Brand Info & Socials */}
           <StaggerItem className="flex flex-col">

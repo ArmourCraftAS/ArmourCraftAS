@@ -24,24 +24,24 @@ export default function ArmourAdvantage() {
   const activeImg2 = (typeof image2 === 'string' && !isVideoAsset(image2)) ? image2 : (image2Props?.src || '/images/advantage_thigh_guard.png')
 
   return (
-    <section className="relative w-full bg-[#060a14] py-20 lg:py-28 overflow-hidden text-white border-t border-slate-900/60">
+    <section className="relative w-full bg-[#060a14] py-12 sm:py-20 lg:py-28 overflow-hidden text-white border-t border-slate-900/60">
       
       {/* Background ambient lighting */}
       <div className="absolute top-1/2 left-1/4 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-blue-600/5 blur-[140px] pointer-events-none rounded-full" />
       <div className="absolute bottom-10 right-1/4 w-[400px] h-[400px] bg-blue-500/5 blur-[120px] pointer-events-none rounded-full" />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-center">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-16 items-center">
           
           {/* LEFT SIDE: Overlapping Image Cards */}
           <div className="lg:col-span-6 relative flex justify-center lg:justify-start">
             
             <FadeIn direction="right" distance={30} delay={0.1}>
               {/* Outer Container with exact height to comfortably accommodate overlapping cards */}
-              <div className="relative w-full max-w-[480px] h-[460px] sm:h-[510px]">
+              <div className="relative w-full max-w-[480px] h-[340px] xs:h-[400px] sm:h-[460px] md:h-[510px]">
                 
                 {/* Subtle Blue Accent Corner Line (bottom left background) */}
-                <div className="absolute -bottom-4 -left-4 sm:-bottom-6 sm:-left-6 w-32 sm:w-40 h-32 sm:h-40 border-l-2 border-b-2 border-blue-500/25 rounded-bl-2xl pointer-events-none" />
+                <div className="absolute -bottom-2 -left-2 sm:-bottom-6 sm:-left-6 w-24 sm:w-40 h-24 sm:h-40 border-l-2 border-b-2 border-blue-500/25 rounded-bl-2xl pointer-events-none" />
 
                 {/* 1. Background Card (Carbon-fiber/Foam Macro Texture) */}
                 <div className="absolute top-0 left-0 w-[58%] sm:w-[60%] h-[74%] sm:h-[76%] rounded-2xl sm:rounded-3xl overflow-hidden border border-slate-700/70 shadow-2xl bg-[#090f1d] card-hover">
@@ -104,7 +104,7 @@ export default function ArmourAdvantage() {
           {/* RIGHT SIDE: Content Card */}
           <div className="lg:col-span-6">
             <FadeIn direction="left" distance={30} delay={0.2}>
-              <div className="relative rounded-3xl p-8 sm:p-12 md:p-14 bg-gradient-to-br from-[#0c1426] via-[#090f1e] to-[#060a14] border border-slate-800/90 shadow-2xl shadow-blue-950/20 overflow-hidden card-hover">
+              <div className="relative rounded-2xl sm:rounded-3xl p-5 sm:p-8 md:p-12 lg:p-14 bg-gradient-to-br from-[#0c1426] via-[#090f1e] to-[#060a14] border border-slate-800/90 shadow-2xl shadow-blue-950/20 overflow-hidden card-hover">
               
               {/* Corner soft light reflection */}
               <div className="absolute top-0 right-0 w-64 h-64 bg-blue-500/5 blur-3xl pointer-events-none rounded-full" />
@@ -113,10 +113,10 @@ export default function ArmourAdvantage() {
               <div
                 data-cms-path="home.advantage.tag"
                 data-cms-label="Advantage Pill Tag"
-                className="flex items-center gap-2.5 mb-5"
+                className="flex items-center gap-2.5 mb-4 sm:mb-5"
               >
-                <span className="w-6 h-[2px] bg-blue-500 rounded-full inline-block" />
-                <span className="text-blue-500 font-extrabold text-xs sm:text-sm tracking-widest uppercase">
+                <span className="w-5 sm:w-6 h-[2px] bg-blue-500 rounded-full inline-block" />
+                <span className="text-blue-500 font-extrabold text-[11px] sm:text-sm tracking-widest uppercase">
                   {tag}
                 </span>
               </div>
@@ -125,7 +125,7 @@ export default function ArmourAdvantage() {
               <h2
                 data-cms-path="home.advantage.heading"
                 data-cms-label="Advantage Main Heading"
-                className="text-4xl sm:text-5xl lg:text-[54px] font-black text-white leading-[1.08] tracking-tight mb-7"
+                className="text-2xl sm:text-4xl lg:text-[50px] font-black text-white leading-[1.14] sm:leading-[1.08] tracking-tight mb-5 sm:mb-7"
               >
                 {heading}
               </h2>

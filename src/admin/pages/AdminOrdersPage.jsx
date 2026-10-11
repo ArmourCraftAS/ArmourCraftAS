@@ -59,7 +59,7 @@ export default function AdminOrdersPage() {
       </div>
 
       {/* Filter and Search Bar */}
-      <div className="bg-[#0b1222] border border-slate-800/90 rounded-2xl p-4 flex flex-col md:flex-row items-stretch md:items-center justify-between gap-4">
+      <div className="bg-[#0b1222] border border-slate-800/90 rounded-2xl p-3.5 sm:p-4 flex flex-col md:flex-row items-stretch md:items-center justify-between gap-3 sm:gap-4">
         
         {/* Search Input */}
         <div className="relative flex-1 max-w-md">
@@ -69,18 +69,18 @@ export default function AdminOrdersPage() {
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder="Search by Order ID, customer, or phone..."
-            className="w-full bg-[#080d19] border border-slate-800 rounded-xl pl-10 pr-4 py-2 text-xs sm:text-sm text-white placeholder-slate-500 focus:outline-none focus:border-blue-500 transition-colors"
+            className="w-full bg-[#080d19] border border-slate-800 rounded-xl pl-10 pr-4 py-2 sm:py-2 text-xs sm:text-sm text-white placeholder-slate-500 focus:outline-none focus:border-blue-500 transition-colors min-h-[42px]"
           />
         </div>
 
         {/* Status Filters */}
-        <div className="flex items-center gap-1.5 overflow-x-auto pb-1 md:pb-0">
+        <div className="flex items-center gap-1.5 overflow-x-auto pb-1 md:pb-0 custom-scrollbar">
           {statuses.map((st) => (
             <button
               key={st}
               type="button"
               onClick={() => setStatusFilter(st)}
-              className={`px-3 py-1.5 rounded-lg text-xs font-semibold whitespace-nowrap transition-colors cursor-pointer ${
+              className={`px-3 py-1.5 rounded-lg text-xs font-semibold whitespace-nowrap transition-colors cursor-pointer min-h-[34px] ${
                 statusFilter === st
                   ? 'bg-blue-600 text-white shadow-sm'
                   : 'bg-slate-900 text-slate-400 hover:text-white border border-slate-800'
@@ -103,15 +103,15 @@ export default function AdminOrdersPage() {
           filteredOrders.map((order) => (
             <div
               key={order.id}
-              className="bg-[#0b1222] border border-slate-800/90 rounded-2xl p-5 hover:border-slate-700/80 transition-all shadow-md"
+              className="bg-[#0b1222] border border-slate-800/90 rounded-2xl p-4 sm:p-5 hover:border-slate-700/80 transition-all shadow-md"
             >
-              <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 pb-4 border-b border-slate-800/70">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4 pb-4 border-b border-slate-800/70">
                 {/* Order ID & Date */}
-                <div className="flex items-center gap-3">
-                  <span className="font-mono font-black text-base text-blue-400">
+                <div className="flex flex-wrap items-center gap-2 sm:gap-3">
+                  <span className="font-mono font-black text-sm sm:text-base text-blue-400">
                     {order.id}
                   </span>
-                  <span className="text-xs text-slate-500 font-mono">
+                  <span className="text-[11px] sm:text-xs text-slate-500 font-mono">
                     {order.date}
                   </span>
                   <span
@@ -125,11 +125,11 @@ export default function AdminOrdersPage() {
 
                 {/* Status Switcher Selector */}
                 <div className="flex items-center gap-2">
-                  <span className="text-xs text-slate-400 font-medium">Update Status:</span>
+                  <span className="text-[11px] sm:text-xs text-slate-400 font-medium">Update:</span>
                   <select
                     value={order.status}
                     onChange={(e) => updateOrderStatus(order.id, e.target.value)}
-                    className="bg-[#080d19] border border-slate-700 text-xs text-white rounded-lg px-2.5 py-1.5 focus:border-blue-500 focus:outline-none cursor-pointer"
+                    className="bg-[#080d19] border border-slate-700 text-xs text-white rounded-lg px-2.5 py-1.5 focus:border-blue-500 focus:outline-none cursor-pointer min-h-[36px]"
                   >
                     <option value="Pending">Pending</option>
                     <option value="Confirmed">Confirmed</option>

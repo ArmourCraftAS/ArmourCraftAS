@@ -86,8 +86,8 @@ export default function ContactPage() {
   }
 
   return (
-    <div className="w-full bg-[#060a12] text-white min-h-[calc(100vh-80px)] py-12 sm:py-16 lg:py-20 px-4 sm:px-6 lg:px-8 selection:bg-blue-600 selection:text-white">
-      <div className="max-w-6xl mx-auto space-y-12 sm:space-y-16">
+    <div className="w-full bg-[#060a12] text-white min-h-[calc(100vh-80px)] py-10 sm:py-16 lg:py-20 px-4 sm:px-6 lg:px-8 selection:bg-blue-600 selection:text-white">
+      <div className="max-w-6xl mx-auto space-y-10 sm:space-y-16">
         
         {/* ========================================================================= */}
         {/* 1. HEADER SECTION (CENTERED TEXT)                                         */}
@@ -96,14 +96,14 @@ export default function ContactPage() {
           <h1
             data-cms-path="contact.heading"
             data-cms-label="Contact Page Main Heading"
-            className="text-4xl sm:text-5xl lg:text-6xl font-black text-white uppercase tracking-tight leading-[1.08] mb-4 sm:mb-6"
+            className="text-2xl sm:text-4xl md:text-5xl lg:text-6xl font-black text-white uppercase tracking-tight leading-[1.12] sm:leading-[1.08] mb-3 sm:mb-6"
           >
             {heading}
           </h1>
           <p
             data-cms-path="contact.subheading"
             data-cms-label="Contact Page Subtitle"
-            className="text-slate-400 text-sm sm:text-base md:text-lg max-w-2xl mx-auto leading-relaxed font-normal"
+            className="text-slate-400 text-xs sm:text-base md:text-lg max-w-2xl mx-auto leading-relaxed font-normal"
           >
             {subheading}
           </p>
@@ -115,7 +115,7 @@ export default function ContactPage() {
         <ScrollReveal y={50} amount={0.2} className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-10 items-start">
           
           {/* Left Side: Interactive Contact Form Card */}
-          <FadeIn direction="right" className="lg:col-span-7 bg-[#0b1324] border border-slate-800/80 rounded-2xl sm:rounded-3xl p-6 sm:p-8 lg:p-10 shadow-2xl backdrop-blur-md relative overflow-hidden card-elevate">
+          <FadeIn direction="right" className="lg:col-span-7 bg-[#0b1324] border border-slate-800/80 rounded-2xl sm:rounded-3xl p-4 sm:p-8 lg:p-10 shadow-2xl backdrop-blur-md relative overflow-hidden card-elevate">
             {/* Subtle atmospheric ambient glow */}
             <div className="absolute top-0 right-1/4 w-72 h-72 bg-blue-600/5 blur-3xl pointer-events-none rounded-full" />
 

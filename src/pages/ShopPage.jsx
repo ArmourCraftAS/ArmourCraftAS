@@ -121,15 +121,15 @@ export default function ShopPage({ onAddToCart }) {
   }
 
   return (
-    <div className="w-full bg-[#060a12] text-white min-h-[calc(100vh-80px)] py-16 lg:py-24 px-4 sm:px-6 lg:px-8">
+    <div className="w-full bg-[#060a12] text-white min-h-[calc(100vh-80px)] py-10 sm:py-16 lg:py-24 px-4 sm:px-6 lg:px-8">
       <div className="max-w-7xl mx-auto">
         
         {/* Page Title & Subtitle */}
-        <ScrollReveal y={50} amount={0.2} className="text-center mb-10 sm:mb-12">
+        <ScrollReveal y={50} amount={0.2} className="text-center mb-8 sm:mb-12">
           <h1
             data-cms-path="shop.heading"
             data-cms-label="Shop Page Heading"
-            className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black text-white tracking-tight uppercase mb-4"
+            className="text-2xl sm:text-4xl md:text-5xl lg:text-6xl font-black text-white tracking-tight uppercase mb-3 sm:mb-4"
           >
             {heading}
           </h1>
@@ -143,7 +143,7 @@ export default function ShopPage({ onAddToCart }) {
         </ScrollReveal>
 
         {/* Category Filter Tabs */}
-        <ScrollReveal y={50} amount={0.2} delay={0.08} className="flex flex-wrap items-center justify-center gap-2.5 sm:gap-3 mb-10">
+        <ScrollReveal y={50} amount={0.2} delay={0.08} className="flex flex-wrap items-center justify-center gap-2 sm:gap-3 mb-8 sm:mb-10">
           {categories.map((cat) => {
             const isActive = activeCategory === cat
             return (
@@ -151,7 +151,7 @@ export default function ShopPage({ onAddToCart }) {
                 key={cat}
                 type="button"
                 onClick={() => setActiveCategory(cat)}
-                className={`px-5 sm:px-6 py-2.5 rounded-full text-xs sm:text-sm font-bold tracking-wide transition-all duration-200 cursor-pointer ${
+                className={`px-3.5 sm:px-6 py-2 sm:py-2.5 rounded-full text-xs sm:text-sm font-bold tracking-wide transition-all duration-200 cursor-pointer min-h-[40px] ${
                   isActive
                     ? 'bg-[#1762f0] text-white shadow-lg shadow-blue-600/35 scale-[1.03]'
                     : 'bg-[#0d1627] hover:bg-[#121f36] text-slate-300 hover:text-white border border-slate-800 hover:scale-[1.02]'
@@ -164,7 +164,7 @@ export default function ShopPage({ onAddToCart }) {
         </ScrollReveal>
 
         {/* Secondary Filter & Search Bar */}
-        <ScrollReveal y={50} amount={0.2} delay={0.12} className="flex flex-col md:flex-row items-stretch md:items-center justify-between gap-4 mb-10 pb-6 border-b border-slate-800/80">
+        <ScrollReveal y={50} amount={0.2} delay={0.12} className="flex flex-col md:flex-row items-stretch md:items-center justify-between gap-4 mb-8 sm:mb-10 pb-6 border-b border-slate-800/80">
           
           {/* Stance Selector */}
           <div className="flex flex-wrap items-center gap-2 sm:gap-3">
@@ -178,7 +178,7 @@ export default function ShopPage({ onAddToCart }) {
                   key={stance}
                   type="button"
                   onClick={() => setActiveStance(stance)}
-                  className={`px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-all duration-200 cursor-pointer ${
+                  className={`px-3 py-1.5 sm:px-3.5 sm:py-1.5 rounded-lg text-xs font-semibold transition-all duration-200 cursor-pointer min-h-[36px] ${
                     isSelected
                       ? 'bg-[#0d1a33] text-blue-400 border border-blue-500/60 shadow-sm shadow-blue-500/20'
                       : 'bg-[#091122] text-slate-400 hover:text-slate-200 border border-slate-800 hover:border-slate-700'
@@ -197,17 +197,17 @@ export default function ShopPage({ onAddToCart }) {
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="Search..."
-              className="w-full bg-[#091122] border border-slate-800 rounded-xl px-4 py-2 text-xs sm:text-sm text-slate-200 placeholder-slate-500 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all pr-10"
+              className="w-full bg-[#091122] border border-slate-800 rounded-xl px-4 py-2.5 sm:py-2 text-xs sm:text-sm text-slate-200 placeholder-slate-500 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all pr-10 min-h-[44px]"
             />
             <Search className="w-4 h-4 text-slate-400 absolute right-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
           </div>
 
         </ScrollReveal>
 
-        {/* Product Grid (3 Columns) */}
+        {/* Product Grid (Single-col on mobile, 2-col on md, 3-col on lg) */}
         <ScrollReveal y={50} amount={0.2}>
           {filteredProducts.length > 0 ? (
-            <StaggerContainer staggerDelay={0.08} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
+            <StaggerContainer staggerDelay={0.08} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-6 lg:gap-8">
               {filteredProducts.map((product) => {
                 const isAdded = addedItem === product.id
 

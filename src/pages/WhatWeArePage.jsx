@@ -18,19 +18,19 @@ export default function WhatWeArePage({ onNavigate }) {
 
   return (
     <>
-      <div className="w-full bg-[#060a12] text-white min-h-[calc(100vh-80px)] py-16 sm:py-20 lg:py-24 px-4 sm:px-6 lg:px-8 selection:bg-blue-600 selection:text-white">
+      <div className="w-full bg-[#060a12] text-white min-h-[calc(100vh-80px)] py-10 sm:py-16 lg:py-24 px-4 sm:px-6 lg:px-8 selection:bg-blue-600 selection:text-white">
       <div className="max-w-7xl mx-auto">
         
         {/* ========================================================================= */}
         {/* 1. HERO HEADER SECTION                                                    */}
         {/* ========================================================================= */}
-        <ScrollReveal y={50} amount={0.2} className="text-center max-w-4xl mx-auto mb-16 sm:mb-20 lg:mb-24">
+        <ScrollReveal y={50} amount={0.2} className="text-center max-w-4xl mx-auto mb-10 sm:mb-20 lg:mb-24">
           
           {/* Top Pill Badge */}
           <div
             data-cms-path="whatWeAre.tag"
             data-cms-label="What We Are Tag"
-            className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#0d162a] border border-blue-500/30 shadow-sm shadow-blue-500/20 backdrop-blur-md mb-8"
+            className="inline-flex items-center gap-2 px-3.5 sm:px-4 py-1.5 rounded-full bg-[#0d162a] border border-blue-500/30 shadow-sm shadow-blue-500/20 backdrop-blur-md mb-5 sm:mb-8"
           >
             <span className="w-2 h-2 rounded-full bg-blue-500 shadow-[0_0_8px_#3b82f6] animate-pulse" />
             <span className="text-[11px] sm:text-xs font-bold tracking-widest text-blue-300 uppercase">
@@ -42,7 +42,7 @@ export default function WhatWeArePage({ onNavigate }) {
           <h1
             data-cms-path="whatWeAre.heading"
             data-cms-label="What We Are Heading"
-            className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-black text-white uppercase tracking-tight leading-[1.08] mb-6"
+            className="text-2xl sm:text-4xl md:text-5xl lg:text-7xl font-black text-white uppercase tracking-tight leading-[1.12] sm:leading-[1.08] mb-4 sm:mb-6"
           >
             {heading}
           </h1>
@@ -51,7 +51,7 @@ export default function WhatWeArePage({ onNavigate }) {
           <p
             data-cms-path="whatWeAre.subheading"
             data-cms-label="What We Are Subtitle"
-            className="text-slate-400 text-sm sm:text-base md:text-lg max-w-2xl mx-auto leading-relaxed font-normal"
+            className="text-slate-400 text-xs sm:text-base md:text-lg max-w-2xl mx-auto leading-relaxed font-normal"
           >
             {subheading}
           </p>
@@ -61,7 +61,7 @@ export default function WhatWeArePage({ onNavigate }) {
         {/* ========================================================================= */}
         {/* 2. CONTENT & IMAGE COLLAGE GRID SECTION                                   */}
         {/* ========================================================================= */}
-        <ScrollReveal y={50} amount={0.2} className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-center mb-20 lg:mb-28">
+        <ScrollReveal y={50} amount={0.2} className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-16 items-center mb-14 sm:mb-20 lg:mb-28">
           
           {/* Left Side: 3-Image Collage Grid */}
           <FadeIn direction="right" className="lg:col-span-7">

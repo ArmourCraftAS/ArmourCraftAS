@@ -52,7 +52,7 @@ export default function CustomGearBanner() {
       </div>
 
       {/* Main Container Content */}
-      <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-20 lg:py-24">
+      <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-20 lg:py-24">
         <FadeIn direction="up" distance={25}>
           <div className="max-w-xl lg:max-w-2xl animate-slide-up">
             
@@ -60,7 +60,7 @@ export default function CustomGearBanner() {
             <h2
               data-cms-path="home.customSquad.heading"
               data-cms-label="Custom Gear Banner Heading"
-              className="text-3xl sm:text-4xl md:text-5xl lg:text-[46px] font-black uppercase tracking-tight leading-[1.1] mb-5"
+              className="text-2xl sm:text-4xl md:text-5xl lg:text-[46px] font-black uppercase tracking-tight leading-[1.15] sm:leading-[1.1] mb-4 sm:mb-5"
             >
               {heading}
             </h2>
@@ -69,7 +69,7 @@ export default function CustomGearBanner() {
             <p
               data-cms-path="home.customSquad.subheading"
               data-cms-label="Custom Gear Banner Description"
-              className="text-slate-300 text-sm sm:text-base leading-relaxed max-w-lg mb-8 text-slate-300/90 font-normal"
+              className="text-slate-300 text-xs sm:text-base leading-relaxed max-w-lg mb-6 sm:mb-8 text-slate-300/90 font-normal"
             >
               {subheading}
             </p>
@@ -80,7 +80,7 @@ export default function CustomGearBanner() {
                 onClick={() => setIsQuoteModalOpen(true)}
                 data-cms-path="home.customSquad.ctaText"
                 data-cms-label="Custom Gear Banner CTA"
-                className="inline-flex items-center justify-center bg-white hover:bg-slate-200 text-black font-black text-xs sm:text-sm uppercase tracking-widest px-8 py-4 rounded-none sm:rounded-md transition-all duration-200 shadow-xl shadow-white/10 hover:shadow-white/20 active:scale-[0.98] btn-elevate btn-hover group cursor-pointer"
+                className="w-full sm:w-auto inline-flex items-center justify-center bg-white hover:bg-slate-200 text-black font-black text-xs sm:text-sm uppercase tracking-widest px-6 sm:px-8 py-3.5 sm:py-4 rounded-xl sm:rounded-md transition-all duration-200 shadow-xl shadow-white/10 hover:shadow-white/20 active:scale-[0.98] btn-elevate btn-hover group cursor-pointer"
               >
                 <span>{ctaText}</span>
                 <ArrowRight className="w-4 h-4 ml-2 transition-transform duration-200 group-hover:translate-x-1 text-black" />

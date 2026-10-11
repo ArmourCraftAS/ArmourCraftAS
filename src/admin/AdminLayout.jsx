@@ -173,35 +173,35 @@ export default function AdminLayout({ children, currentPath, onNavigate }) {
       <div className="flex-1 flex flex-col min-w-0">
         
         {/* Top Bar */}
-        <header className="sticky top-0 z-30 h-20 bg-[#070b14]/90 backdrop-blur-md border-b border-slate-800/80 px-4 sm:px-6 lg:px-8 flex items-center justify-between">
+        <header className="sticky top-0 z-30 h-16 sm:h-20 bg-[#070b14]/90 backdrop-blur-md border-b border-slate-800/80 px-3.5 sm:px-6 lg:px-8 flex items-center justify-between">
           
           {/* Left Title & Mobile Toggle */}
-          <div className="flex items-center gap-3 sm:gap-4">
+          <div className="flex items-center gap-2.5 sm:gap-4">
             <button
               type="button"
               onClick={() => setIsMobileSidebarOpen(true)}
-              className="md:hidden p-2 rounded-xl bg-slate-900 border border-slate-800 text-slate-300 hover:text-white cursor-pointer"
+              className="md:hidden p-2 rounded-xl bg-slate-900 border border-slate-800 text-slate-300 hover:text-white cursor-pointer min-h-[40px] min-w-[40px] flex items-center justify-center"
             >
               <Menu className="w-5 h-5" />
             </button>
 
             <div>
-              <div className="flex items-center gap-2 text-xs text-slate-400">
+              <div className="flex items-center gap-1.5 text-[11px] sm:text-xs text-slate-400">
                 <span>Admin</span>
                 <span>/</span>
                 <span className="text-blue-400 font-semibold">{activeItem.name}</span>
               </div>
-              <h1 className="text-lg sm:text-xl font-black text-white uppercase tracking-tight">
+              <h1 className="text-base sm:text-xl font-black text-white uppercase tracking-tight leading-tight">
                 {activeItem.name}
               </h1>
             </div>
           </div>
 
           {/* Right: Admin Profile Avatar & Standalone Logout Button */}
-          <div className="flex items-center gap-3 sm:gap-5">
+          <div className="flex items-center gap-2.5 sm:gap-5">
             {/* Admin Profile Pill */}
-            <div className="flex items-center gap-3 py-1.5 px-3 rounded-2xl bg-[#0b1222] border border-slate-800">
-              <div className="w-8 h-8 rounded-full bg-blue-600/30 border border-blue-500/50 flex items-center justify-center overflow-hidden shrink-0">
+            <div className="flex items-center gap-2.5 py-1 px-2.5 sm:py-1.5 sm:px-3 rounded-2xl bg-[#0b1222] border border-slate-800">
+              <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-blue-600/30 border border-blue-500/50 flex items-center justify-center overflow-hidden shrink-0">
                 {adminUser?.avatar ? (
                   <img
                     src={adminUser.avatar}
@@ -229,7 +229,7 @@ export default function AdminLayout({ children, currentPath, onNavigate }) {
               type="button"
               onClick={handleLogoutClick}
               title="Logout from Admin Portal"
-              className="flex items-center gap-2 px-3.5 py-2 rounded-xl bg-slate-900 hover:bg-rose-500/10 border border-slate-800 hover:border-rose-500/30 text-slate-300 hover:text-rose-400 text-xs font-bold transition-all duration-200 cursor-pointer group"
+              className="flex items-center gap-2 px-3 py-1.5 sm:px-3.5 sm:py-2 rounded-xl bg-slate-900 hover:bg-rose-500/10 border border-slate-800 hover:border-rose-500/30 text-slate-300 hover:text-rose-400 text-xs font-bold transition-all duration-200 cursor-pointer group min-h-[36px]"
             >
               <LogOut className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
               <span className="hidden sm:inline">LOGOUT</span>
@@ -239,7 +239,7 @@ export default function AdminLayout({ children, currentPath, onNavigate }) {
         </header>
 
         {/* Page Content View */}
-        <main className="flex-1 p-4 sm:p-6 lg:p-8 overflow-y-auto">
+        <main className="flex-1 p-3.5 sm:p-6 lg:p-8 overflow-y-auto">
           {children}
         </main>
       </div>

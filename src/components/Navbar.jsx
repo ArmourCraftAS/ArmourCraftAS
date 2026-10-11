@@ -49,7 +49,7 @@ export default function Navbar({ cartCount = 0, currentPath = '/', onNavigate, o
       duration={0.55}
       className="sticky top-0 z-50 w-full bg-[#060a12]/95 backdrop-blur-md border-b border-white/[0.06]"
     >
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 sm:h-20 flex items-center justify-between">
         
         {/* Brand Logo */}
         <a
@@ -63,7 +63,7 @@ export default function Navbar({ cartCount = 0, currentPath = '/', onNavigate, o
           <img
             src="/images/logo_transparent.png"
             alt="ARMOURCRAFT AS"
-            className="h-11 sm:h-12 md:h-14 w-auto object-contain transition-transform duration-300 group-hover:scale-105 select-none bg-transparent mix-blend-screen"
+            className="h-9 sm:h-12 md:h-14 w-auto object-contain transition-transform duration-300 group-hover:scale-105 select-none bg-transparent mix-blend-screen"
             style={{ mixBlendMode: 'screen' }}
             loading="eager"
           />
@@ -143,7 +143,7 @@ export default function Navbar({ cartCount = 0, currentPath = '/', onNavigate, o
             animate={{ opacity: 1, height: 'auto' }}
             exit={{ opacity: 0, height: 0 }}
             transition={{ duration: 0.25, ease: 'easeInOut' }}
-            className="md:hidden bg-[#070d18] border-b border-slate-800 px-6 py-5 space-y-4 overflow-hidden"
+            className="md:hidden bg-[#070d18] border-b border-slate-800 px-5 py-4 space-y-1 overflow-hidden"
           >
             {navLinks.map((link) => {
               const isActive = activeNav === link.name
@@ -152,8 +152,8 @@ export default function Navbar({ cartCount = 0, currentPath = '/', onNavigate, o
                   <button
                     type="button"
                     onClick={() => handleNavClick(link)}
-                    className={`block w-full text-left py-2 text-base font-medium cursor-pointer transition-colors ${
-                      isActive ? 'text-blue-400 font-bold' : 'text-slate-300 hover:text-white'
+                    className={`flex items-center w-full text-left py-3 px-3 rounded-xl min-h-[44px] text-base font-semibold cursor-pointer transition-colors ${
+                      isActive ? 'text-blue-400 font-bold bg-blue-500/10' : 'text-slate-300 hover:text-white hover:bg-slate-800/40'
                     }`}
                   >
                     {link.name}

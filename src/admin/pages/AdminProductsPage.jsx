@@ -329,17 +329,17 @@ export default function AdminProductsPage() {
       <div className="space-y-4 max-w-7xl mx-auto">
         
         {/* ROW 1: CATEGORY FILTER PILLS & "ADD NEW PRODUCT TYPE" BUTTON */}
-        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+        <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 sm:gap-4">
           
           {/* Category Filter Pills */}
-          <div className="flex items-center gap-2 overflow-x-auto pb-1 max-w-full">
+          <div className="flex items-center gap-2 overflow-x-auto pb-1 max-w-full custom-scrollbar">
             {allCategories.map((cat) => {
               const isSelected = activeCategory === cat
               return (
                 <div
                   key={cat}
                   onClick={() => setActiveCategory(cat)}
-                  className={`inline-flex items-center gap-1.5 px-4 py-2 rounded-full text-xs sm:text-sm font-semibold transition-all duration-150 cursor-pointer whitespace-nowrap select-none group ${
+                  className={`inline-flex items-center gap-1.5 px-3.5 sm:px-4 py-2 rounded-full text-xs sm:text-sm font-semibold transition-all duration-150 cursor-pointer whitespace-nowrap select-none group min-h-[38px] ${
                     isSelected
                       ? 'bg-[#1965eb] text-white font-bold shadow-lg shadow-blue-600/30'
                       : 'bg-[#0d1527] hover:bg-[#14203a] text-slate-300 hover:text-white border border-slate-800/80'
@@ -390,7 +390,7 @@ export default function AdminProductsPage() {
           <button
             type="button"
             onClick={() => setIsAddTypeModalOpen(true)}
-            className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-[#1965eb] hover:bg-blue-600 text-white font-bold text-xs uppercase tracking-wider shadow-lg shadow-blue-600/25 cursor-pointer shrink-0 active:scale-[0.98] transition-all"
+            className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-4 sm:px-5 py-2.5 rounded-xl bg-[#1965eb] hover:bg-blue-600 text-white font-bold text-xs uppercase tracking-wider shadow-lg shadow-blue-600/25 cursor-pointer shrink-0 active:scale-[0.98] transition-all min-h-[42px]"
           >
             <FolderPlus className="w-4 h-4 stroke-[2.5]" />
             <span>ADD NEW PRODUCT TYPE</span>
@@ -398,10 +398,10 @@ export default function AdminProductsPage() {
         </div>
 
         {/* ROW 2: STANCE FILTER PILLS & SEARCH BAR & "ADD PRODUCT" BUTTON */}
-        <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 pt-1">
+        <div className="flex flex-col md:flex-row items-stretch md:items-center justify-between gap-3 sm:gap-4 pt-1">
           
           {/* Stance Filter Pills */}
-          <div className="flex items-center gap-2">
+          <div className="flex flex-wrap items-center gap-1.5 sm:gap-2">
             <span className="text-[11px] sm:text-xs font-bold text-slate-400 tracking-wider uppercase mr-1">
               STANCE:
             </span>
@@ -412,7 +412,7 @@ export default function AdminProductsPage() {
                   key={stance}
                   type="button"
                   onClick={() => setActiveStance(stance)}
-                  className={`px-3.5 py-1.5 rounded-full text-xs font-semibold transition-all duration-150 cursor-pointer whitespace-nowrap ${
+                  className={`px-3 py-1.5 rounded-full text-xs font-semibold transition-all duration-150 cursor-pointer whitespace-nowrap min-h-[34px] ${
                     isSelected
                       ? 'bg-[#0f1b33] text-white border border-blue-500/70 shadow-sm'
                       : 'bg-transparent text-slate-400 hover:text-slate-200 border border-slate-800 hover:border-slate-700'
@@ -425,7 +425,7 @@ export default function AdminProductsPage() {
           </div>
 
           {/* Search Input & Accent Action: + ADD PRODUCT */}
-          <div className="flex items-center gap-3 w-full md:w-auto">
+          <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2.5 sm:gap-3 w-full md:w-auto">
             {/* Search Input */}
             <div className="relative flex-1 md:w-64 sm:w-72">
               <input
@@ -433,7 +433,7 @@ export default function AdminProductsPage() {
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder="Search"
-                className="w-full bg-[#0a101d] border border-slate-800 rounded-xl pl-4 pr-10 py-2 text-xs sm:text-sm text-white placeholder-slate-500 focus:outline-none focus:border-blue-500 transition-colors"
+                className="w-full bg-[#0a101d] border border-slate-800 rounded-xl pl-4 pr-10 py-2 sm:py-2 text-xs sm:text-sm text-white placeholder-slate-500 focus:outline-none focus:border-blue-500 transition-colors min-h-[42px]"
               />
               <Search className="w-4 h-4 text-slate-400 absolute right-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
             </div>
@@ -442,7 +442,7 @@ export default function AdminProductsPage() {
             <button
               type="button"
               onClick={handleOpenAddModal}
-              className="inline-flex items-center gap-1.5 px-5 py-2.5 rounded-xl bg-[#2563eb] hover:bg-blue-600 text-white font-bold text-xs uppercase tracking-wider shadow-md shadow-blue-600/30 cursor-pointer shrink-0 active:scale-[0.98] transition-all"
+              className="inline-flex items-center justify-center gap-1.5 px-5 py-2.5 rounded-xl bg-[#2563eb] hover:bg-blue-600 text-white font-bold text-xs uppercase tracking-wider shadow-md shadow-blue-600/30 cursor-pointer shrink-0 active:scale-[0.98] transition-all min-h-[42px]"
             >
               <Plus className="w-4 h-4 stroke-[3]" />
               <span>ADD PRODUCT</span>

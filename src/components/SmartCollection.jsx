@@ -87,7 +87,7 @@ export default function SmartCollection({ onAddToCart }) {
   }
 
   return (
-    <section className="relative w-full bg-[#060a12] py-20 lg:py-28 px-4 sm:px-6 lg:px-8 text-white border-t border-slate-900/80 overflow-hidden">
+    <section className="relative w-full bg-[#060a12] py-12 sm:py-20 lg:py-28 px-4 sm:px-6 lg:px-8 text-white border-t border-slate-900/80 overflow-hidden">
       
       {/* Background ambient lighting */}
       <div className="absolute top-1/4 right-1/4 w-[500px] h-[500px] bg-blue-600/5 blur-[150px] pointer-events-none rounded-full" />
@@ -99,7 +99,7 @@ export default function SmartCollection({ onAddToCart }) {
           <h2
             data-cms-path="home.showcase.heading"
             data-cms-label="Smart Collection Heading"
-            className="text-3xl sm:text-4xl md:text-5xl font-black text-white text-center tracking-tight uppercase mb-8"
+            className="text-2xl sm:text-4xl md:text-5xl font-black text-white text-center tracking-tight uppercase mb-6 sm:mb-8"
           >
             {heading}
           </h2>
@@ -107,14 +107,14 @@ export default function SmartCollection({ onAddToCart }) {
 
         {/* Category Filter Tabs */}
         <FadeIn direction="up" distance={15} delay={0.1}>
-          <div className="flex flex-wrap items-center justify-center gap-2.5 sm:gap-3 mb-14">
+          <div className="flex flex-wrap items-center justify-center gap-2 sm:gap-3 mb-8 sm:mb-14">
             {categories.map((tab) => {
               const isActive = activeTab === tab
               return (
                 <button
                   key={tab}
                   onClick={() => setActiveTab(tab)}
-                  className={`px-5 sm:px-6 py-2 rounded-full text-xs font-bold tracking-wider uppercase transition-all duration-200 cursor-pointer btn-hover ${
+                  className={`px-3.5 sm:px-6 py-2 rounded-full text-[11px] sm:text-xs font-bold tracking-wider uppercase transition-all duration-200 cursor-pointer btn-hover ${
                     isActive
                       ? 'bg-[#1762f0] text-white shadow-lg shadow-blue-600/35 scale-[1.02]'
                       : 'bg-[#0d1627] hover:bg-[#121f36] text-slate-400 hover:text-white border border-slate-800'
@@ -127,8 +127,8 @@ export default function SmartCollection({ onAddToCart }) {
           </div>
         </FadeIn>
 
-        {/* Product Grid (4 Columns) with Staggered Scroll Reveal */}
-        <StaggerContainer staggerDelay={0.08} className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+        {/* Product Grid (Single-col on mobile, 2-col on sm, 4-col on lg) */}
+        <StaggerContainer staggerDelay={0.08} className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
           {filteredProducts.map((product) => (
             <StaggerItem key={product.id}>
               <div

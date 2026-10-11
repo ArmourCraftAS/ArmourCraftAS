@@ -66,23 +66,23 @@ export default function ProMatchEssentials({ onAddToCart, onNavigate }) {
     <section id="shop" className="relative w-full bg-[#080d19] text-white">
       
       {/* 1. Feature Highlights Bar (Top 4-Column Bar) */}
-      <div className="w-full bg-[#0a152d] border-y border-blue-900/30 py-6 px-4 sm:px-6 lg:px-8 shadow-inner animate-fade-in">
+      <div className="w-full bg-[#0a152d] border-y border-blue-900/30 py-4 sm:py-6 px-4 sm:px-6 lg:px-8 shadow-inner animate-fade-in">
         <StaggerContainer
           staggerDelay={0.08}
-          className="max-w-7xl mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-8"
+          className="max-w-7xl mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 lg:gap-8"
         >
           {featureHighlights.map((feature, idx) => (
             <StaggerItem key={idx}>
               <div className="flex items-center gap-3.5 group animate-slide-up stagger-fade">
                 {/* Rounded Square Icon Badge */}
-                <div className="w-11 h-11 rounded-xl bg-[#0f2554] border border-blue-500/25 flex items-center justify-center shrink-0 shadow-sm shadow-blue-500/20 group-hover:scale-110 group-hover:border-blue-400/50 transition-all duration-300">
+                <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-xl bg-[#0f2554] border border-blue-500/25 flex items-center justify-center shrink-0 shadow-sm shadow-blue-500/20 group-hover:scale-110 group-hover:border-blue-400/50 transition-all duration-300">
                   {feature.icon}
                 </div>
                 <div>
-                  <h4 className="text-white font-bold text-sm tracking-wide group-hover:text-blue-300 transition-colors">
+                  <h4 className="text-white font-bold text-xs sm:text-sm tracking-wide group-hover:text-blue-300 transition-colors">
                     {feature.title}
                   </h4>
-                  <p className="text-slate-400 text-xs leading-relaxed mt-0.5">
+                  <p className="text-slate-400 text-[11px] sm:text-xs leading-relaxed mt-0.5">
                     {feature.desc}
                   </p>
                 </div>
@@ -93,23 +93,23 @@ export default function ProMatchEssentials({ onAddToCart, onNavigate }) {
       </div>
 
       {/* 2. Main Section Content Area */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-20">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-16 md:py-20">
         
         {/* Section Header */}
         <FadeIn direction="up" distance={20}>
-          <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-12">
+          <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-3 sm:gap-4 mb-8 sm:mb-12">
             <div>
               <h2
                 data-cms-path="home.essentials.heading"
                 data-cms-label="Pro Match Essentials Heading"
-                className="text-3xl sm:text-4xl md:text-5xl font-black text-white tracking-tight uppercase"
+                className="text-2xl sm:text-4xl md:text-5xl font-black text-white tracking-tight uppercase"
               >
                 {heading}
               </h2>
               <p
                 data-cms-path="home.essentials.subheading"
                 data-cms-label="Pro Match Essentials Subtitle"
-                className="text-slate-400 text-sm sm:text-base mt-2"
+                className="text-slate-400 text-xs sm:text-base mt-1.5 sm:mt-2"
               >
                 {subheading}
               </p>
@@ -131,15 +131,15 @@ export default function ProMatchEssentials({ onAddToCart, onNavigate }) {
           </div>
         </FadeIn>
 
-        {/* 3. Product Cards Grid (3 Cards in a row) */}
-        <StaggerContainer staggerDelay={0.12} className="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8">
+        {/* 3. Product Cards Grid (Single-column on mobile, 3-column on tablet/desktop) */}
+        <StaggerContainer staggerDelay={0.12} className="grid grid-cols-1 md:grid-cols-3 gap-5 sm:gap-6 lg:gap-8">
           {products.map((product) => (
             <StaggerItem key={product.id}>
               <div
                 data-dynamic-type="product"
                 data-dynamic-id={product.id}
                 data-dynamic-title={product.title}
-                className="bg-[#0b1222] border border-slate-800/90 rounded-2xl p-5 flex flex-col justify-between card-elevate card-hover animate-slide-up group h-full"
+                className="bg-[#0b1222] border border-slate-800/90 rounded-2xl p-4 sm:p-5 flex flex-col justify-between card-elevate card-hover animate-slide-up group h-full"
               >
                 {/* Product Image Frame */}
                 <div className="relative w-full aspect-square bg-[#050811] rounded-xl border border-slate-800/60 overflow-hidden flex items-center justify-center p-4 mb-5">

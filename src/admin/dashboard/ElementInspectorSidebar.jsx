@@ -240,7 +240,13 @@ export default function ElementInspectorSidebar({
   )
 
   return (
-    <aside className="w-80 sm:w-96 h-full bg-[#080d19]/98 backdrop-blur-2xl border-l border-slate-800/90 flex flex-col z-40 select-none shadow-2xl transition-all duration-200">
+    <>
+      {/* Mobile Backdrop Overlay */}
+      <div
+        className="fixed inset-0 z-40 bg-black/75 backdrop-blur-sm sm:hidden"
+        onClick={onClose}
+      />
+      <aside className="fixed inset-y-0 right-0 z-50 sm:static sm:z-auto w-full max-w-[360px] sm:w-80 md:w-96 h-full bg-[#080d19]/98 backdrop-blur-2xl border-l border-slate-800/90 flex flex-col select-none shadow-2xl transition-all duration-200">
       
       {/* ========================================================================= */}
       {/* 1. TOP HEADER: BADGE & TYPE (FIGMA SPEC)                                  */}
@@ -1087,5 +1093,6 @@ export default function ElementInspectorSidebar({
       </div>
 
     </aside>
+    </>
   )
 }

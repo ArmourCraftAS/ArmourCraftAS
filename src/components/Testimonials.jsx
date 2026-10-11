@@ -30,18 +30,18 @@ export default function Testimonials() {
   ]
 
   return (
-    <section className="relative w-full bg-[#060a12] py-16 sm:py-20 lg:py-24 px-4 sm:px-6 lg:px-8 text-white border-t border-slate-900/60 overflow-hidden">
+    <section className="relative w-full bg-[#060a12] py-12 sm:py-20 lg:py-24 px-4 sm:px-6 lg:px-8 text-white border-t border-slate-900/60 overflow-hidden">
       {/* Subtle backdrop glow */}
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[350px] bg-blue-600/5 blur-[140px] pointer-events-none rounded-full" />
 
       <div className="max-w-7xl mx-auto relative z-10">
         {/* Main Section Heading (Without Star Rating Line) */}
         <FadeIn direction="up" distance={20}>
-          <div className="text-center mb-10 sm:mb-14">
+          <div className="text-center mb-8 sm:mb-14">
             <h2
               data-cms-path="home.testimonials.heading"
               data-cms-label="Testimonials Heading"
-              className="text-3xl sm:text-4xl md:text-5xl font-black text-white tracking-tight uppercase"
+              className="text-2xl sm:text-4xl md:text-5xl font-black text-white tracking-tight uppercase"
             >
               {heading}
             </h2>
@@ -49,13 +49,13 @@ export default function Testimonials() {
         </FadeIn>
 
         {/* Testimonial Cards Grid (3 Columns) with Staggered Scroll Reveal */}
-        <StaggerContainer staggerDelay={0.12} className="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8">
+        <StaggerContainer staggerDelay={0.12} className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6 lg:gap-8">
           {testimonials.map((item) => (
             <StaggerItem key={item.id}>
-              <div className="bg-[#0b1222] border border-slate-800/80 rounded-2xl p-6 sm:p-7 flex flex-col justify-between card-elevate card-hover animate-slide-up group h-full">
+              <div className="bg-[#0b1222] border border-slate-800/80 rounded-2xl p-4 sm:p-6 lg:p-7 flex flex-col justify-between card-elevate card-hover animate-slide-up group h-full">
                 {/* Header with Avatar, Name, Verified Badge */}
-                <div className="flex items-center gap-4 mb-5">
-                  <div className="relative w-14 h-14 sm:w-16 sm:h-16 rounded-full overflow-hidden border-4 border-[#007bff] bg-slate-900 flex-shrink-0 shadow-[0_0_16px_rgba(0,123,255,0.45)] user-avatar-circle">
+                <div className="flex items-center gap-3.5 sm:gap-4 mb-4 sm:mb-5">
+                  <div className="relative w-12 h-12 sm:w-16 sm:h-16 rounded-full overflow-hidden border-4 border-[#007bff] bg-slate-900 flex-shrink-0 shadow-[0_0_16px_rgba(0,123,255,0.45)] user-avatar-circle">
                     <img
                       src={item.avatar}
                       alt={`${item.name} - Verified Batsman Review for ARMOURCRAFT AS Cricket Protection`}
