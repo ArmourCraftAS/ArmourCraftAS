@@ -142,25 +142,27 @@ export default function ShopPage({ onAddToCart }) {
           </p>
         </ScrollReveal>
 
-        {/* Category Filter Tabs */}
-        <ScrollReveal y={50} amount={0.2} delay={0.08} className="flex flex-wrap items-center justify-center gap-2 sm:gap-3 mb-8 sm:mb-10">
-          {categories.map((cat) => {
-            const isActive = activeCategory === cat
-            return (
-              <button
-                key={cat}
-                type="button"
-                onClick={() => setActiveCategory(cat)}
-                className={`px-3.5 sm:px-6 py-2 sm:py-2.5 rounded-full text-xs sm:text-sm font-bold tracking-wide transition-all duration-200 cursor-pointer min-h-[40px] ${
-                  isActive
-                    ? 'bg-[#1762f0] text-white shadow-lg shadow-blue-600/35 scale-[1.03]'
-                    : 'bg-[#0d1627] hover:bg-[#121f36] text-slate-300 hover:text-white border border-slate-800 hover:scale-[1.02]'
-                }`}
-              >
-                {cat}
-              </button>
-            )
-          })}
+        {/* Category Filter Tabs (Scroll horizontally without pushing content) */}
+        <ScrollReveal y={50} amount={0.2} delay={0.08} className="w-full overflow-x-auto no-scrollbar scroll-smooth py-1 px-1 mb-6 sm:mb-10">
+          <div className="flex items-center gap-1.5 sm:gap-2.5 justify-start sm:justify-center min-w-max mx-auto px-1">
+            {categories.map((cat) => {
+              const isActive = activeCategory === cat
+              return (
+                <button
+                  key={cat}
+                  type="button"
+                  onClick={() => setActiveCategory(cat)}
+                  className={`whitespace-nowrap shrink-0 px-3 sm:px-5 py-1.5 sm:py-2 rounded-full text-[11px] sm:text-xs md:text-sm font-bold tracking-wide transition-all duration-200 cursor-pointer ${
+                    isActive
+                      ? 'bg-[#1762f0] text-white shadow-lg shadow-blue-600/35 scale-[1.03]'
+                      : 'bg-[#0d1627] hover:bg-[#121f36] text-slate-300 hover:text-white border border-slate-800'
+                  }`}
+                >
+                  {cat}
+                </button>
+              )
+            })}
+          </div>
         </ScrollReveal>
 
         {/* Secondary Filter & Search Bar */}
@@ -204,10 +206,13 @@ export default function ShopPage({ onAddToCart }) {
 
         </ScrollReveal>
 
-        {/* Product Grid (Single-col on mobile, 2-col on md, 3-col on lg) */}
+        {/* Product Grid (Strict 2-column on mobile 320px+, 3-col on lg) */}
         <ScrollReveal y={50} amount={0.2}>
           {filteredProducts.length > 0 ? (
-            <StaggerContainer staggerDelay={0.08} className="grid grid-cols-2 lg:grid-cols-3 gap-2 sm:gap-4 lg:gap-8">
+            <StaggerContainer
+              staggerDelay={0.08}
+              className="grid grid-cols-2 lg:grid-cols-3 gap-2 sm:gap-4 lg:gap-8 p-1.5 sm:p-2 mobile-product-grid-2col lg-3col"
+            >
               {filteredProducts.map((product) => {
                 const isAdded = addedItem === product.id
 
@@ -217,33 +222,33 @@ export default function ShopPage({ onAddToCart }) {
                     data-dynamic-type="product"
                     data-dynamic-id={product.id}
                     data-dynamic-title={product.title}
-                    className="h-full"
+                    className="min-w-0 w-full h-full flex flex-col"
                   >
-                    <div className="bg-[#0b1222] border border-slate-800/80 rounded-xl sm:rounded-2xl p-2 sm:p-4 md:p-6 flex flex-col justify-between card-elevate group h-full">
+                    <div className="bg-[#0b1222] border border-slate-800/80 rounded-xl sm:rounded-2xl p-1.5 xs:p-2 sm:p-4 md:p-5 flex flex-col justify-between card-elevate group h-full min-w-0 w-full">
                       {/* Product Image Frame (Compact scaled height for 320px+) */}
-                      <div className="w-full aspect-square max-h-32 xs:max-h-36 sm:max-h-56 sm:aspect-[4/3] rounded-lg sm:rounded-xl bg-[#060a14] border border-slate-800/60 overflow-hidden flex items-center justify-center p-1.5 sm:p-3 mb-2 sm:mb-4">
+                      <div className="relative w-full h-28 xs:h-32 sm:h-44 md:h-52 rounded-lg sm:rounded-xl bg-[#060a14] border border-slate-800/60 overflow-hidden flex items-center justify-center p-1 sm:p-2.5 mb-1.5 sm:mb-3 shrink-0">
                         <img
                           src={product.image}
                           alt={`ARMOURCRAFT AS ${product.title} - Pro Cricket Protection`}
-                          className="w-full h-full object-contain filter drop-shadow-[0_4px_16px_rgba(0,0,0,0.7)] group-hover:scale-105 transition-transform duration-300 ease-out select-none"
+                          className="w-full h-full object-contain filter drop-shadow-[0_4px_10px_rgba(0,0,0,0.7)] group-hover:scale-105 transition-transform duration-300 ease-out select-none"
                           loading="lazy"
                         />
                       </div>
 
                       {/* Product Details */}
-                      <div className="flex-1 flex flex-col justify-between">
-                        <div className="mb-2 sm:mb-4">
-                          <h3 className="text-white font-bold text-xs sm:text-sm md:text-lg leading-tight sm:leading-snug group-hover:text-blue-300 transition-colors mb-1 sm:mb-2 line-clamp-2">
+                      <div className="flex-1 flex flex-col justify-between min-w-0">
+                        <div className="mb-1 min-w-0">
+                          <h3 className="text-white font-bold text-[11px] sm:text-xs md:text-base leading-tight group-hover:text-blue-300 transition-colors line-clamp-2 min-w-0">
                             {product.title}
                           </h3>
-                          <p className="text-slate-400 text-[10px] sm:text-xs md:text-sm leading-relaxed line-clamp-2 hidden sm:block">
+                          <p className="text-slate-400 text-[9px] sm:text-xs leading-tight line-clamp-1 hidden sm:block min-w-0 mt-0.5">
                             {product.description}
                           </p>
                         </div>
 
                         {/* Price and QUICK ADD Button */}
-                        <div className="flex flex-col xs:flex-row xs:items-center justify-between gap-1.5 sm:gap-2 pt-2 sm:pt-3 border-t border-slate-800/60 mt-auto">
-                          <div className="text-blue-400 sm:text-white font-black text-xs sm:text-base md:text-2xl tracking-tight">
+                        <div className="flex flex-col xs:flex-row xs:items-center justify-between gap-1 pt-1.5 sm:pt-2 border-t border-slate-800/60 mt-auto min-w-0">
+                          <div className="text-blue-400 sm:text-white font-black text-xs sm:text-sm md:text-xl tracking-tight">
                             {typeof product.price === 'number'
                               ? `$${product.price.toFixed(2)}`
                               : product.price?.toString().startsWith('$')
@@ -254,10 +259,10 @@ export default function ShopPage({ onAddToCart }) {
                           <button
                             type="button"
                             onClick={() => handleAdd(product)}
-                            className="w-full xs:w-auto py-1.5 sm:py-2.5 px-1.5 sm:px-4 rounded-lg sm:rounded-xl font-bold text-[10px] sm:text-xs uppercase tracking-tight sm:tracking-wider btn-elevate flex items-center justify-center gap-1 sm:gap-1.5 cursor-pointer shadow-md bg-[#1762f0] hover:bg-[#1354d4] text-white shadow-blue-600/30 shrink-0"
+                            className="w-full xs:w-auto py-1.5 sm:py-2 px-1 sm:px-3 rounded-lg sm:rounded-xl font-bold text-[10px] sm:text-xs uppercase tracking-tight sm:tracking-wider btn-elevate flex items-center justify-center gap-1 cursor-pointer shadow-md bg-[#1762f0] hover:bg-[#1354d4] text-white shadow-blue-600/30 shrink-0"
                           >
                             <span className="truncate">{isAdded ? 'ADDED!' : 'ADD TO CART'}</span>
-                            <ShoppingCart className="w-3 h-3 sm:w-3.5 sm:h-3.5 stroke-[2.5] hidden xs:inline-block shrink-0" />
+                            <ShoppingCart className="w-3 h-3 stroke-[2] hidden xs:inline-block shrink-0" />
                           </button>
                         </div>
                       </div>
