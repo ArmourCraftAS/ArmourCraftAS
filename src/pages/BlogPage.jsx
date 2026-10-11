@@ -4,7 +4,7 @@ import { initialBlogs, getSortedBlogs, getStoredBlogs } from '../data/blogsData'
 import WhatsAppCalloutBanner from '../components/WhatsAppCalloutBanner'
 import { supabase } from '../../lib/supabaseClient'
 import { useCmsContent } from '../admin/cmsStore'
-import { FadeIn, StaggerContainer, StaggerItem } from '../components/StorefrontMotion'
+import { FadeIn, StaggerContainer, StaggerItem, ScrollReveal } from '../components/StorefrontMotion'
 
 export default function BlogPage({ onNavigate }) {
   const latestInsightsHeading = useCmsContent('blog.latestInsightsHeading', 'LATEST INSIGHTS')
@@ -77,7 +77,7 @@ export default function BlogPage({ onNavigate }) {
         {/* 1. FEATURED / MOST RECENT BLOG BANNER (TOP SECTION)                       */}
         {/* ========================================================================= */}
         {featuredBlog && (
-          <FadeIn direction="up">
+          <ScrollReveal y={50} amount={0.2}>
             <section
               aria-label="Featured Story"
               data-dynamic-type="blog"
@@ -150,13 +150,13 @@ export default function BlogPage({ onNavigate }) {
 
               </div>
             </section>
-          </FadeIn>
+          </ScrollReveal>
         )}
 
         {/* ========================================================================= */}
         {/* 2. 'LATEST INSIGHTS' GRID SECTION                                         */}
         {/* ========================================================================= */}
-        <section aria-label="Latest Insights" className="w-full">
+        <ScrollReveal as="section" aria-label="Latest Insights" y={50} amount={0.2} className="w-full">
           
           {/* Header Row: Title on Left, Horizontal Line, and VIEW ALL > on Right */}
           <FadeIn direction="up" className="flex items-center justify-between mb-8 sm:mb-10">
@@ -235,12 +235,14 @@ export default function BlogPage({ onNavigate }) {
             ))}
           </StaggerContainer>
 
-        </section>
+        </ScrollReveal>
 
         {/* ========================================================================= */}
         {/* 3. WHATSAPP SIZING & BULK ASSISTANCE BANNER (ABOVE FOOTER)                */}
         {/* ========================================================================= */}
-        <WhatsAppCalloutBanner />
+        <ScrollReveal y={50} amount={0.2}>
+          <WhatsAppCalloutBanner />
+        </ScrollReveal>
 
       </div>
 

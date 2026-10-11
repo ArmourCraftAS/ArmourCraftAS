@@ -1,6 +1,6 @@
 import React from 'react'
 import { Mail, MapPin, MessageCircle } from 'lucide-react'
-import { FadeIn, StaggerContainer, StaggerItem } from './StorefrontMotion'
+import { FadeIn, StaggerContainer, StaggerItem, ScrollReveal } from './StorefrontMotion'
 
 export default function Footer({ onNavigate, currentPath, isAdminContext }) {
   // Resolve active pathname safely across both CSR and SSR
@@ -43,7 +43,12 @@ export default function Footer({ onNavigate, currentPath, isAdminContext }) {
   }
 
   return (
-    <footer className="w-full bg-[#04070e] text-slate-400 border-t border-slate-900/90 pt-16 pb-12 px-4 sm:px-6 lg:px-8 overflow-hidden animate-slide-up">
+    <ScrollReveal
+      as="footer"
+      y={50}
+      amount={0.2}
+      className="w-full bg-[#04070e] text-slate-400 border-t border-slate-900/90 pt-16 pb-12 px-4 sm:px-6 lg:px-8 overflow-hidden"
+    >
       <FadeIn direction="up" distance={35} threshold={0.05} className="max-w-7xl mx-auto">
         {/* Top 4-Column Grid */}
         <StaggerContainer staggerDelay={0.1} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10 lg:gap-12 mb-14">
@@ -251,6 +256,6 @@ export default function Footer({ onNavigate, currentPath, isAdminContext }) {
           )}
         </FadeIn>
       </FadeIn>
-    </footer>
+    </ScrollReveal>
   )
 }

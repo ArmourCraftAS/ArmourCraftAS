@@ -3,7 +3,7 @@ import { Shield, Zap, Gem } from 'lucide-react'
 import NextGenFeatureBanner from '../components/NextGenFeatureBanner'
 import { useCmsContent } from '../admin/cmsStore'
 import CmsMedia, { isVideoAsset } from '../components/CmsMedia'
-import { FadeIn, StaggerContainer, StaggerItem, FloatingElement } from '../components/StorefrontMotion'
+import { FadeIn, StaggerContainer, StaggerItem, FloatingElement, ScrollReveal } from '../components/StorefrontMotion'
 
 export default function WhatWeArePage({ onNavigate }) {
   const tag = useCmsContent('whatWeAre.tag', 'WHAT WE ARE')
@@ -24,7 +24,7 @@ export default function WhatWeArePage({ onNavigate }) {
         {/* ========================================================================= */}
         {/* 1. HERO HEADER SECTION                                                    */}
         {/* ========================================================================= */}
-        <FadeIn direction="up" className="text-center max-w-4xl mx-auto mb-16 sm:mb-20 lg:mb-24">
+        <ScrollReveal y={50} amount={0.2} className="text-center max-w-4xl mx-auto mb-16 sm:mb-20 lg:mb-24">
           
           {/* Top Pill Badge */}
           <div
@@ -56,12 +56,12 @@ export default function WhatWeArePage({ onNavigate }) {
             {subheading}
           </p>
 
-        </FadeIn>
+        </ScrollReveal>
 
         {/* ========================================================================= */}
         {/* 2. CONTENT & IMAGE COLLAGE GRID SECTION                                   */}
         {/* ========================================================================= */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-center mb-20 lg:mb-28">
+        <ScrollReveal y={50} amount={0.2} className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-center mb-20 lg:mb-28">
           
           {/* Left Side: 3-Image Collage Grid */}
           <FadeIn direction="right" className="lg:col-span-7">
@@ -155,12 +155,12 @@ export default function WhatWeArePage({ onNavigate }) {
 
           </FadeIn>
 
-        </div>
+        </ScrollReveal>
 
         {/* ========================================================================= */}
         {/* 3. OUR CRAFT & PROTECTION SECTION                                         */}
         {/* ========================================================================= */}
-        <div className="pt-16 sm:pt-20 border-t border-slate-800/80">
+        <ScrollReveal y={50} amount={0.2} className="pt-16 sm:pt-20 border-t border-slate-800/80">
           
           {/* Section Header */}
           <FadeIn direction="up" className="text-center mb-12 sm:mb-16">
@@ -287,13 +287,15 @@ export default function WhatWeArePage({ onNavigate }) {
             </div>
           </FadeIn>
 
-        </div>
+        </ScrollReveal>
 
       </div>
     </div>
 
     {/* Feature Highlight: Designed for the Next Generation of Batsmen */}
-    <NextGenFeatureBanner />
+    <ScrollReveal y={50} amount={0.2}>
+      <NextGenFeatureBanner />
+    </ScrollReveal>
   </>
   )
 }

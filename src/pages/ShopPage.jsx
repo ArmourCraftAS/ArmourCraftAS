@@ -4,7 +4,7 @@ import CustomSquadBanner from '../components/CustomSquadBanner'
 import { initialAdminProducts } from '../admin/data/initialProducts'
 import { supabase } from '../../lib/supabaseClient'
 import { useCmsContent } from '../admin/cmsStore'
-import { FadeIn, StaggerContainer, StaggerItem } from '../components/StorefrontMotion'
+import { FadeIn, StaggerContainer, StaggerItem, ScrollReveal } from '../components/StorefrontMotion'
 
 export default function ShopPage({ onAddToCart }) {
   const heading = useCmsContent('shop.heading', 'ALL PROTECTION GEAR')
@@ -125,7 +125,7 @@ export default function ShopPage({ onAddToCart }) {
       <div className="max-w-7xl mx-auto">
         
         {/* Page Title & Subtitle */}
-        <FadeIn direction="up" className="text-center mb-10 sm:mb-12">
+        <ScrollReveal y={50} amount={0.2} className="text-center mb-10 sm:mb-12">
           <h1
             data-cms-path="shop.heading"
             data-cms-label="Shop Page Heading"
@@ -140,10 +140,10 @@ export default function ShopPage({ onAddToCart }) {
           >
             {subheading}
           </p>
-        </FadeIn>
+        </ScrollReveal>
 
         {/* Category Filter Tabs */}
-        <FadeIn delay={0.1} direction="up" className="flex flex-wrap items-center justify-center gap-2.5 sm:gap-3 mb-10">
+        <ScrollReveal y={50} amount={0.2} delay={0.08} className="flex flex-wrap items-center justify-center gap-2.5 sm:gap-3 mb-10">
           {categories.map((cat) => {
             const isActive = activeCategory === cat
             return (
@@ -161,10 +161,10 @@ export default function ShopPage({ onAddToCart }) {
               </button>
             )
           })}
-        </FadeIn>
+        </ScrollReveal>
 
         {/* Secondary Filter & Search Bar */}
-        <FadeIn delay={0.15} direction="up" className="flex flex-col md:flex-row items-stretch md:items-center justify-between gap-4 mb-10 pb-6 border-b border-slate-800/80">
+        <ScrollReveal y={50} amount={0.2} delay={0.12} className="flex flex-col md:flex-row items-stretch md:items-center justify-between gap-4 mb-10 pb-6 border-b border-slate-800/80">
           
           {/* Stance Selector */}
           <div className="flex flex-wrap items-center gap-2 sm:gap-3">
@@ -202,85 +202,89 @@ export default function ShopPage({ onAddToCart }) {
             <Search className="w-4 h-4 text-slate-400 absolute right-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
           </div>
 
-        </FadeIn>
+        </ScrollReveal>
 
         {/* Product Grid (3 Columns) */}
-        {filteredProducts.length > 0 ? (
-          <StaggerContainer staggerDelay={0.08} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
-            {filteredProducts.map((product) => {
-              const isAdded = addedItem === product.id
+        <ScrollReveal y={50} amount={0.2}>
+          {filteredProducts.length > 0 ? (
+            <StaggerContainer staggerDelay={0.08} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
+              {filteredProducts.map((product) => {
+                const isAdded = addedItem === product.id
 
-              return (
-                <StaggerItem
-                  key={product.id}
-                  data-dynamic-type="product"
-                  data-dynamic-id={product.id}
-                  data-dynamic-title={product.title}
-                  className="bg-[#0b1222] border border-slate-800/80 rounded-2xl p-5 sm:p-6 flex flex-col justify-between card-elevate group"
-                >
-                  {/* Product Image Frame */}
-                  <div className="w-full aspect-[4/3] rounded-xl bg-[#060a14] border border-slate-800/60 overflow-hidden flex items-center justify-center p-4 mb-5">
-                    <img
-                      src={product.image}
-                      alt={`ARMOURCRAFT AS ${product.title} - Pro Cricket Protection`}
-                      className="w-full h-full object-contain filter drop-shadow-[0_4px_16px_rgba(0,0,0,0.7)] group-hover:scale-105 transition-transform duration-300 ease-out select-none"
-                      loading="lazy"
-                    />
-                  </div>
-
-                  {/* Product Details */}
-                  <div className="flex-1 flex flex-col justify-between">
-                    <div className="mb-4">
-                      <h3 className="text-white font-bold text-base sm:text-lg leading-snug group-hover:text-blue-300 transition-colors mb-2">
-                        {product.title}
-                      </h3>
-                      <p className="text-slate-400 text-xs sm:text-sm leading-relaxed">
-                        {product.description}
-                      </p>
+                return (
+                  <StaggerItem
+                    key={product.id}
+                    data-dynamic-type="product"
+                    data-dynamic-id={product.id}
+                    data-dynamic-title={product.title}
+                    className="bg-[#0b1222] border border-slate-800/80 rounded-2xl p-5 sm:p-6 flex flex-col justify-between card-elevate group"
+                  >
+                    {/* Product Image Frame */}
+                    <div className="w-full aspect-[4/3] rounded-xl bg-[#060a14] border border-slate-800/60 overflow-hidden flex items-center justify-center p-4 mb-5">
+                      <img
+                        src={product.image}
+                        alt={`ARMOURCRAFT AS ${product.title} - Pro Cricket Protection`}
+                        className="w-full h-full object-contain filter drop-shadow-[0_4px_16px_rgba(0,0,0,0.7)] group-hover:scale-105 transition-transform duration-300 ease-out select-none"
+                        loading="lazy"
+                      />
                     </div>
 
-                    {/* Price and QUICK ADD Button */}
-                    <div className="flex items-center justify-between gap-4 pt-3 border-t border-slate-800/60 mt-auto">
-                      <div className="text-white font-black text-xl sm:text-2xl tracking-tight">
-                        {typeof product.price === 'number'
-                          ? `$${product.price.toFixed(2)}`
-                          : product.price?.toString().startsWith('$')
-                          ? product.price
-                          : `$${product.price || '0.00'}`}
+                    {/* Product Details */}
+                    <div className="flex-1 flex flex-col justify-between">
+                      <div className="mb-4">
+                        <h3 className="text-white font-bold text-base sm:text-lg leading-snug group-hover:text-blue-300 transition-colors mb-2">
+                          {product.title}
+                        </h3>
+                        <p className="text-slate-400 text-xs sm:text-sm leading-relaxed">
+                          {product.description}
+                        </p>
                       </div>
 
-                      <button
-                        type="button"
-                        onClick={() => handleAdd(product)}
-                        className="py-2.5 px-4 rounded-xl font-bold text-xs uppercase tracking-wider btn-elevate flex items-center gap-1.5 cursor-pointer shadow-md bg-[#1762f0] hover:bg-[#1354d4] text-white shadow-blue-600/30"
-                      >
-                        <span>ADD TO CART</span>
-                        <ShoppingCart className="w-3.5 h-3.5 stroke-[2.5]" />
-                      </button>
+                      {/* Price and QUICK ADD Button */}
+                      <div className="flex items-center justify-between gap-4 pt-3 border-t border-slate-800/60 mt-auto">
+                        <div className="text-white font-black text-xl sm:text-2xl tracking-tight">
+                          {typeof product.price === 'number'
+                            ? `$${product.price.toFixed(2)}`
+                            : product.price?.toString().startsWith('$')
+                            ? product.price
+                            : `$${product.price || '0.00'}`}
+                        </div>
+
+                        <button
+                          type="button"
+                          onClick={() => handleAdd(product)}
+                          className="py-2.5 px-4 rounded-xl font-bold text-xs uppercase tracking-wider btn-elevate flex items-center gap-1.5 cursor-pointer shadow-md bg-[#1762f0] hover:bg-[#1354d4] text-white shadow-blue-600/30"
+                        >
+                          <span>ADD TO CART</span>
+                          <ShoppingCart className="w-3.5 h-3.5 stroke-[2.5]" />
+                        </button>
+                      </div>
                     </div>
-                  </div>
-                </StaggerItem>
-              )
-            })}
-          </StaggerContainer>
-        ) : (
-          /* Empty State */
-          <div className="text-center py-20 bg-[#091122]/40 rounded-2xl border border-slate-800/60">
-            <p className="text-slate-400 text-base mb-4">
-              No products found matching &ldquo;{searchQuery}&rdquo; in this category.
-            </p>
-            <button
-              type="button"
-              onClick={resetFilters}
-              className="px-5 py-2.5 bg-[#1762f0] hover:bg-blue-600 text-white rounded-xl text-xs font-bold tracking-wider uppercase transition-all cursor-pointer"
-            >
-              Reset Filters
-            </button>
-          </div>
-        )}
+                  </StaggerItem>
+                )
+              })}
+            </StaggerContainer>
+          ) : (
+            /* Empty State */
+            <div className="text-center py-20 bg-[#091122]/40 rounded-2xl border border-slate-800/60">
+              <p className="text-slate-400 text-base mb-4">
+                No products found matching &ldquo;{searchQuery}&rdquo; in this category.
+              </p>
+              <button
+                type="button"
+                onClick={resetFilters}
+                className="px-5 py-2.5 bg-[#1762f0] hover:bg-blue-600 text-white rounded-xl text-xs font-bold tracking-wider uppercase transition-all cursor-pointer"
+              >
+                Reset Filters
+              </button>
+            </div>
+          )}
+        </ScrollReveal>
 
         {/* Customization Callout Banner Section */}
-        <CustomSquadBanner />
+        <ScrollReveal y={50} amount={0.2} className="mt-14 sm:mt-18">
+          <CustomSquadBanner />
+        </ScrollReveal>
 
       </div>
     </div>

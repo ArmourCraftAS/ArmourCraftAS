@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import { ShoppingBag, Menu, X } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { useStorefrontMotion } from './StorefrontMotion'
+import { useStorefrontMotion, ScrollReveal } from './StorefrontMotion'
 
 export default function Navbar({ cartCount = 0, currentPath = '/', onNavigate, onOpenCart }) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
@@ -41,18 +41,13 @@ export default function Navbar({ cartCount = 0, currentPath = '/', onNavigate, o
     setMobileMenuOpen(false)
   }
 
-  const HeaderTag = isMotionEnabled ? motion.header : 'header'
-  const headerMotionProps = isMotionEnabled
-    ? {
-        initial: { y: -70, opacity: 0 },
-        animate: { y: 0, opacity: 1 },
-        transition: { duration: 0.5, ease: [0.16, 1, 0.3, 1] }
-      }
-    : {}
-
   return (
-    <header
-      className="sticky top-0 z-50 w-full bg-[#060a12]/95 backdrop-blur-md border-b border-white/[0.06] animate-slide-down"
+    <ScrollReveal
+      as="header"
+      y={-30}
+      amount={0.1}
+      duration={0.55}
+      className="sticky top-0 z-50 w-full bg-[#060a12]/95 backdrop-blur-md border-b border-white/[0.06]"
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
         
@@ -169,7 +164,7 @@ export default function Navbar({ cartCount = 0, currentPath = '/', onNavigate, o
           </motion.div>
         )}
       </AnimatePresence>
-    </header>
+    </ScrollReveal>
   )
 }
 

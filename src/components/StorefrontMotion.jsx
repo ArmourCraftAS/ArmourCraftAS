@@ -1,4 +1,5 @@
 import React, { createContext, useContext } from 'react'
+import { motion } from 'framer-motion'
 
 /**
  * Helper to check if the current environment is the public customer storefront
@@ -16,6 +17,90 @@ export function useStorefrontMotion() {
   const contextVal = useContext(StorefrontAnimationContext)
   if (contextVal !== null) return contextVal
   return isStorefront()
+}
+
+/**
+ * Reusable scroll-reveal viewport animation hook powered by framer-motion.
+ * Features:
+ * - whileInView={{ opacity: 1, y: 0 }}
+ * - initial={{ opacity: 0, y: 50 }}
+ * - viewport={{ once: true, amount: 0.2 }}
+ */
+export function useScrollReveal(options = {}) {
+  const enableMotion = useStorefrontMotion()
+  const {
+    y = 50,
+    amount = 0.2,
+    once = true,
+    duration = 0.65,
+    delay = 0,
+    ease = [0.25, 0.1, 0.25, 1]
+  } = options
+
+  if (!enableMotion) {
+    return {
+      initial: false,
+      animate: false
+    }
+  }
+
+  return {
+    initial: { opacity: 0, y },
+    whileInView: { opacity: 1, y: 0 },
+    viewport: { once, amount },
+    transition: { duration, delay, ease }
+  }
+}
+
+/**
+ * Reusable scroll-reveal viewport animation component powered by framer-motion.
+ * whileInView={{ opacity: 1, y: 0 }} with initial={{ opacity: 0, y: 50 }} and viewport={{ once: true, amount: 0.2 }}
+ *
+ * Exclusively active on public storefront; renders static HTML in /admin/* to preserve editor performance.
+ */
+export function ScrollReveal({
+  children,
+  className = '',
+  style = {},
+  y = 50,
+  amount = 0.2,
+  once = true,
+  duration = 0.65,
+  delay = 0,
+  as = 'div',
+  ease = [0.25, 0.1, 0.25, 1],
+  ...rest
+}) {
+  const enableMotion = useStorefrontMotion()
+
+  if (!enableMotion) {
+    const Component = as || 'div'
+    return (
+      <Component className={className} style={style} {...rest}>
+        {children}
+      </Component>
+    )
+  }
+
+  const MotionComponent = motion[as] || motion.div
+
+  return (
+    <MotionComponent
+      initial={{ opacity: 0, y }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once, amount }}
+      transition={{
+        duration,
+        delay,
+        ease
+      }}
+      className={className}
+      style={style}
+      {...rest}
+    >
+      {children}
+    </MotionComponent>
+  )
 }
 
 /**
@@ -271,3 +356,5 @@ export function TextReveal({
     </span>
   )
 }
+
+export default ScrollReveal

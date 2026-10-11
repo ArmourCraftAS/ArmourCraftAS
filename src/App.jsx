@@ -22,7 +22,7 @@ import { useCart } from './context/CartContext'
 import AdminRoot from './admin/AdminRoot'
 import { syncPublishedCmsFromSupabase } from './admin/cmsStore'
 import { AnimatePresence } from 'framer-motion'
-import { PageTransition } from './components/StorefrontMotion'
+import { PageTransition, ScrollReveal, StorefrontAnimationContext } from './components/StorefrontMotion'
 
 export default function App() {
   const {
@@ -158,9 +158,10 @@ export default function App() {
   }
 
   return (
-    <div className="min-h-screen bg-[#060a12] text-slate-100 flex flex-col font-sans selection:bg-blue-600 selection:text-white">
-      {/* 1. Header / Navbar (Linked directly to dynamic cartCount) */}
-      <Navbar
+    <StorefrontAnimationContext.Provider value={true}>
+      <div className="min-h-screen bg-[#060a12] text-slate-100 flex flex-col font-sans selection:bg-blue-600 selection:text-white">
+        {/* 1. Header / Navbar (Linked directly to dynamic cartCount) */}
+        <Navbar
         cartCount={cartCount}
         currentPath={currentPath}
         onNavigate={navigate}
@@ -183,32 +184,48 @@ export default function App() {
               <ContactPage onNavigate={navigate} />
             ) : (
               <>
-                {/* Hero Section */}
-                <Hero onNavigate={navigate} />
+                {/* 1. Hero Section */}
+                <ScrollReveal as="div" id="hero-section" y={50} amount={0.15}>
+                  <Hero onNavigate={navigate} />
+                </ScrollReveal>
 
-                {/* PRO MATCH ESSENTIALS Section */}
-                <ProMatchEssentials
-                  onAddToCart={handleOpenQuickAdd}
-                  onNavigate={navigate}
-                />
+                {/* 2. PRO MATCH ESSENTIALS Section (Features) */}
+                <ScrollReveal as="div" id="features-section" y={50} amount={0.2}>
+                  <ProMatchEssentials
+                    onAddToCart={handleOpenQuickAdd}
+                    onNavigate={navigate}
+                  />
+                </ScrollReveal>
 
-                {/* THE ARMOURCRAFT ADVANTAGE Section */}
-                <ArmourAdvantage />
+                {/* 3. THE ARMOURCRAFT ADVANTAGE Section (Advantages) */}
+                <ScrollReveal as="div" id="advantages-section" y={50} amount={0.2}>
+                  <ArmourAdvantage />
+                </ScrollReveal>
 
-                {/* CUSTOM TEAM GEAR & JERSEY MATCHING Banner */}
-                <CustomGearBanner />
+                {/* 4. CUSTOM TEAM GEAR & JERSEY MATCHING Banner (Banner) */}
+                <ScrollReveal as="div" id="custom-team" y={50} amount={0.2}>
+                  <CustomGearBanner />
+                </ScrollReveal>
 
-                {/* SmartThighs vs. The Others Comparison Table Section */}
-                <ComparisonTable />
+                {/* 5. SmartThighs vs. The Others Comparison Table Section */}
+                <ScrollReveal as="div" id="comparison-section" y={50} amount={0.2}>
+                  <ComparisonTable />
+                </ScrollReveal>
 
-                {/* BROWSE THE SMART COLLECTION Section */}
-                <SmartCollection onAddToCart={handleOpenQuickAdd} />
+                {/* 6. BROWSE THE SMART COLLECTION Section (Product Grid) */}
+                <ScrollReveal as="div" id="products-section" y={50} amount={0.2}>
+                  <SmartCollection onAddToCart={handleOpenQuickAdd} />
+                </ScrollReveal>
 
-                {/* TRUSTED BY 10,000+ BATSMEN Testimonials Section */}
-                <Testimonials />
+                {/* 7. TRUSTED BY 10,000+ BATSMEN Testimonials Section (Testimonials) */}
+                <ScrollReveal as="div" id="testimonials-section" y={50} amount={0.2}>
+                  <Testimonials />
+                </ScrollReveal>
 
-                {/* Frequently Asked Questions (FAQ) Section */}
-                <FAQ />
+                {/* 8. Frequently Asked Questions (FAQ) Section */}
+                <ScrollReveal as="div" id="faq" y={50} amount={0.2}>
+                  <FAQ />
+                </ScrollReveal>
               </>
             )}
           </main>
@@ -256,6 +273,7 @@ export default function App() {
           openCart()
         }}
       />
-    </div>
+      </div>
+    </StorefrontAnimationContext.Provider>
   )
 }

@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react'
 import { ArrowLeft, Clock, Calendar, User, Tag, Share2, ArrowRight } from 'lucide-react'
 import { getBlogBySlug, initialBlogs } from '../data/blogsData'
-import { FadeIn, StaggerContainer, StaggerItem } from '../components/StorefrontMotion'
+import { FadeIn, StaggerContainer, StaggerItem, ScrollReveal } from '../components/StorefrontMotion'
 
 export default function BlogDetailPage({ slug, onNavigate }) {
   const blog = getBlogBySlug(slug)
@@ -53,7 +53,7 @@ export default function BlogDetailPage({ slug, onNavigate }) {
         {/* ========================================================================= */}
         {/* 2. ARTICLE HEADER SECTION                                                 */}
         {/* ========================================================================= */}
-        <FadeIn direction="up">
+        <ScrollReveal y={50} amount={0.2}>
           <header className="mb-8 sm:mb-10">
             
             {/* Main Title */}
@@ -89,12 +89,12 @@ export default function BlogDetailPage({ slug, onNavigate }) {
             </div>
 
           </header>
-        </FadeIn>
+        </ScrollReveal>
 
         {/* ========================================================================= */}
         {/* 3. FEATURED IMAGE BANNER                                                  */}
         {/* ========================================================================= */}
-        <FadeIn direction="up" delay={0.1}>
+        <ScrollReveal y={50} amount={0.2} delay={0.1}>
           <div className="relative w-full rounded-2xl sm:rounded-3xl overflow-hidden bg-[#0c1527] border border-slate-800/80 shadow-2xl mb-12 sm:mb-16 card-elevate">
             <div className="aspect-[16/9] sm:aspect-[21/9] w-full overflow-hidden relative">
               <img
@@ -106,12 +106,12 @@ export default function BlogDetailPage({ slug, onNavigate }) {
               <div className="absolute inset-0 bg-gradient-to-t from-[#060a12]/70 via-transparent to-transparent pointer-events-none" />
             </div>
           </div>
-        </FadeIn>
+        </ScrollReveal>
 
         {/* ========================================================================= */}
         {/* 4. BODY CONTENT SECTION                                                   */}
         {/* ========================================================================= */}
-        <FadeIn direction="up" delay={0.15}>
+        <ScrollReveal y={50} amount={0.2} delay={0.15}>
           <article className="max-w-4xl mx-auto space-y-10 sm:space-y-12">
             {blog.sections && blog.sections.length > 0 ? (
               blog.sections.map((sec, sIdx) => (
@@ -134,13 +134,13 @@ export default function BlogDetailPage({ slug, onNavigate }) {
               </div>
             )}
           </article>
-        </FadeIn>
+        </ScrollReveal>
 
         {/* ========================================================================= */}
         {/* 5. FOOTER NAVIGATION STRIP & MORE INSIGHTS                                */}
         {/* ========================================================================= */}
-        <div className="mt-16 pt-10 border-t border-slate-800/80">
-          <FadeIn direction="up" className="flex flex-wrap items-center justify-between gap-4 mb-8">
+        <ScrollReveal y={50} amount={0.2} className="mt-16 pt-10 border-t border-slate-800/80">
+          <div className="flex flex-wrap items-center justify-between gap-4 mb-8">
             <h3 className="text-lg font-bold text-white uppercase tracking-wider">
               More Protection Insights
             </h3>
@@ -152,7 +152,7 @@ export default function BlogDetailPage({ slug, onNavigate }) {
               <span>View All Articles</span>
               <ArrowRight className="w-4 h-4" />
             </button>
-          </FadeIn>
+          </div>
 
           <StaggerContainer staggerDelay={0.08} className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {relatedBlogs.map((rel) => (
@@ -177,7 +177,7 @@ export default function BlogDetailPage({ slug, onNavigate }) {
               </StaggerItem>
             ))}
           </StaggerContainer>
-        </div>
+        </ScrollReveal>
 
       </div>
     </div>

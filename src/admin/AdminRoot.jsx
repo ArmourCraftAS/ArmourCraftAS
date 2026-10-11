@@ -10,6 +10,7 @@ import AdminProductsPage from './pages/AdminProductsPage'
 import AdminBlogsPage from './pages/AdminBlogsPage'
 import AdminFaqsPage from './pages/AdminFaqsPage'
 import AdminOrdersPage from './pages/AdminOrdersPage'
+import { StorefrontAnimationContext } from '../components/StorefrontMotion'
 
 function AdminRouter({ currentPath, onNavigate }) {
   const { isAuthenticated } = useAdminAuth()
@@ -82,10 +83,12 @@ function AdminRouter({ currentPath, onNavigate }) {
 
 export default function AdminRoot({ currentPath, onNavigate }) {
   return (
-    <div data-admin-root="true" className="admin-workspace">
-      <AdminAuthProvider>
-        <AdminRouter currentPath={currentPath} onNavigate={onNavigate} />
-      </AdminAuthProvider>
-    </div>
+    <StorefrontAnimationContext.Provider value={false}>
+      <div data-admin-root="true" className="admin-workspace">
+        <AdminAuthProvider>
+          <AdminRouter currentPath={currentPath} onNavigate={onNavigate} />
+        </AdminAuthProvider>
+      </div>
+    </StorefrontAnimationContext.Provider>
   )
 }

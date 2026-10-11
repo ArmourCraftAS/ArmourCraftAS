@@ -4,7 +4,7 @@ import CountryPhoneInput from '../components/CountryPhoneInput'
 import { getStoredFaqs } from '../data/faqsData'
 import { supabase } from '../../lib/supabaseClient'
 import { useCmsContent } from '../admin/cmsStore'
-import { FadeIn, StaggerContainer, StaggerItem } from '../components/StorefrontMotion'
+import { FadeIn, StaggerContainer, StaggerItem, ScrollReveal } from '../components/StorefrontMotion'
 
 export default function ContactPage() {
   const heading = useCmsContent('contact.heading', "WE'RE HERE TO KEEP YOU PROTECTED.")
@@ -92,7 +92,7 @@ export default function ContactPage() {
         {/* ========================================================================= */}
         {/* 1. HEADER SECTION (CENTERED TEXT)                                         */}
         {/* ========================================================================= */}
-        <FadeIn direction="up" className="text-center max-w-3xl mx-auto">
+        <ScrollReveal y={50} amount={0.2} className="text-center max-w-3xl mx-auto">
           <h1
             data-cms-path="contact.heading"
             data-cms-label="Contact Page Main Heading"
@@ -107,12 +107,12 @@ export default function ContactPage() {
           >
             {subheading}
           </p>
-        </FadeIn>
+        </ScrollReveal>
 
         {/* ========================================================================= */}
         {/* 2. MAIN 2-COLUMN LAYOUT                                                   */}
         {/* ========================================================================= */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-10 items-start">
+        <ScrollReveal y={50} amount={0.2} className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-10 items-start">
           
           {/* Left Side: Interactive Contact Form Card */}
           <FadeIn direction="right" className="lg:col-span-7 bg-[#0b1324] border border-slate-800/80 rounded-2xl sm:rounded-3xl p-6 sm:p-8 lg:p-10 shadow-2xl backdrop-blur-md relative overflow-hidden card-elevate">
@@ -331,22 +331,22 @@ export default function ContactPage() {
 
           </FadeIn>
 
-        </div>
+        </ScrollReveal>
 
         {/* ========================================================================= */}
         {/* 3. INTERACTIVE FREQUENTLY ASKED QUESTIONS (FAQ) SECTION                   */}
         {/* ========================================================================= */}
-        <section aria-label="Frequently Asked Questions" className="max-w-4xl mx-auto pt-6 sm:pt-10">
+        <ScrollReveal as="section" aria-label="Frequently Asked Questions" y={50} amount={0.2} className="max-w-4xl mx-auto pt-6 sm:pt-10">
           
           {/* Centered Heading */}
-          <FadeIn direction="up" className="text-center mb-8 sm:mb-10">
+          <div className="text-center mb-8 sm:mb-10">
             <h2 className="text-2xl sm:text-3xl lg:text-4xl font-black text-white uppercase tracking-tight">
               FREQUENTLY ASKED{' '}
               <span className="text-[#1762f0] italic drop-shadow-[0_0_20px_rgba(23,98,240,0.5)]">
                 QUESTIONS
               </span>
             </h2>
-          </FadeIn>
+          </div>
 
           {/* Accordion Cards List */}
           <StaggerContainer staggerDelay={0.06} className="space-y-4">
@@ -384,7 +384,7 @@ export default function ContactPage() {
             })}
           </StaggerContainer>
 
-        </section>
+        </ScrollReveal>
 
       </div>
     </div>
