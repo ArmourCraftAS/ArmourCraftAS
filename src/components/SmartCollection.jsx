@@ -87,7 +87,7 @@ export default function SmartCollection({ onAddToCart }) {
   }
 
   return (
-    <section className="relative w-full bg-[#060a12] py-12 sm:py-20 lg:py-28 px-4 sm:px-6 lg:px-8 text-white border-t border-slate-900/80 overflow-hidden">
+    <section className="relative w-full bg-[#060a12] py-10 sm:py-20 lg:py-28 px-2.5 xs:px-4 sm:px-6 lg:px-8 text-white border-t border-slate-900/80 overflow-hidden">
       
       {/* Background ambient lighting */}
       <div className="absolute top-1/4 right-1/4 w-[500px] h-[500px] bg-blue-600/5 blur-[150px] pointer-events-none rounded-full" />
@@ -107,14 +107,14 @@ export default function SmartCollection({ onAddToCart }) {
 
         {/* Category Filter Tabs */}
         <FadeIn direction="up" distance={15} delay={0.1}>
-          <div className="flex flex-wrap items-center justify-center gap-2 sm:gap-3 mb-8 sm:mb-14">
+          <div className="flex flex-wrap items-center justify-center gap-2 sm:gap-3 mb-6 sm:mb-14">
             {categories.map((tab) => {
               const isActive = activeTab === tab
               return (
                 <button
                   key={tab}
                   onClick={() => setActiveTab(tab)}
-                  className={`px-3.5 sm:px-6 py-2 rounded-full text-[11px] sm:text-xs font-bold tracking-wider uppercase transition-all duration-200 cursor-pointer btn-hover ${
+                  className={`px-3 sm:px-6 py-1.5 sm:py-2 rounded-full text-[11px] sm:text-xs font-bold tracking-wider uppercase transition-all duration-200 cursor-pointer btn-hover ${
                     isActive
                       ? 'bg-[#1762f0] text-white shadow-lg shadow-blue-600/35 scale-[1.02]'
                       : 'bg-[#0d1627] hover:bg-[#121f36] text-slate-400 hover:text-white border border-slate-800'
@@ -127,18 +127,18 @@ export default function SmartCollection({ onAddToCart }) {
           </div>
         </FadeIn>
 
-        {/* Product Grid (2-col on mobile, 4-col on lg) */}
-        <StaggerContainer staggerDelay={0.08} className="grid grid-cols-2 lg:grid-cols-4 gap-2.5 sm:gap-6">
+        {/* Product Grid (Strict 2-column on mobile 320px+, 4-col on lg) */}
+        <StaggerContainer staggerDelay={0.08} className="grid grid-cols-2 lg:grid-cols-4 gap-2 sm:gap-4 lg:gap-6">
           {filteredProducts.map((product) => (
-            <StaggerItem key={product.id}>
+            <StaggerItem key={product.id} className="h-full">
               <div
                 data-dynamic-type="product"
                 data-dynamic-id={product.id}
                 data-dynamic-title={product.title}
-                className="bg-[#0b1222] border border-slate-800/80 rounded-xl sm:rounded-2xl p-2.5 sm:p-5 flex flex-col justify-between card-elevate card-hover animate-slide-up group h-full"
+                className="bg-[#0b1222] border border-slate-800/80 rounded-xl sm:rounded-2xl p-2 sm:p-4 md:p-5 flex flex-col justify-between card-elevate card-hover animate-slide-up group h-full"
               >
-                {/* Product Image Frame */}
-                <div className="w-full aspect-square rounded-lg sm:rounded-xl bg-[#060a14] border border-slate-800/60 overflow-hidden flex items-center justify-center p-2 sm:p-3 mb-2.5 sm:mb-4">
+                {/* Product Image Frame (Compact scaled height for 320px+) */}
+                <div className="w-full aspect-square max-h-32 xs:max-h-36 sm:max-h-48 rounded-lg sm:rounded-xl bg-[#060a14] border border-slate-800/60 overflow-hidden flex items-center justify-center p-1.5 sm:p-3 mb-2 sm:mb-3">
                   <img
                     src={product.image}
                     alt={product.alt}
@@ -150,7 +150,7 @@ export default function SmartCollection({ onAddToCart }) {
                 {/* Product Info */}
                 <div className="flex-1 flex flex-col justify-between">
                   <div>
-                    <h3 className="text-white font-bold text-[11px] sm:text-sm uppercase tracking-wide leading-snug group-hover:text-blue-300 transition-colors mb-0.5 sm:mb-1 line-clamp-2">
+                    <h3 className="text-white font-bold text-xs sm:text-sm uppercase tracking-wide leading-tight group-hover:text-blue-300 transition-colors mb-0.5 sm:mb-1 line-clamp-2">
                       {product.title}
                     </h3>
                     <p className="text-slate-400 text-[10px] sm:text-xs mb-1.5 sm:mb-3 leading-tight line-clamp-1 sm:line-clamp-none">
@@ -158,16 +158,16 @@ export default function SmartCollection({ onAddToCart }) {
                     </p>
                   </div>
 
-                  <div className="text-blue-400 sm:text-white font-black text-xs sm:text-lg mb-2 sm:mb-4">
+                  <div className="text-blue-400 sm:text-white font-black text-xs sm:text-sm md:text-lg mb-2 sm:mb-3">
                     {product.price}
                   </div>
                 </div>
 
-                {/* Dark ADD TO CART Button */}
+                {/* Compact ADD TO CART Button */}
                 <button
                   type="button"
                   onClick={() => handleAdd(product)}
-                  className="w-full py-2 px-2 sm:py-2.5 sm:px-4 rounded-lg sm:rounded-xl font-bold text-[10px] sm:text-xs uppercase tracking-wider transition-all duration-200 flex items-center justify-center gap-1.5 border bg-[#090e1a] hover:bg-[#1762f0] text-slate-300 hover:text-white border-slate-800 hover:border-blue-500 btn-elevate btn-hover cursor-pointer mt-auto"
+                  className="w-full py-1.5 sm:py-2.5 px-1.5 sm:px-4 rounded-lg sm:rounded-xl font-bold text-[10px] sm:text-xs uppercase tracking-tight sm:tracking-wider transition-all duration-200 flex items-center justify-center gap-1 sm:gap-1.5 border bg-[#090e1a] hover:bg-[#1762f0] text-slate-300 hover:text-white border-slate-800 hover:border-blue-500 btn-elevate btn-hover cursor-pointer mt-auto"
                 >
                   <span className="truncate">{addedItem === product.id ? 'ADDED!' : 'ADD TO CART'}</span>
                   <ShoppingCart className="w-3 h-3 sm:w-3.5 sm:h-3.5 shrink-0 hidden xs:inline-block" />
