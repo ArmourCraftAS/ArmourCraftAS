@@ -207,7 +207,7 @@ export default function ShopPage({ onAddToCart }) {
         {/* Product Grid (Single-col on mobile, 2-col on md, 3-col on lg) */}
         <ScrollReveal y={50} amount={0.2}>
           {filteredProducts.length > 0 ? (
-            <StaggerContainer staggerDelay={0.08} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-6 lg:gap-8">
+            <StaggerContainer staggerDelay={0.08} className="grid grid-cols-2 lg:grid-cols-3 gap-2.5 sm:gap-6 lg:gap-8">
               {filteredProducts.map((product) => {
                 const isAdded = addedItem === product.id
 
@@ -217,10 +217,10 @@ export default function ShopPage({ onAddToCart }) {
                     data-dynamic-type="product"
                     data-dynamic-id={product.id}
                     data-dynamic-title={product.title}
-                    className="bg-[#0b1222] border border-slate-800/80 rounded-2xl p-5 sm:p-6 flex flex-col justify-between card-elevate group"
+                    className="bg-[#0b1222] border border-slate-800/80 rounded-xl sm:rounded-2xl p-2.5 sm:p-5 md:p-6 flex flex-col justify-between card-elevate group"
                   >
                     {/* Product Image Frame */}
-                    <div className="w-full aspect-[4/3] rounded-xl bg-[#060a14] border border-slate-800/60 overflow-hidden flex items-center justify-center p-4 mb-5">
+                    <div className="w-full aspect-square sm:aspect-[4/3] rounded-lg sm:rounded-xl bg-[#060a14] border border-slate-800/60 overflow-hidden flex items-center justify-center p-2 sm:p-4 mb-2.5 sm:mb-5">
                       <img
                         src={product.image}
                         alt={`ARMOURCRAFT AS ${product.title} - Pro Cricket Protection`}
@@ -231,18 +231,18 @@ export default function ShopPage({ onAddToCart }) {
 
                     {/* Product Details */}
                     <div className="flex-1 flex flex-col justify-between">
-                      <div className="mb-4">
-                        <h3 className="text-white font-bold text-base sm:text-lg leading-snug group-hover:text-blue-300 transition-colors mb-2">
+                      <div className="mb-2 sm:mb-4">
+                        <h3 className="text-white font-bold text-xs sm:text-base md:text-lg leading-snug group-hover:text-blue-300 transition-colors mb-1 sm:mb-2 line-clamp-2">
                           {product.title}
                         </h3>
-                        <p className="text-slate-400 text-xs sm:text-sm leading-relaxed">
+                        <p className="text-slate-400 text-[10px] sm:text-xs md:text-sm leading-relaxed line-clamp-2 hidden sm:block">
                           {product.description}
                         </p>
                       </div>
 
                       {/* Price and QUICK ADD Button */}
-                      <div className="flex items-center justify-between gap-4 pt-3 border-t border-slate-800/60 mt-auto">
-                        <div className="text-white font-black text-xl sm:text-2xl tracking-tight">
+                      <div className="flex flex-col xs:flex-row xs:items-center justify-between gap-2 pt-2 sm:pt-3 border-t border-slate-800/60 mt-auto">
+                        <div className="text-blue-400 sm:text-white font-black text-xs sm:text-xl md:text-2xl tracking-tight">
                           {typeof product.price === 'number'
                             ? `$${product.price.toFixed(2)}`
                             : product.price?.toString().startsWith('$')
@@ -253,10 +253,10 @@ export default function ShopPage({ onAddToCart }) {
                         <button
                           type="button"
                           onClick={() => handleAdd(product)}
-                          className="py-2.5 px-4 rounded-xl font-bold text-xs uppercase tracking-wider btn-elevate flex items-center gap-1.5 cursor-pointer shadow-md bg-[#1762f0] hover:bg-[#1354d4] text-white shadow-blue-600/30"
+                          className="w-full xs:w-auto py-2 px-2 sm:py-2.5 sm:px-4 rounded-lg sm:rounded-xl font-bold text-[10px] sm:text-xs uppercase tracking-wider btn-elevate flex items-center justify-center gap-1 sm:gap-1.5 cursor-pointer shadow-md bg-[#1762f0] hover:bg-[#1354d4] text-white shadow-blue-600/30 shrink-0"
                         >
-                          <span>ADD TO CART</span>
-                          <ShoppingCart className="w-3.5 h-3.5 stroke-[2.5]" />
+                          <span className="truncate">{isAdded ? 'ADDED!' : 'ADD TO CART'}</span>
+                          <ShoppingCart className="w-3 h-3 sm:w-3.5 sm:h-3.5 stroke-[2.5] hidden xs:inline-block shrink-0" />
                         </button>
                       </div>
                     </div>

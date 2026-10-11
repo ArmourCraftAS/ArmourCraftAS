@@ -127,18 +127,18 @@ export default function SmartCollection({ onAddToCart }) {
           </div>
         </FadeIn>
 
-        {/* Product Grid (Single-col on mobile, 2-col on sm, 4-col on lg) */}
-        <StaggerContainer staggerDelay={0.08} className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
+        {/* Product Grid (2-col on mobile, 4-col on lg) */}
+        <StaggerContainer staggerDelay={0.08} className="grid grid-cols-2 lg:grid-cols-4 gap-2.5 sm:gap-6">
           {filteredProducts.map((product) => (
             <StaggerItem key={product.id}>
               <div
                 data-dynamic-type="product"
                 data-dynamic-id={product.id}
                 data-dynamic-title={product.title}
-                className="bg-[#0b1222] border border-slate-800/80 rounded-2xl p-4 sm:p-5 flex flex-col justify-between card-elevate card-hover animate-slide-up group h-full"
+                className="bg-[#0b1222] border border-slate-800/80 rounded-xl sm:rounded-2xl p-2.5 sm:p-5 flex flex-col justify-between card-elevate card-hover animate-slide-up group h-full"
               >
                 {/* Product Image Frame */}
-                <div className="w-full aspect-square rounded-xl bg-[#060a14] border border-slate-800/60 overflow-hidden flex items-center justify-center p-3 mb-4">
+                <div className="w-full aspect-square rounded-lg sm:rounded-xl bg-[#060a14] border border-slate-800/60 overflow-hidden flex items-center justify-center p-2 sm:p-3 mb-2.5 sm:mb-4">
                   <img
                     src={product.image}
                     alt={product.alt}
@@ -150,15 +150,15 @@ export default function SmartCollection({ onAddToCart }) {
                 {/* Product Info */}
                 <div className="flex-1 flex flex-col justify-between">
                   <div>
-                    <h3 className="text-white font-bold text-xs sm:text-sm uppercase tracking-wide leading-snug group-hover:text-blue-300 transition-colors mb-1">
+                    <h3 className="text-white font-bold text-[11px] sm:text-sm uppercase tracking-wide leading-snug group-hover:text-blue-300 transition-colors mb-0.5 sm:mb-1 line-clamp-2">
                       {product.title}
                     </h3>
-                    <p className="text-slate-400 text-xs mb-3 leading-snug">
+                    <p className="text-slate-400 text-[10px] sm:text-xs mb-1.5 sm:mb-3 leading-tight line-clamp-1 sm:line-clamp-none">
                       {product.subtitle}
                     </p>
                   </div>
 
-                  <div className="text-white font-black text-base sm:text-lg mb-4">
+                  <div className="text-blue-400 sm:text-white font-black text-xs sm:text-lg mb-2 sm:mb-4">
                     {product.price}
                   </div>
                 </div>
@@ -167,10 +167,10 @@ export default function SmartCollection({ onAddToCart }) {
                 <button
                   type="button"
                   onClick={() => handleAdd(product)}
-                  className="w-full py-2.5 px-4 rounded-xl font-bold text-xs uppercase tracking-wider transition-all duration-200 flex items-center justify-center gap-2 border bg-[#090e1a] hover:bg-[#1762f0] text-slate-300 hover:text-white border-slate-800 hover:border-blue-500 btn-elevate btn-hover cursor-pointer mt-auto"
+                  className="w-full py-2 px-2 sm:py-2.5 sm:px-4 rounded-lg sm:rounded-xl font-bold text-[10px] sm:text-xs uppercase tracking-wider transition-all duration-200 flex items-center justify-center gap-1.5 border bg-[#090e1a] hover:bg-[#1762f0] text-slate-300 hover:text-white border-slate-800 hover:border-blue-500 btn-elevate btn-hover cursor-pointer mt-auto"
                 >
-                  <span>ADD TO CART</span>
-                  <ShoppingCart className="w-3.5 h-3.5" />
+                  <span className="truncate">{addedItem === product.id ? 'ADDED!' : 'ADD TO CART'}</span>
+                  <ShoppingCart className="w-3 h-3 sm:w-3.5 sm:h-3.5 shrink-0 hidden xs:inline-block" />
                 </button>
               </div>
             </StaggerItem>

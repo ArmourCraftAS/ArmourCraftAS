@@ -131,18 +131,18 @@ export default function ProMatchEssentials({ onAddToCart, onNavigate }) {
           </div>
         </FadeIn>
 
-        {/* 3. Product Cards Grid (Single-column on mobile, 3-column on tablet/desktop) */}
-        <StaggerContainer staggerDelay={0.12} className="grid grid-cols-1 md:grid-cols-3 gap-5 sm:gap-6 lg:gap-8">
+        {/* 3. Product Cards Grid (2-column on mobile, 3-column on tablet/desktop) */}
+        <StaggerContainer staggerDelay={0.12} className="grid grid-cols-2 md:grid-cols-3 gap-2.5 sm:gap-6 lg:gap-8">
           {products.map((product) => (
             <StaggerItem key={product.id}>
               <div
                 data-dynamic-type="product"
                 data-dynamic-id={product.id}
                 data-dynamic-title={product.title}
-                className="bg-[#0b1222] border border-slate-800/90 rounded-2xl p-4 sm:p-5 flex flex-col justify-between card-elevate card-hover animate-slide-up group h-full"
+                className="bg-[#0b1222] border border-slate-800/90 rounded-xl sm:rounded-2xl p-2.5 sm:p-5 flex flex-col justify-between card-elevate card-hover animate-slide-up group h-full"
               >
                 {/* Product Image Frame */}
-                <div className="relative w-full aspect-square bg-[#050811] rounded-xl border border-slate-800/60 overflow-hidden flex items-center justify-center p-4 mb-5">
+                <div className="relative w-full aspect-square bg-[#050811] rounded-lg sm:rounded-xl border border-slate-800/60 overflow-hidden flex items-center justify-center p-2 sm:p-4 mb-2.5 sm:mb-5">
                   <img
                     src={product.image}
                     alt={product.alt}
@@ -154,11 +154,11 @@ export default function ProMatchEssentials({ onAddToCart, onNavigate }) {
                 </div>
 
                 {/* Product Title & Price Row */}
-                <div className="flex items-start justify-between gap-3 mb-5">
-                  <h3 className="text-white font-bold text-sm sm:text-base leading-snug group-hover:text-blue-200 transition-colors">
+                <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-1 sm:gap-3 mb-2.5 sm:mb-5 flex-grow">
+                  <h3 className="text-white font-bold text-xs sm:text-base leading-snug group-hover:text-blue-200 transition-colors line-clamp-2">
                     {product.title}
                   </h3>
-                  <span className="text-white font-extrabold text-base sm:text-lg tracking-tight shrink-0">
+                  <span className="text-blue-400 sm:text-white font-black text-xs sm:text-lg tracking-tight shrink-0">
                     {product.price}
                   </span>
                 </div>
@@ -167,12 +167,12 @@ export default function ProMatchEssentials({ onAddToCart, onNavigate }) {
                 <button
                   type="button"
                   onClick={() => handleAddToCart(product)}
-                  className="w-full py-3.5 px-5 rounded-xl font-bold text-xs uppercase tracking-wider flex items-center justify-between transition-all duration-200 shadow-md bg-[#1762f0] hover:bg-[#1354d4] text-white shadow-blue-600/30 hover:shadow-blue-500/50 btn-elevate btn-hover cursor-pointer mt-auto"
+                  className="w-full py-2 px-2 sm:py-3.5 sm:px-5 rounded-lg sm:rounded-xl font-bold text-[10px] sm:text-xs uppercase tracking-wider flex items-center justify-center sm:justify-between gap-1 sm:gap-2 transition-all duration-200 shadow-md bg-[#1762f0] hover:bg-[#1354d4] text-white shadow-blue-600/30 hover:shadow-blue-500/50 btn-elevate btn-hover cursor-pointer mt-auto"
                 >
-                  <span className="font-extrabold tracking-widest">
-                    ADD TO CART
+                  <span className="font-extrabold tracking-tight sm:tracking-widest truncate">
+                    {addedItem === product.id ? 'ADDED!' : 'ADD TO CART'}
                   </span>
-                  <ShoppingCart className="w-4 h-4 stroke-[2.5]" />
+                  <ShoppingCart className="w-3.5 h-3.5 sm:w-4 sm:h-4 stroke-[2.5] hidden xs:inline-block shrink-0" />
                 </button>
               </div>
             </StaggerItem>
