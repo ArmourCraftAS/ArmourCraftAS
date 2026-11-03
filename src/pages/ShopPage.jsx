@@ -121,7 +121,7 @@ export default function ShopPage({ onAddToCart }) {
   }
 
   return (
-    <div className="w-full bg-[#060a12] text-white min-h-[calc(100vh-80px)] py-10 sm:py-16 lg:py-24 px-2.5 xs:px-4 sm:px-6 lg:px-8">
+    <div className="w-full bg-[#060a12] text-white min-h-[calc(100vh-80px)] py-8 sm:py-16 lg:py-24 px-2 sm:px-6 lg:px-8 overflow-x-hidden">
       <div className="max-w-7xl mx-auto">
         
         {/* Page Title & Subtitle */}
@@ -211,7 +211,7 @@ export default function ShopPage({ onAddToCart }) {
           {filteredProducts.length > 0 ? (
             <StaggerContainer
               staggerDelay={0.08}
-              className="grid grid-cols-2 lg:grid-cols-3 gap-2 sm:gap-4 lg:gap-8 p-1.5 sm:p-2 mobile-product-grid-2col lg-3col"
+              className="grid grid-cols-2 lg:grid-cols-3 gap-2 sm:gap-4 lg:gap-8 p-1 sm:p-2 mobile-product-grid-2col lg-3col"
             >
               {filteredProducts.map((product) => {
                 const isAdded = addedItem === product.id
@@ -224,9 +224,9 @@ export default function ShopPage({ onAddToCart }) {
                     data-dynamic-title={product.title}
                     className="min-w-0 w-full h-full flex flex-col"
                   >
-                    <div className="bg-[#0b1222] border border-slate-800/80 rounded-xl sm:rounded-2xl p-1.5 xs:p-2 sm:p-4 md:p-5 flex flex-col justify-between card-elevate group h-full min-w-0 w-full">
+                    <div className="bg-[#0b1222] border border-slate-800/80 rounded-xl sm:rounded-2xl p-2 sm:p-4 md:p-5 flex flex-col justify-between card-elevate group h-full min-w-0 w-full compact-product-card">
                       {/* Product Image Frame (Compact scaled height for 320px+) */}
-                      <div className="relative w-full h-28 xs:h-32 sm:h-44 md:h-52 rounded-lg sm:rounded-xl bg-[#060a14] border border-slate-800/60 overflow-hidden flex items-center justify-center p-1 sm:p-2.5 mb-1.5 sm:mb-3 shrink-0">
+                      <div className="relative w-full h-28 sm:h-44 md:h-52 rounded-lg sm:rounded-xl bg-[#060a14] border border-slate-800/60 overflow-hidden flex items-center justify-center p-1 sm:p-2.5 mb-1.5 sm:mb-3 shrink-0 compact-product-image">
                         <img
                           src={product.image}
                           alt={`ARMOURCRAFT AS ${product.title} - Pro Cricket Protection`}
@@ -238,7 +238,7 @@ export default function ShopPage({ onAddToCart }) {
                       {/* Product Details */}
                       <div className="flex-1 flex flex-col justify-between min-w-0">
                         <div className="mb-1 min-w-0">
-                          <h3 className="text-white font-bold text-[11px] sm:text-xs md:text-base leading-tight group-hover:text-blue-300 transition-colors line-clamp-2 min-w-0">
+                          <h3 className="text-white font-bold text-[11px] sm:text-xs md:text-base leading-tight group-hover:text-blue-300 transition-colors line-clamp-2 min-w-0 break-words">
                             {product.title}
                           </h3>
                           <p className="text-slate-400 text-[9px] sm:text-xs leading-tight line-clamp-1 hidden sm:block min-w-0 mt-0.5">
@@ -247,8 +247,8 @@ export default function ShopPage({ onAddToCart }) {
                         </div>
 
                         {/* Price and QUICK ADD Button */}
-                        <div className="flex flex-col xs:flex-row xs:items-center justify-between gap-1 pt-1.5 sm:pt-2 border-t border-slate-800/60 mt-auto min-w-0">
-                          <div className="text-blue-400 sm:text-white font-black text-xs sm:text-sm md:text-xl tracking-tight">
+                        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1 pt-1.5 sm:pt-2 border-t border-slate-800/60 mt-auto min-w-0">
+                          <div className="text-blue-400 sm:text-white font-black text-xs sm:text-sm md:text-xl tracking-tight shrink-0">
                             {typeof product.price === 'number'
                               ? `$${product.price.toFixed(2)}`
                               : product.price?.toString().startsWith('$')
@@ -259,10 +259,10 @@ export default function ShopPage({ onAddToCart }) {
                           <button
                             type="button"
                             onClick={() => handleAdd(product)}
-                            className="w-full xs:w-auto py-1.5 sm:py-2 px-1 sm:px-3 rounded-lg sm:rounded-xl font-bold text-[10px] sm:text-xs uppercase tracking-tight sm:tracking-wider btn-elevate flex items-center justify-center gap-1 cursor-pointer shadow-md bg-[#1762f0] hover:bg-[#1354d4] text-white shadow-blue-600/30 shrink-0"
+                            className="w-full sm:w-auto py-1.5 sm:py-2 px-1 sm:px-3 rounded-lg sm:rounded-xl font-bold text-[10px] sm:text-xs uppercase tracking-tight sm:tracking-wider btn-elevate flex items-center justify-center gap-1 cursor-pointer shadow-md bg-[#1762f0] hover:bg-[#1354d4] text-white shadow-blue-600/30 shrink-0"
                           >
                             <span className="truncate">{isAdded ? 'ADDED!' : 'ADD TO CART'}</span>
-                            <ShoppingCart className="w-3 h-3 stroke-[2] hidden xs:inline-block shrink-0" />
+                            <ShoppingCart className="w-3 h-3 stroke-[2] hidden sm:inline-block shrink-0" />
                           </button>
                         </div>
                       </div>

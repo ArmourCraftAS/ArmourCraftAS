@@ -167,11 +167,11 @@ export default function CartCheckoutModal({
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/80 backdrop-blur-md animate-in fade-in duration-200"
+      className="fixed inset-0 z-50 flex items-center justify-center p-2.5 sm:p-4 bg-black/80 backdrop-blur-md animate-in fade-in duration-200"
       onClick={handleCloseAndReset}
     >
       <div
-        className="relative w-full max-w-[480px] bg-[#0c1424] border border-slate-800/90 rounded-3xl p-5 sm:p-7 shadow-2xl text-white max-h-[92vh] overflow-y-auto select-none animate-in fade-in zoom-in-95 duration-200"
+        className="relative w-full max-w-[480px] bg-[#0c1424] border border-slate-800/90 rounded-2xl sm:rounded-3xl p-4 sm:p-7 shadow-2xl text-white max-h-[92vh] overflow-y-auto select-none animate-in fade-in zoom-in-95 duration-200"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Top Right Close Button */}

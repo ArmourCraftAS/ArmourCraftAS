@@ -159,7 +159,7 @@ export default function App() {
 
   return (
     <StorefrontAnimationContext.Provider value={true}>
-      <div className="min-h-screen bg-[#060a12] text-slate-100 flex flex-col font-sans selection:bg-blue-600 selection:text-white">
+      <div className="min-h-screen w-full max-w-full overflow-x-hidden bg-[#060a12] text-slate-100 flex flex-col font-sans selection:bg-blue-600 selection:text-white">
         {/* 1. Header / Navbar (Linked directly to dynamic cartCount) */}
         <Navbar
         cartCount={cartCount}
@@ -170,8 +170,8 @@ export default function App() {
 
       {/* 2. Main Body: Switch between Home, Shop, What We Are, Blog, and Contact */}
       <AnimatePresence mode="wait">
-        <PageTransition routeKey={normalizedPath} className="flex-1 flex flex-col">
-          <main className="flex-1">
+        <PageTransition routeKey={normalizedPath} className="flex-1 flex flex-col w-full max-w-full overflow-x-hidden">
+          <main className="flex-1 w-full max-w-full overflow-x-hidden">
             {isShopRoute ? (
               <ShopPage onAddToCart={handleOpenQuickAdd} />
             ) : isWhatWeAreRoute ? (

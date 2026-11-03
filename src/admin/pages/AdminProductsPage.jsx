@@ -477,14 +477,14 @@ export default function AdminProductsPage() {
             </button>
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-2 lg:grid-cols-3 gap-2 sm:gap-4 lg:gap-6 mobile-product-grid-2col lg-3col">
             {filteredProducts.map((product) => (
               <div
                 key={product.id}
-                className="bg-[#0b1220] border border-slate-800/90 rounded-2xl p-5 hover:border-slate-700/80 transition-all duration-200 flex flex-col justify-between shadow-xl shadow-black/40 group"
+                className="bg-[#0b1220] border border-slate-800/90 rounded-xl sm:rounded-2xl p-2 sm:p-4 md:p-5 hover:border-slate-700/80 transition-all duration-200 flex flex-col justify-between shadow-xl shadow-black/40 group min-w-0 w-full compact-product-card"
               >
                 {/* Product Image Frame */}
-                <div className="w-full h-56 bg-[#070b14] rounded-xl flex items-center justify-center p-3 mb-4 overflow-hidden border border-slate-800/50 relative">
+                <div className="w-full h-28 sm:h-44 md:h-56 bg-[#070b14] rounded-lg sm:rounded-xl flex items-center justify-center p-1.5 sm:p-3 mb-2 sm:mb-4 overflow-hidden border border-slate-800/50 relative shrink-0 compact-product-image">
                   <img
                     src={product.image}
                     alt={product.title}
@@ -496,43 +496,43 @@ export default function AdminProductsPage() {
                 </div>
 
                 {/* Title & Description */}
-                <div className="flex-1 flex flex-col mb-4">
-                  <h3 className="text-base font-bold text-white mb-2 leading-snug line-clamp-1">
+                <div className="flex-1 flex flex-col mb-2 sm:mb-4 min-w-0">
+                  <h3 className="text-xs sm:text-base font-bold text-white mb-1 sm:mb-2 leading-snug line-clamp-1 min-w-0 break-words">
                     {product.title}
                   </h3>
-                  <p className="text-xs text-slate-400 leading-relaxed mb-4 line-clamp-2 min-h-[34px]">
+                  <p className="text-[10px] sm:text-xs text-slate-400 leading-relaxed mb-2 sm:mb-4 line-clamp-2 min-h-0 sm:min-h-[34px] hidden sm:block">
                     {product.description ||
                       'Ultra-lightweight ergonomic cricket protection engineered for maximum mobility.'}
                   </p>
                 </div>
 
                 {/* Bottom Bar: Price & Action Icons (Edit & Delete) */}
-                <div className="flex items-center justify-between pt-3 border-t border-slate-800/60 mt-auto">
-                  <span className="text-lg font-black text-white font-mono">
+                <div className="flex items-center justify-between pt-2 sm:pt-3 border-t border-slate-800/60 mt-auto min-w-0 gap-1">
+                  <span className="text-xs sm:text-base md:text-lg font-black text-white font-mono shrink-0">
                     ${typeof product.price === 'number'
                       ? product.price.toFixed(2)
                       : parseFloat(product.price || 0).toFixed(2)}
                   </span>
 
-                  <div className="flex items-center gap-1.5">
+                  <div className="flex items-center gap-1 sm:gap-1.5 shrink-0">
                     {/* Edit Pencil Icon Button */}
                     <button
                       type="button"
                       onClick={() => handleOpenEditModal(product)}
-                      className="p-2 text-slate-400 hover:text-white hover:bg-slate-800/80 rounded-lg transition-colors cursor-pointer"
+                      className="p-1 sm:p-2 text-slate-400 hover:text-white hover:bg-slate-800/80 rounded-lg transition-colors cursor-pointer"
                       title="Edit product"
                     >
-                      <Edit2 className="w-4 h-4" />
+                      <Edit2 className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
                     </button>
 
                     {/* Delete Trash Icon Button */}
                     <button
                       type="button"
                       onClick={() => setDeleteConfirmProduct(product)}
-                      className="p-2 text-rose-500 hover:text-rose-400 hover:bg-rose-500/10 rounded-lg transition-colors cursor-pointer"
+                      className="p-1 sm:p-2 text-rose-500 hover:text-rose-400 hover:bg-rose-500/10 rounded-lg transition-colors cursor-pointer"
                       title="Delete product"
                     >
-                      <Trash2 className="w-4 h-4" />
+                      <Trash2 className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
                     </button>
                   </div>
                 </div>

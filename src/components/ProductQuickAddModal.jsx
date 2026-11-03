@@ -61,11 +61,11 @@ export default function ProductQuickAddModal({
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md animate-in fade-in duration-200"
+      className="fixed inset-0 z-50 flex items-center justify-center p-2.5 sm:p-4 bg-black/80 backdrop-blur-md animate-in fade-in duration-200"
       onClick={onClose}
     >
       <div
-        className="relative w-full max-w-[440px] bg-[#0c1424] border border-slate-800/90 rounded-3xl p-6 sm:p-7 shadow-2xl text-white select-none animate-in fade-in zoom-in-95 duration-200"
+        className="relative w-full max-w-[440px] bg-[#0c1424] border border-slate-800/90 rounded-2xl sm:rounded-3xl p-4 sm:p-7 shadow-2xl text-white select-none animate-in fade-in zoom-in-95 duration-200"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Top Header Row: Category Badge & Close Icon */}
@@ -142,7 +142,7 @@ export default function ProductQuickAddModal({
           <div className="text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-2.5">
             SELECT SIZE
           </div>
-          <div className="grid grid-cols-4 gap-2">
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
             {sizes.map((s) => {
               const isSelected = size === s
               return (

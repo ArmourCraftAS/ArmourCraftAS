@@ -14,25 +14,25 @@ export default function WhatsAppCalloutBanner({ className = '' }) {
     <FadeIn direction="up">
       <section
         aria-label="WhatsApp Sizing Support"
-        className={`relative w-full max-w-5xl mx-auto rounded-2xl sm:rounded-3xl bg-[#0c1427]/90 border border-blue-900/30 p-8 sm:p-12 lg:p-16 shadow-2xl backdrop-blur-md overflow-hidden text-center card-elevate ${className}`}
+        className={`relative w-full max-w-5xl mx-auto rounded-2xl sm:rounded-3xl bg-[#0c1427]/90 border border-blue-900/30 p-4 sm:p-12 lg:p-16 shadow-2xl backdrop-blur-md overflow-hidden text-center card-elevate ${className}`}
       >
         {/* Atmospheric Radial Ambient Glow */}
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[550px] h-[320px] bg-blue-600/10 blur-3xl pointer-events-none rounded-full" />
 
         <div className="relative z-10 flex flex-col items-center justify-center">
           {/* Green Circular Badge with WhatsApp Icon */}
-          <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-[#0d2a1f] border border-emerald-500/40 flex items-center justify-center text-[#25D366] mb-6 shadow-[0_0_20px_rgba(16,185,129,0.25)]">
+          <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-[#0d2a1f] border border-emerald-500/40 flex items-center justify-center text-[#25D366] mb-4 sm:mb-6 shadow-[0_0_20px_rgba(16,185,129,0.25)]">
             <WhatsAppIcon className="w-6 h-6 fill-current" />
           </div>
 
           {/* Heading */}
-          <h3 className="text-2xl sm:text-3xl lg:text-[34px] font-black text-white uppercase tracking-tight leading-snug mb-3 max-w-2xl">
+          <h3 className="text-xl sm:text-3xl lg:text-[34px] font-black text-white uppercase tracking-tight leading-snug mb-2 sm:mb-3 max-w-2xl">
             NEED HELP CHOOSING THE <br className="hidden sm:inline" />
             RIGHT SIZES FOR YOUR TEAM?
           </h3>
 
           {/* Subtext */}
-          <p className="text-slate-400 text-sm sm:text-base max-w-xl mx-auto leading-relaxed mb-8 font-normal">
+          <p className="text-slate-400 text-xs sm:text-base max-w-xl mx-auto leading-relaxed mb-6 sm:mb-8 font-normal">
             Talk directly with our Sialkot gear specialists on WhatsApp for custom bulk team orders and technical sizing assistance.
           </p>
 
@@ -41,10 +41,10 @@ export default function WhatsAppCalloutBanner({ className = '' }) {
             href="https://wa.me/923001234567?text=Hi%20ArmourCraft%2C%20I%20need%20help%20choosing%20the%20right%20sizes%20for%20our%20team"
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center justify-center gap-2.5 px-8 py-3.5 rounded-xl bg-[#1462ea] hover:bg-[#1a6df6] active:bg-blue-700 text-white font-bold text-xs sm:text-sm tracking-wider uppercase btn-elevate cursor-pointer group shadow-lg shadow-blue-600/30"
+            className="inline-flex items-center justify-center gap-2 px-4 sm:px-8 py-3 sm:py-3.5 rounded-xl bg-[#1462ea] hover:bg-[#1a6df6] active:bg-blue-700 text-white font-bold text-[11px] sm:text-xs md:text-sm tracking-wider uppercase btn-elevate cursor-pointer group shadow-lg shadow-blue-600/30 max-w-full"
           >
             <WhatsAppIcon className="w-4 h-4 fill-white shrink-0 group-hover:scale-110 transition-transform" />
-            <span>CHAT ON WHATSAPP NOW</span>
+            <span className="truncate">CHAT ON WHATSAPP NOW</span>
           </a>
         </div>
       </section>

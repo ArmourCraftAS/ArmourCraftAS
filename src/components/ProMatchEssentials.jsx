@@ -93,7 +93,7 @@ export default function ProMatchEssentials({ onAddToCart, onNavigate }) {
       </div>
 
       {/* 2. Main Section Content Area */}
-      <div className="max-w-7xl mx-auto px-2.5 xs:px-4 sm:px-6 lg:px-8 py-10 sm:py-16 md:py-20">
+      <div className="max-w-7xl mx-auto px-2 sm:px-6 lg:px-8 py-8 sm:py-16 md:py-20">
         
         {/* Section Header */}
         <FadeIn direction="up" distance={20}>
@@ -134,7 +134,7 @@ export default function ProMatchEssentials({ onAddToCart, onNavigate }) {
         {/* 3. Product Cards Grid (Strict 2-column on mobile 320px+, 3-column on tablet/desktop) */}
         <StaggerContainer
           staggerDelay={0.08}
-          className="grid grid-cols-2 md:grid-cols-3 gap-2 sm:gap-4 lg:gap-8 p-1.5 sm:p-2 mobile-product-grid-2col md-3col"
+          className="grid grid-cols-2 md:grid-cols-3 gap-2 sm:gap-4 lg:gap-8 p-1 sm:p-2 mobile-product-grid-2col md-3col"
         >
           {products.map((product) => (
             <StaggerItem key={product.id} className="min-w-0 w-full h-full flex flex-col">
@@ -142,10 +142,10 @@ export default function ProMatchEssentials({ onAddToCart, onNavigate }) {
                 data-dynamic-type="product"
                 data-dynamic-id={product.id}
                 data-dynamic-title={product.title}
-                className="bg-[#0b1222] border border-slate-800/90 rounded-xl sm:rounded-2xl p-1.5 xs:p-2 sm:p-4 md:p-5 flex flex-col justify-between card-elevate card-hover animate-slide-up group h-full min-w-0 w-full"
+                className="bg-[#0b1222] border border-slate-800/90 rounded-xl sm:rounded-2xl p-2 sm:p-4 md:p-5 flex flex-col justify-between card-elevate card-hover animate-slide-up group h-full min-w-0 w-full compact-product-card"
               >
                 {/* Product Image Frame (Compact scaled height for 320px+) */}
-                <div className="relative w-full h-28 xs:h-32 sm:h-44 md:h-52 bg-[#050811] rounded-lg sm:rounded-xl border border-slate-800/60 overflow-hidden flex items-center justify-center p-1 sm:p-2.5 mb-1.5 sm:mb-3 shrink-0">
+                <div className="relative w-full h-28 sm:h-44 md:h-52 bg-[#050811] rounded-lg sm:rounded-xl border border-slate-800/60 overflow-hidden flex items-center justify-center p-1 sm:p-2.5 mb-1.5 sm:mb-3 shrink-0 compact-product-image">
                   <img
                     src={product.image}
                     alt={product.alt}
@@ -158,7 +158,7 @@ export default function ProMatchEssentials({ onAddToCart, onNavigate }) {
 
                 {/* Product Title & Price Row */}
                 <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-1 mb-1.5 sm:mb-3 flex-grow min-w-0">
-                  <h3 className="text-white font-bold text-[11px] sm:text-xs md:text-base leading-tight group-hover:text-blue-200 transition-colors line-clamp-2 min-w-0">
+                  <h3 className="text-white font-bold text-[11px] sm:text-xs md:text-base leading-tight group-hover:text-blue-200 transition-colors line-clamp-2 min-w-0 break-words">
                     {product.title}
                   </h3>
                   <span className="text-blue-400 sm:text-white font-black text-xs sm:text-sm md:text-base tracking-tight shrink-0">
@@ -175,7 +175,7 @@ export default function ProMatchEssentials({ onAddToCart, onNavigate }) {
                   <span className="font-extrabold truncate">
                     {addedItem === product.id ? 'ADDED!' : 'ADD TO CART'}
                   </span>
-                  <ShoppingCart className="w-3 h-3 sm:w-3.5 sm:h-3.5 stroke-[2] hidden xs:inline-block shrink-0" />
+                  <ShoppingCart className="w-3 h-3 sm:w-3.5 sm:h-3.5 stroke-[2] hidden sm:inline-block shrink-0" />
                 </button>
               </div>
             </StaggerItem>

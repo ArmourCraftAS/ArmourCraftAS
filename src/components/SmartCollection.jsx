@@ -87,7 +87,7 @@ export default function SmartCollection({ onAddToCart }) {
   }
 
   return (
-    <section className="relative w-full bg-[#060a12] py-10 sm:py-20 lg:py-28 px-2.5 xs:px-4 sm:px-6 lg:px-8 text-white border-t border-slate-900/80 overflow-hidden">
+    <section className="relative w-full bg-[#060a12] py-8 sm:py-20 lg:py-28 px-2 sm:px-6 lg:px-8 text-white border-t border-slate-900/80 overflow-hidden">
       
       {/* Background ambient lighting */}
       <div className="absolute top-1/4 right-1/4 w-[500px] h-[500px] bg-blue-600/5 blur-[150px] pointer-events-none rounded-full" />
@@ -132,7 +132,7 @@ export default function SmartCollection({ onAddToCart }) {
         {/* Product Grid (Strict 2-column on mobile 320px+, 4-col on lg) */}
         <StaggerContainer
           staggerDelay={0.08}
-          className="grid grid-cols-2 lg:grid-cols-4 gap-2 sm:gap-4 lg:gap-6 p-1.5 sm:p-2 mobile-product-grid-2col lg-4col"
+          className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2 sm:gap-4 lg:gap-6 p-1 sm:p-2 mobile-product-grid-2col lg-4col"
         >
           {filteredProducts.map((product) => (
             <StaggerItem key={product.id} className="min-w-0 w-full h-full flex flex-col">
@@ -140,10 +140,10 @@ export default function SmartCollection({ onAddToCart }) {
                 data-dynamic-type="product"
                 data-dynamic-id={product.id}
                 data-dynamic-title={product.title}
-                className="bg-[#0b1222] border border-slate-800/80 rounded-xl sm:rounded-2xl p-1.5 xs:p-2 sm:p-4 flex flex-col justify-between card-elevate card-hover animate-slide-up group h-full min-w-0 w-full"
+                className="bg-[#0b1222] border border-slate-800/80 rounded-xl sm:rounded-2xl p-2 sm:p-4 flex flex-col justify-between card-elevate card-hover animate-slide-up group h-full min-w-0 w-full compact-product-card"
               >
                 {/* Product Image Frame (Compact scaled height for 320px+) */}
-                <div className="relative w-full h-28 xs:h-32 sm:h-44 md:h-48 rounded-lg sm:rounded-xl bg-[#060a14] border border-slate-800/60 overflow-hidden flex items-center justify-center p-1 sm:p-2.5 mb-1.5 sm:mb-3 shrink-0">
+                <div className="relative w-full h-28 sm:h-44 md:h-48 rounded-lg sm:rounded-xl bg-[#060a14] border border-slate-800/60 overflow-hidden flex items-center justify-center p-1 sm:p-2.5 mb-1.5 sm:mb-3 shrink-0 compact-product-image">
                   <img
                     src={product.image}
                     alt={product.alt}
@@ -155,7 +155,7 @@ export default function SmartCollection({ onAddToCart }) {
                 {/* Product Info */}
                 <div className="flex-1 flex flex-col justify-between min-w-0">
                   <div className="min-w-0 mb-1">
-                    <h3 className="text-white font-bold text-[11px] sm:text-xs md:text-sm uppercase tracking-wide leading-tight group-hover:text-blue-300 transition-colors line-clamp-2 min-w-0">
+                    <h3 className="text-white font-bold text-[11px] sm:text-xs md:text-sm uppercase tracking-wide leading-tight group-hover:text-blue-300 transition-colors line-clamp-2 min-w-0 break-words">
                       {product.title}
                     </h3>
                     <p className="text-slate-400 text-[9px] sm:text-xs leading-tight line-clamp-1 min-w-0 mt-0.5">
@@ -175,7 +175,7 @@ export default function SmartCollection({ onAddToCart }) {
                   className="w-full py-1.5 sm:py-2 px-1 sm:px-3 rounded-lg sm:rounded-xl font-bold text-[10px] sm:text-xs uppercase tracking-tight sm:tracking-wider transition-all duration-200 flex items-center justify-center gap-1 border bg-[#090e1a] hover:bg-[#1762f0] text-slate-300 hover:text-white border-slate-800 hover:border-blue-500 btn-elevate btn-hover cursor-pointer mt-auto shrink-0"
                 >
                   <span className="truncate">{addedItem === product.id ? 'ADDED!' : 'ADD TO CART'}</span>
-                  <ShoppingCart className="w-3 h-3 shrink-0 hidden xs:inline-block" />
+                  <ShoppingCart className="w-3 h-3 shrink-0 hidden sm:inline-block" />
                 </button>
               </div>
             </StaggerItem>
