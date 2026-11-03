@@ -100,9 +100,26 @@ function AdminRouter({ currentPath, onNavigate }) {
 }
 
 export default function AdminRoot({ currentPath, onNavigate }) {
+  // Real-time window resize listener: restrict admin portal to desktop screens (width >= 800px)
+  const [viewportWidth, setViewportWidth] = useState(() =>
+    typeof window !== 'undefined' ? window.innerWidth : 1200
+  )
+  const isDesktopScreen = viewportWidth >= 800
+
+  useEffect(() => {
+    const handleResize = () => setViewportWidth(window.innerWidth)
+    handleResize()
+    window.addEventListener('resize', handleResize)
+    return () => window.removeEventListener('resize', handleResize)
+  }, [])
+
   return (
     <StorefrontAnimationContext.Provider value={false}>
-      <div data-admin-root="true" className="admin-workspace">
+      <div data-admin-root="true" className="admin-workspace relative">
+        {/* Desktop-Only Real-Time Blocking Overlay (< 800px) */}
+        {!isDesktopScreen && (
+          <DesktopEditingRestrictedOverlay onNavigate={onNavigate} />
+        )}
         <AdminAuthProvider>
           <AdminRouter currentPath={currentPath} onNavigate={onNavigate} />
         </AdminAuthProvider>
