@@ -1,6 +1,7 @@
-import React, { useEffect } from 'react'
+import React, { useState, useEffect } from 'react'
 import { AdminAuthProvider, useAdminAuth } from './AdminAuthContext'
 import AdminLayout from './AdminLayout'
+import DesktopEditingRestrictedOverlay from './dashboard/DesktopEditingRestrictedOverlay'
 import AdminLoginPage from './pages/AdminLoginPage'
 import AdminSignupPage from './pages/AdminSignupPage'
 import AdminForgotPasswordPage from './pages/AdminForgotPasswordPage'
@@ -14,6 +15,18 @@ import { StorefrontAnimationContext } from '../components/StorefrontMotion'
 
 function AdminRouter({ currentPath, onNavigate }) {
   const { isAuthenticated } = useAdminAuth()
+
+  // Viewport width monitoring: restrict admin editing to desktop screens (width >= 800px)
+  const [viewportWidth, setViewportWidth] = useState(() =>
+    typeof window !== 'undefined' ? window.innerWidth : 1200
+  )
+  const isDesktopScreen = viewportWidth >= 800
+
+  useEffect(() => {
+    const handleResize = () => setViewportWidth(window.innerWidth)
+    window.addEventListener('resize', handleResize)
+    return () => window.removeEventListener('resize', handleResize)
+  }, [])
 
   // Clean trailing slashes & strip query string for robust route matching
   const basePath = currentPath ? currentPath.split('?')[0] : '/admin'
@@ -60,24 +73,29 @@ function AdminRouter({ currentPath, onNavigate }) {
   }
 
   // Authenticated Protected Routes
-  if (normalizedPath === '/admin/dashboard' || normalizedPath === '/admin') {
-    return <AdminDashboardPage onNavigate={onNavigate} />
-  }
-
   return (
-    <AdminLayout currentPath={normalizedPath} onNavigate={onNavigate}>
-      {normalizedPath === '/admin/products' ? (
-        <AdminProductsPage onNavigate={onNavigate} />
-      ) : normalizedPath === '/admin/blogs' || normalizedPath === '/admin/blog' ? (
-        <AdminBlogsPage onNavigate={onNavigate} />
-      ) : normalizedPath === '/admin/faqs' || normalizedPath === '/admin/faq' ? (
-        <AdminFaqsPage onNavigate={onNavigate} />
-      ) : normalizedPath === '/admin/orders' ? (
-        <AdminOrdersPage onNavigate={onNavigate} />
-      ) : (
-        <AdminDashboardPage onNavigate={onNavigate} />
+    <>
+      {!isDesktopScreen && (
+        <DesktopEditingRestrictedOverlay onNavigate={onNavigate} />
       )}
-    </AdminLayout>
+      {normalizedPath === '/admin/dashboard' || normalizedPath === '/admin' ? (
+        <AdminDashboardPage onNavigate={onNavigate} />
+      ) : (
+        <AdminLayout currentPath={normalizedPath} onNavigate={onNavigate}>
+          {normalizedPath === '/admin/products' ? (
+            <AdminProductsPage onNavigate={onNavigate} />
+          ) : normalizedPath === '/admin/blogs' || normalizedPath === '/admin/blog' ? (
+            <AdminBlogsPage onNavigate={onNavigate} />
+          ) : normalizedPath === '/admin/faqs' || normalizedPath === '/admin/faq' ? (
+            <AdminFaqsPage onNavigate={onNavigate} />
+          ) : normalizedPath === '/admin/orders' ? (
+            <AdminOrdersPage onNavigate={onNavigate} />
+          ) : (
+            <AdminDashboardPage onNavigate={onNavigate} />
+          )}
+        </AdminLayout>
+      )}
+    </>
   )
 }
 

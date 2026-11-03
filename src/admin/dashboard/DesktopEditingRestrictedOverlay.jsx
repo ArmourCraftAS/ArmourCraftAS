@@ -6,7 +6,7 @@ export default function DesktopEditingRestrictedOverlay({ onNavigate }) {
     <div
       role="alert"
       aria-live="assertive"
-      className="fixed inset-0 z-[100] bg-[#070b14]/95 backdrop-blur-md flex items-center justify-center p-4 text-center select-none animate-in fade-in duration-200"
+      className="fixed inset-0 z-[999999] bg-[#070b14]/95 backdrop-blur-md flex items-center justify-center p-4 text-center select-none animate-in fade-in duration-200"
     >
       <div className="max-w-md w-full bg-[#0c1427] border border-blue-900/50 rounded-2xl p-6 sm:p-8 shadow-2xl shadow-blue-950/60 flex flex-col items-center">
         {/* Device Icon Graphic */}
@@ -59,3 +59,4 @@ export default function DesktopEditingRestrictedOverlay({ onNavigate }) {
     </div>
   )
 }
+
