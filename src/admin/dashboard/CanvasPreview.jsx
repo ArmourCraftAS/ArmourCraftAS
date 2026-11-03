@@ -41,6 +41,23 @@ export default function CanvasPreview({
 }) {
   const containerRef = useRef(null)
   const [hoveredInfo, setHoveredInfo] = useState(null)
+  const [viewportWidth, setViewportWidth] = useState(() =>
+    typeof window !== 'undefined' ? window.innerWidth : 1200
+  )
+  const isDesktop = viewportWidth >= 800
+  const isEffectiveInspectorMode = Boolean(isInspectorMode && isDesktop)
+
+  useEffect(() => {
+    const handleResize = () => {
+      const w = window.innerWidth
+      setViewportWidth(w)
+      if (w < 800) {
+        setHoveredInfo(null)
+      }
+    }
+    window.addEventListener('resize', handleResize)
+    return () => window.removeEventListener('resize', handleResize)
+  }, [])
 
   // Pure static no-op for internal links
   const noop = () => {}
@@ -105,7 +122,7 @@ export default function CanvasPreview({
   // Handle double click on canvas in Inspector Mode
   // Bypasses foreground text elements and directly targets underlying background Image / Video
   const handleCanvasDoubleClick = (e) => {
-    if (!isInspectorMode || !onSelectElement) return
+    if (!isEffectiveInspectorMode || !onSelectElement) return
 
     e.preventDefault()
     e.stopPropagation()
@@ -150,7 +167,7 @@ export default function CanvasPreview({
 
   // Handle click on canvas in Inspector Mode
   const handleCanvasClick = (e) => {
-    if (!isInspectorMode || !onSelectElement) {
+    if (!isEffectiveInspectorMode || !onSelectElement) {
       e.preventDefault()
       e.stopPropagation()
       return
@@ -353,7 +370,7 @@ export default function CanvasPreview({
 
   // Handle Mouse Over to provide visual inspector outlines
   const handleMouseOver = (e) => {
-    if (!isInspectorMode) return
+    if (!isEffectiveInspectorMode) return
     const target = e.target
     if (!target || !containerRef.current || !containerRef.current.contains(target)) return
 
@@ -437,7 +454,7 @@ export default function CanvasPreview({
     })
 
     // Apply hovered outline
-    if (isInspectorMode && hoveredInfo?.el) {
+    if (isEffectiveInspectorMode && hoveredInfo?.el) {
       hoveredInfo.el.classList.add('cms-inspector-hover')
       if (hoveredInfo.type === 'dynamic') {
         hoveredInfo.el.classList.add('cms-hover-dynamic')
@@ -451,13 +468,13 @@ export default function CanvasPreview({
     }
 
     // Apply selected outline
-    if (isInspectorMode && selectedElement) {
+    if (isEffectiveInspectorMode && selectedElement) {
       if (selectedElement.path) {
         const found = root.querySelector(`[data-cms-path="${selectedElement.path}"]`)
         if (found) found.classList.add('cms-inspector-selected')
       }
     }
-  }, [hoveredInfo, selectedElement, isInspectorMode])
+  }, [hoveredInfo, selectedElement, isEffectiveInspectorMode])
 
   return (
     <div
@@ -467,7 +484,7 @@ export default function CanvasPreview({
       onMouseOver={handleMouseOver}
       onMouseLeave={handleMouseLeave}
       className={`preview-canvas-wrapper w-full min-h-full relative ${
-        isInspectorMode ? 'cursor-pointer' : 'cursor-default select-none'
+        isEffectiveInspectorMode ? 'cursor-pointer' : 'cursor-default select-none'
       }`}
     >
       {/* ========================================================================= */}

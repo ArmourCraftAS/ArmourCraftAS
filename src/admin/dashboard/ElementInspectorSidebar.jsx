@@ -119,7 +119,7 @@ export default function ElementInspectorSidebar({
 }) {
   const [iconSearch, setIconSearch] = useState('')
 
-  if (!selectedElement) return null
+  if (!selectedElement || (typeof window !== 'undefined' && window.innerWidth < 800)) return null
 
   const {
     id,

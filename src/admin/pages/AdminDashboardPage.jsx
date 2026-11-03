@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef, useCallback } from 'react'
 import TopBarHeader from '../dashboard/TopBarHeader'
 import CanvasPreview from '../dashboard/CanvasPreview'
 import ElementInspectorSidebar from '../dashboard/ElementInspectorSidebar'
+import DesktopEditingRestrictedOverlay from '../dashboard/DesktopEditingRestrictedOverlay'
 import AdminProductsPage from './AdminProductsPage'
 import AdminBlogsPage from './AdminBlogsPage'
 import AdminFaqsPage from './AdminFaqsPage'
@@ -18,6 +19,24 @@ export default function AdminDashboardPage({ onNavigate }) {
   const [activePage, setActivePage] = useState('Home')
   // 2. Admin Management Dashboard Tabs (exclusively: 'product' | 'Blog' | 'FAQs' | null for preview)
   const [activeTab, setActiveTab] = useState(null)
+
+  // Viewport width monitoring: restrict editing features to screens >= 800px
+  const [viewportWidth, setViewportWidth] = useState(() =>
+    typeof window !== 'undefined' ? window.innerWidth : 1200
+  )
+  const isDesktopScreen = viewportWidth >= 800
+
+  useEffect(() => {
+    const handleResize = () => {
+      const w = window.innerWidth
+      setViewportWidth(w)
+      if (w < 800) {
+        setSelectedElement(null)
+      }
+    }
+    window.addEventListener('resize', handleResize)
+    return () => window.removeEventListener('resize', handleResize)
+  }, [])
 
   // 3. Visual Element Inspector State
   const [selectedElement, setSelectedElement] = useState(null)
@@ -582,7 +601,7 @@ export default function AdminDashboardPage({ onNavigate }) {
                 selectedElement={selectedElement}
                 onSelectElement={setSelectedElement}
                 cmsData={cmsData}
-                isInspectorMode={true}
+                isInspectorMode={isDesktopScreen}
                 onSwitchTab={(tab) => {
                   setSelectedElement(null)
                   setActiveTab(tab)
@@ -591,8 +610,8 @@ export default function AdminDashboardPage({ onNavigate }) {
               />
             </div>
 
-            {/* Element Inspector Sidebar */}
-            {selectedElement && (
+            {/* Element Inspector Sidebar (Strictly Desktop Screens >= 800px) */}
+            {selectedElement && isDesktopScreen && (
               <ElementInspectorSidebar
                 selectedElement={selectedElement}
                 onClose={() => setSelectedElement(null)}
@@ -607,6 +626,13 @@ export default function AdminDashboardPage({ onNavigate }) {
           </div>
         )}
       </main>
+
+      {/* ========================================================================= */}
+      {/* 2.5 DESKTOP-ONLY BLOCKING NOTICE OVERLAY (< 800px)                        */}
+      {/* ========================================================================= */}
+      {!isDesktopScreen && (
+        <DesktopEditingRestrictedOverlay onNavigate={onNavigate} />
+      )}
 
       {/* ========================================================================= */}
       {/* 3. FLOATING FEEDBACK TOAST NOTIFICATION                                   */}

@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import {
   LayoutDashboard,
   Package,
@@ -9,16 +9,30 @@ import {
   Menu,
   X,
   ChevronRight,
-  Bell
+  Bell,
+  AlertTriangle
 } from 'lucide-react'
 import { useAdminAuth } from './AdminAuthContext'
 import LogoutConfirmModal from './dashboard/LogoutConfirmModal'
+import DesktopEditingRestrictedOverlay from './dashboard/DesktopEditingRestrictedOverlay'
 
 export default function AdminLayout({ children, currentPath, onNavigate }) {
   const { adminUser, logout } = useAdminAuth()
   const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false)
   const [isLogoutModalOpen, setIsLogoutModalOpen] = useState(false)
   const [isLoggingOut, setIsLoggingOut] = useState(false)
+
+  // Viewport width monitoring: restrict admin editing to screens >= 800px
+  const [viewportWidth, setViewportWidth] = useState(() =>
+    typeof window !== 'undefined' ? window.innerWidth : 1200
+  )
+  const isDesktopScreen = viewportWidth >= 800
+
+  useEffect(() => {
+    const handleResize = () => setViewportWidth(window.innerWidth)
+    window.addEventListener('resize', handleResize)
+    return () => window.removeEventListener('resize', handleResize)
+  }, [])
 
   const navItems = [
     {
@@ -238,11 +252,24 @@ export default function AdminLayout({ children, currentPath, onNavigate }) {
 
         </header>
 
+        {/* Desktop-Only Warning Banner (< 800px) */}
+        {!isDesktopScreen && (
+          <div className="w-full bg-amber-500/10 border-b border-amber-500/30 px-4 py-2.5 flex items-center justify-center gap-2 text-center text-xs font-semibold text-amber-300">
+            <AlertTriangle className="w-4 h-4 shrink-0 text-amber-400" />
+            <span>Admin editing requires a desktop screen (width 800px or higher). Please switch to a larger device to edit content.</span>
+          </div>
+        )}
+
         {/* Page Content View */}
         <main className="flex-1 p-3.5 sm:p-6 lg:p-8 overflow-y-auto">
           {children}
         </main>
       </div>
+
+      {/* Desktop-Only Blocking Notice Overlay (< 800px) */}
+      {!isDesktopScreen && (
+        <DesktopEditingRestrictedOverlay onNavigate={onNavigate} />
+      )}
 
       {/* Logout Confirmation Popup Modal (image_13.png) */}
       <LogoutConfirmModal
