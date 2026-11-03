@@ -14,13 +14,14 @@ import {
 } from 'lucide-react'
 import { useAdminAuth } from './AdminAuthContext'
 import LogoutConfirmModal from './dashboard/LogoutConfirmModal'
-import DesktopEditingRestrictedOverlay from './dashboard/DesktopEditingRestrictedOverlay'
+import AdminNotificationsScreen from './dashboard/AdminNotificationsScreen'
 
 export default function AdminLayout({ children, currentPath, onNavigate }) {
   const { adminUser, logout } = useAdminAuth()
   const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false)
   const [isLogoutModalOpen, setIsLogoutModalOpen] = useState(false)
   const [isLoggingOut, setIsLoggingOut] = useState(false)
+  const [isNotificationScreenOpen, setIsNotificationScreenOpen] = useState(false)
 
   // Viewport width monitoring: restrict admin editing to screens >= 800px
   const [viewportWidth, setViewportWidth] = useState(() =>
@@ -211,8 +212,22 @@ export default function AdminLayout({ children, currentPath, onNavigate }) {
             </div>
           </div>
 
-          {/* Right: Admin Profile Avatar & Standalone Logout Button */}
-          <div className="flex items-center gap-2.5 sm:gap-5">
+          {/* Right: Notification Bell, Admin Profile Avatar & Standalone Logout Button */}
+          <div className="flex items-center gap-2 sm:gap-4">
+            {/* Notification Bell Badge */}
+            <button
+              type="button"
+              onClick={() => setIsNotificationScreenOpen(true)}
+              className="p-2 text-slate-400 hover:text-white rounded-xl bg-slate-900 border border-slate-800 transition-colors relative cursor-pointer min-h-[36px] min-w-[36px] flex items-center justify-center"
+              title="Admin Notifications"
+              aria-label="Admin Notifications"
+            >
+              <Bell className="w-4 h-4" />
+              <span className="absolute top-1 right-1 w-3.5 h-3.5 rounded-full bg-rose-500 text-[9px] font-black text-white flex items-center justify-center border border-[#070b14] shadow-sm">
+                3
+              </span>
+            </button>
+
             {/* Admin Profile Pill */}
             <div className="flex items-center gap-2.5 py-1 px-2.5 sm:py-1.5 sm:px-3 rounded-2xl bg-[#0b1222] border border-slate-800">
               <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-blue-600/30 border border-blue-500/50 flex items-center justify-center overflow-hidden shrink-0">
@@ -252,11 +267,11 @@ export default function AdminLayout({ children, currentPath, onNavigate }) {
 
         </header>
 
-        {/* Desktop-Only Warning Banner (< 800px) */}
+        {/* Read-Only Mode Banner on Mobile (< 800px) */}
         {!isDesktopScreen && (
-          <div className="w-full bg-amber-500/10 border-b border-amber-500/30 px-4 py-2.5 flex items-center justify-center gap-2 text-center text-xs font-semibold text-amber-300">
+          <div className="w-full bg-amber-500/10 border-b border-amber-500/30 px-4 py-2 flex items-center justify-center gap-2 text-center text-xs font-semibold text-amber-300">
             <AlertTriangle className="w-4 h-4 shrink-0 text-amber-400" />
-            <span>Admin editing requires a desktop screen (width 800px or higher). Please switch to a larger device to edit content.</span>
+            <span>Mobile Read-Only View: Editing properties and modification tools require desktop (width ≥ 800px).</span>
           </div>
         )}
 
@@ -266,9 +281,9 @@ export default function AdminLayout({ children, currentPath, onNavigate }) {
         </main>
       </div>
 
-      {/* Desktop-Only Blocking Notice Overlay (< 800px) */}
-      {!isDesktopScreen && (
-        <DesktopEditingRestrictedOverlay onNavigate={onNavigate} />
+      {/* Dedicated Notification Screen on Mobile (< 800px) */}
+      {isNotificationScreenOpen && (
+        <AdminNotificationsScreen onClose={() => setIsNotificationScreenOpen(false)} />
       )}
 
       {/* Logout Confirmation Popup Modal (image_13.png) */}

@@ -12,6 +12,7 @@ import {
 } from 'lucide-react'
 import { useAdminAuth } from '../AdminAuthContext'
 import LogoutConfirmModal from './LogoutConfirmModal'
+import AdminNotificationsScreen from './AdminNotificationsScreen'
 
 export default function TopBarHeader({
   activePage = 'Home',
@@ -31,6 +32,7 @@ export default function TopBarHeader({
 }) {
   const { logout } = useAdminAuth()
   const [showNotifications, setShowNotifications] = useState(false)
+  const [isMobileNotificationsOpen, setIsMobileNotificationsOpen] = useState(false)
   const [showPageDropdown, setShowPageDropdown] = useState(false)
   const [isLogoutModalOpen, setIsLogoutModalOpen] = useState(false)
   const [isLoggingOut, setIsLoggingOut] = useState(false)
@@ -241,7 +243,13 @@ export default function TopBarHeader({
         <div className="relative">
           <button
             type="button"
-            onClick={() => setShowNotifications((prev) => !prev)}
+            onClick={() => {
+              if (typeof window !== 'undefined' && window.innerWidth < 800) {
+                setIsMobileNotificationsOpen(true)
+              } else {
+                setShowNotifications((prev) => !prev)
+              }
+            }}
             className="p-2 text-slate-400 hover:text-white rounded-lg hover:bg-slate-800/50 transition-colors relative cursor-pointer"
             title="Admin Alerts"
           >
@@ -251,7 +259,12 @@ export default function TopBarHeader({
             </span>
           </button>
 
-          {/* Notifications Dropdown */}
+          {/* Mobile Dedicated Notification Screen with Back Button (< 800px) */}
+          {isMobileNotificationsOpen && (
+            <AdminNotificationsScreen onClose={() => setIsMobileNotificationsOpen(false)} />
+          )}
+
+          {/* Desktop Notifications Dropdown (>= 800px) */}
           {showNotifications && (
             <div className="absolute right-0 top-full mt-2 w-72 bg-[#0c1322] border border-slate-800 rounded-xl shadow-2xl p-3 z-[99999] animate-in fade-in">
               <div className="flex items-center justify-between pb-2 mb-2 border-b border-slate-800">

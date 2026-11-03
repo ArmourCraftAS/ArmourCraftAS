@@ -95,8 +95,9 @@ export default function AdminBlogsPage({ onNavigate }) {
   const featuredBlog = blogs[0] || null
   const gridBlogs = blogs.slice(1)
 
-  // Handlers for Add / Edit
+  // Handlers for Add / Edit (Desktop screens >= 800px only)
   const handleOpenAddModal = () => {
+    if (typeof window !== 'undefined' && window.innerWidth < 800) return
     setEditingBlog(null)
     setFormData({
       title: '',
@@ -111,6 +112,7 @@ export default function AdminBlogsPage({ onNavigate }) {
   }
 
   const handleOpenEditModal = (blog) => {
+    if (typeof window !== 'undefined' && window.innerWidth < 800) return
     setEditingBlog(blog)
     const existingTags = Array.isArray(blog.tags) && blog.tags.length > 0
       ? blog.tags
@@ -379,7 +381,10 @@ export default function AdminBlogsPage({ onNavigate }) {
                   {/* Delete Trash Icon (Red) */}
                   <button
                     type="button"
-                    onClick={() => setDeleteConfirmBlog(featuredBlog)}
+                    onClick={() => {
+                      if (typeof window !== 'undefined' && window.innerWidth < 800) return
+                      setDeleteConfirmBlog(featuredBlog)
+                    }}
                     className="w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-[#e11d48]/80 hover:bg-[#e11d48] border border-rose-400/30 text-white flex items-center justify-center transition-all cursor-pointer shadow-lg hover:scale-105 active:scale-95 backdrop-blur-sm"
                     title="Delete Featured Blog"
                   >
@@ -457,6 +462,7 @@ export default function AdminBlogsPage({ onNavigate }) {
                       type="button"
                       onClick={(e) => {
                         e.stopPropagation()
+                        if (typeof window !== 'undefined' && window.innerWidth < 800) return
                         setDeleteConfirmBlog(blog)
                       }}
                       className="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-[#e11d48]/80 hover:bg-[#e11d48] border border-rose-400/30 text-white flex items-center justify-center transition-all cursor-pointer shadow-lg backdrop-blur-sm hover:scale-105 active:scale-95"

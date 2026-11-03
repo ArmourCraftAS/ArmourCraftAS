@@ -2,7 +2,6 @@ import React, { useState, useEffect, useRef, useCallback } from 'react'
 import TopBarHeader from '../dashboard/TopBarHeader'
 import CanvasPreview from '../dashboard/CanvasPreview'
 import ElementInspectorSidebar from '../dashboard/ElementInspectorSidebar'
-import DesktopEditingRestrictedOverlay from '../dashboard/DesktopEditingRestrictedOverlay'
 import AdminProductsPage from './AdminProductsPage'
 import AdminBlogsPage from './AdminBlogsPage'
 import AdminFaqsPage from './AdminFaqsPage'
@@ -598,8 +597,8 @@ export default function AdminDashboardPage({ onNavigate }) {
             <div className="flex-1 h-full overflow-y-auto overflow-x-hidden relative custom-scrollbar">
               <CanvasPreview
                 activePage={activePage}
-                selectedElement={selectedElement}
-                onSelectElement={setSelectedElement}
+                selectedElement={isDesktopScreen ? selectedElement : null}
+                onSelectElement={isDesktopScreen ? setSelectedElement : () => {}}
                 cmsData={cmsData}
                 isInspectorMode={isDesktopScreen}
                 onSwitchTab={(tab) => {
@@ -627,11 +626,12 @@ export default function AdminDashboardPage({ onNavigate }) {
         )}
       </main>
 
-      {/* ========================================================================= */}
-      {/* 2.5 DESKTOP-ONLY BLOCKING NOTICE OVERLAY (< 800px)                        */}
-      {/* ========================================================================= */}
+      {/* Floating Read-Only Indicator on Mobile Screens (< 800px) */}
       {!isDesktopScreen && (
-        <DesktopEditingRestrictedOverlay onNavigate={onNavigate} />
+        <div className="fixed bottom-3 left-3 z-40 bg-[#0c1427]/95 border border-amber-500/40 text-amber-300 text-[11px] font-semibold px-3 py-1.5 rounded-xl shadow-lg backdrop-blur-md flex items-center gap-1.5 pointer-events-none">
+          <span className="w-2 h-2 rounded-full bg-amber-400 animate-pulse" />
+          <span>Admin Read-Only (Screen &lt; 800px)</span>
+        </div>
       )}
 
       {/* ========================================================================= */}

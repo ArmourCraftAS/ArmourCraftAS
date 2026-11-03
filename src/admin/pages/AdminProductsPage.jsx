@@ -118,14 +118,16 @@ export default function AdminProductsPage() {
     }, 3500)
   }
 
-  // Open Add Product Modal
+  // Open Add Product Modal (Desktop screens >= 800px only)
   const handleOpenAddModal = () => {
+    if (typeof window !== 'undefined' && window.innerWidth < 800) return
     setEditingProduct(null)
     setIsAddProductModalOpen(true)
   }
 
-  // Open Edit Product Modal
+  // Open Edit Product Modal (Desktop screens >= 800px only)
   const handleOpenEditModal = (product) => {
+    if (typeof window !== 'undefined' && window.innerWidth < 800) return
     setEditingProduct(product)
     setIsAddProductModalOpen(true)
   }
@@ -187,8 +189,9 @@ export default function AdminProductsPage() {
     setIsAddTypeModalOpen(false)
   }
 
-  // Open Edit Category Modal
+  // Open Edit Category Modal (Desktop screens >= 800px only)
   const handleOpenEditCategory = (cat) => {
+    if (typeof window !== 'undefined' && window.innerWidth < 800) return
     setEditingCategory(cat)
     setEditCategoryName(cat)
   }
@@ -528,7 +531,10 @@ export default function AdminProductsPage() {
                     {/* Delete Trash Icon Button */}
                     <button
                       type="button"
-                      onClick={() => setDeleteConfirmProduct(product)}
+                      onClick={() => {
+                        if (typeof window !== 'undefined' && window.innerWidth < 800) return
+                        setDeleteConfirmProduct(product)
+                      }}
                       className="p-1 sm:p-2 text-rose-500 hover:text-rose-400 hover:bg-rose-500/10 rounded-lg transition-colors cursor-pointer"
                       title="Delete product"
                     >

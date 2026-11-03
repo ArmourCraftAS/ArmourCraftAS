@@ -77,8 +77,9 @@ export default function AdminFaqsPage({ onNavigate }) {
     })
   }
 
-  // Open Add Modal
+  // Open Add Modal (Desktop screens >= 800px only)
   const handleOpenAddModal = () => {
+    if (typeof window !== 'undefined' && window.innerWidth < 800) return
     setEditingFaq(null)
     setFormData({
       question: '',
@@ -87,8 +88,9 @@ export default function AdminFaqsPage({ onNavigate }) {
     setIsAddEditModalOpen(true)
   }
 
-  // Open Edit Modal
+  // Open Edit Modal (Desktop screens >= 800px only)
   const handleOpenEditModal = (faq) => {
+    if (typeof window !== 'undefined' && window.innerWidth < 800) return
     setEditingFaq(faq)
     setFormData({
       question: faq.question || '',
@@ -254,7 +256,10 @@ export default function AdminFaqsPage({ onNavigate }) {
                   {/* Delete Trash Icon */}
                   <button
                     type="button"
-                    onClick={() => setDeleteConfirmFaq(faq)}
+                    onClick={() => {
+                      if (typeof window !== 'undefined' && window.innerWidth < 800) return
+                      setDeleteConfirmFaq(faq)
+                    }}
                     className="p-1.5 text-slate-400 hover:text-rose-400 transition-colors cursor-pointer"
                     title="Delete FAQ"
                   >
