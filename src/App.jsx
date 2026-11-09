@@ -15,6 +15,7 @@ import BlogPage from './pages/BlogPage'
 import BlogDetailPage from './pages/BlogDetailPage'
 import ContactPage from './pages/ContactPage'
 import ProductQuickAddModal from './components/ProductQuickAddModal'
+import AnimMaster from './components/animated/AnimMaster'
 import CartDrawer from './components/CartDrawer'
 import CartCheckoutModal from './components/CartCheckoutModal'
 import CartToast from './components/CartToast'
@@ -200,6 +201,11 @@ export default function App() {
                 {/* 3. THE ARMOURCRAFT ADVANTAGE Section (Advantages) */}
                 <ScrollReveal as="div" id="advantages-section" y={50} amount={0.2}>
                   <ArmourAdvantage />
+                </ScrollReveal>
+
+                {/* 3.5. AnimMaster Ballistic Technology Showcase */}
+                <ScrollReveal as="div" id="animmaster-section" y={50} amount={0.2}>
+                  <AnimMaster onExplore={() => navigate('/shop')} />
                 </ScrollReveal>
 
                 {/* 4. CUSTOM TEAM GEAR & JERSEY MATCHING Banner (Banner) */}
